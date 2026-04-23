@@ -3,79 +3,259 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RPS Jajod Portal</title>
+    <title>RPS Jajod - School Portal</title>
     <style>
-        /* CSS Styles */
-        body { font-family: sans-serif; background-color: #f0f2f5; display: flex; justify-content: center; padding: 20px; }
-        .card { background: white; padding: 30px; border-radius: 15px; width: 100%; max-width: 400px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); text-align: center; }
-        .hidden { display: none; }
-        input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box; }
-        button { width: 100%; padding: 12px; background-color: #007BFF; color: white; border: none; border-radius: 25px; cursor: pointer; font-size: 16px; margin-top: 10px; }
-        button:hover { background-color: #0056b3; }
-        .student-item { text-align: left; background: #e9ecef; padding: 10px; border-radius: 8px; margin-top: 10px; }
+        :root {
+            --rps-blue: #007BFF;
+            --rps-dark: #1a237e;
+            --bg-light: #f8f9fa;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-light);
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 450px;
+            background: white;
+            min-height: 100vh;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            position: relative;
+        }
+
+        /* Utility Classes */
+        .hidden { display: none !important; }
+        .card {
+            background: white;
+            margin: 15px;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        /* --- LOGIN STYLING --- */
+        .login-screen {
+            padding: 40px 20px;
+            text-align: center;
+        }
+        .login-screen h1 { color: var(--rps-dark); margin-bottom: 5px; }
+        .login-screen p { color: #666; margin-bottom: 30px; }
+
+        input {
+            width: 100%;
+            padding: 15px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+
+        .btn-main {
+            background-color: var(--rps-blue);
+            color: white;
+            border: none;
+            padding: 15px;
+            width: 100%;
+            border-radius: 50px;
+            font-size: 18px;
+            cursor: pointer;
+            margin-top: 20px;
+            font-weight: bold;
+        }
+
+        /* --- DASHBOARD STYLING --- */
+        .header {
+            background-color: var(--rps-dark);
+            color: white;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .fee-card {
+            background-color: #fff5f5;
+            border: 1px solid #feb2b2;
+            color: #c53030;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin: 15px;
+        }
+
+        .stat-box {
+            background: white;
+            padding: 15px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .teacher-badge {
+            background: #e3f2fd;
+            color: var(--rps-blue);
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 12px;
+            display: inline-block;
+        }
     </style>
 </head>
 <body>
 
-    <div id="loginPage" class="card">
-        <h1>RPS Jajod</h1>
-        <p>Student & Teacher Portal</p>
-        <input type="text" id="mobileNumber" placeholder="Enter Mobile Number...">
-        <button onclick="handleLogin()">Continue →</button>
-        <p style="color: #007BFF; font-size: 14px; margin-top: 20px;">or Login with username</p>
-    </div>
-
-    <div id="teacherPage" class="card hidden">
-        <h2>Teacher Panel</h2>
-        <p>Register New Student</p>
-        <input type="text" id="sName" placeholder="Student Full Name">
-        <input type="text" id="sClass" placeholder="Class (e.g. 11-COMM)">
-        <input type="number" id="sFees" placeholder="Pending Fees (₹)">
-        <button onclick="addStudent()" style="background-color: #28a745;">Register Student</button>
+<div class="container">
+    
+    <div id="loginSection" class="login-screen">
+        <div style="height: 150px;"></div> <h1>RPS Jajod</h1>
+        <p>Let's get started</p>
         
-        <hr style="margin: 20px 0;">
-        <h3>Registered Students</h3>
-        <div id="studentList"></div>
-        <button onclick="location.reload()" style="background-color: #6c757d;">Logout</button>
+        <input type="text" id="loginId" placeholder="Enter Mobile Number...">
+        <button class="btn-main" onclick="appLogic.login()">Continue →</button>
+        
+        <p style="color: var(--rps-blue); margin-top: 30px; cursor: pointer;">or Login with username</p>
     </div>
 
-    <script>
-        // JavaScript Logic
-        function handleLogin() {
-            const mobile = document.getElementById('mobileNumber').value;
+    <div id="teacherSection" class="hidden">
+        <div class="header">
+            <span>Teacher Portal</span>
+            <button onclick="location.reload()" style="background:none; border:1px solid white; color:white; border-radius:5px; cursor:pointer;">Logout</button>
+        </div>
+        
+        <div class="card">
+            <h3>Add New Student</h3>
+            <input type="text" id="regName" placeholder="Full Name">
+            <input type="text" id="regMobile" placeholder="Mobile (Login ID)">
+            <input type="text" id="regClass" placeholder="Class (e.g. 12-COMM)">
+            <input type="number" id="regFees" placeholder="Pending Fees (₹)">
+            <button class="btn-main" onclick="appLogic.registerStudent()">Register Student</button>
+        </div>
+
+        <div class="card">
+            <h3>Recent Registrations</h3>
+            <div id="masterStudentList"></div>
+        </div>
+    </div>
+
+    <div id="studentSection" class="hidden">
+        <div class="header">
+            <span id="displayStudentName">Student Name</span>
+            <button onclick="location.reload()" style="background:none; border:1px solid white; color:white; border-radius:5px; cursor:pointer;">Logout</button>
+        </div>
+
+        <div class="card">
+            <div class="teacher-badge" id="displayClass">Class</div>
+            <h2 id="welcomeName">Welcome Back!</h2>
+            <p style="color:#666;">Rajasthan Public School, Jajod</p>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-box">
+                <small>Attendance</small>
+                <div style="font-size: 20px; font-weight: bold; color: green;">94.12%</div>
+            </div>
+            <div class="stat-box">
+                <small>Punch Time</small>
+                <div style="font-size: 20px; font-weight: bold; color: #666;">N/A</div>
+            </div>
+        </div>
+
+        <div class="card fee-card">
+            <small>Pending Fees</small>
+            <div style="font-size: 24px; font-weight: bold;" id="displayFees">₹ 0</div>
+        </div>
+
+        <div style="padding: 15px;">
+            <h4>Academic Overview</h4>
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; text-align: center;">
+                <div>📚<br><small>Homework</small></div>
+                <div>📝<br><small>Exam</small></div>
+                <div>📅<br><small>Timetable</small></div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    // CORE LOGIC FOR RPS PORTAL
+    const appLogic = {
+        // We use localStorage so data doesn't disappear on refresh
+        students: JSON.parse(localStorage.getItem('rps_students')) || [],
+
+        login: function() {
+            const id = document.getElementById('loginId').value;
             
-            if (mobile === "9999") {
-                // Hide Login, Show Teacher Panel
-                document.getElementById('loginPage').classList.add('hidden');
-                document.getElementById('teacherPage').classList.remove('hidden');
-            } else if (mobile === "") {
-                alert("Please enter a number");
+            if (id === "9999") {
+                this.showSection('teacherSection');
+                this.renderMasterList();
             } else {
-                alert("Student Dashboard coming soon for: " + mobile);
+                // Check if the mobile number exists in our "database"
+                const student = this.students.find(s => s.mobile === id);
+                if (student) {
+                    this.showStudentDashboard(student);
+                } else {
+                    alert("Student not found. Please contact RPS Teacher for registration.");
+                }
             }
-        }
+        },
 
-        function addStudent() {
-            const name = document.getElementById('sName').value;
-            const cls = document.getElementById('sClass').value;
-            const fees = document.getElementById('sFees').value;
+        registerStudent: function() {
+            const name = document.getElementById('regName').value;
+            const mobile = document.getElementById('regMobile').value;
+            const cls = document.getElementById('regClass').value;
+            const fees = document.getElementById('regFees').value;
 
-            if (name && cls) {
-                const list = document.getElementById('studentList');
-                const newItem = document.createElement('div');
-                newItem.className = 'student-item';
-                newItem.innerHTML = `<strong>${name}</strong><br>Class: ${cls} | Fees: ₹${fees}`;
-                list.appendChild(newItem);
-
+            if (name && mobile) {
+                const newStudent = { name, mobile, class: cls, fees };
+                this.students.push(newStudent);
+                localStorage.setItem('rps_students', JSON.stringify(this.students));
+                
+                alert("Student Registered: " + name);
+                this.renderMasterList();
+                
                 // Clear inputs
-                document.getElementById('sName').value = '';
-                document.getElementById('sClass').value = '';
-                document.getElementById('sFees').value = '';
-            } else {
-                alert("Please fill name and class");
+                document.getElementById('regName').value = '';
+                document.getElementById('regMobile').value = '';
             }
+        },
+
+        showStudentDashboard: function(data) {
+            this.showSection('studentSection');
+            document.getElementById('displayStudentName').innerText = data.name;
+            document.getElementById('welcomeName').innerText = "Hello, " + data.name;
+            document.getElementById('displayClass').innerText = "Class: " + data.class;
+            document.getElementById('displayFees').innerText = "₹ " + data.fees;
+        },
+
+        showSection: function(id) {
+            document.getElementById('loginSection').classList.add('hidden');
+            document.getElementById('teacherSection').classList.add('hidden');
+            document.getElementById('studentSection').classList.add('hidden');
+            document.getElementById(id).classList.remove('hidden');
+        },
+
+        renderMasterList: function() {
+            const container = document.getElementById('masterStudentList');
+            container.innerHTML = this.students.map(s => `
+                <div style="border-bottom: 1px solid #eee; padding: 10px 0;">
+                    <b>${s.name}</b> (${s.class})<br>
+                    <small>ID: ${s.mobile} | Fees: ₹${s.fees}</small>
+                </div>
+            `).join('');
         }
-    </script>
+    };
+</script>
+
 </body>
 </html>
-    
+
