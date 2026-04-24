@@ -3,212 +3,216 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RPS Jajod - Master Edition</title>
+    <title>RPS Portal - Ultimate</title>
     <style>
-        :root { --blue: #007BFF; --navy: #0d1b3e; --bg: #f8fafc; --white: #ffffff; --border: #e2e8f0; }
-        body { font-family: 'Inter', system-ui, sans-serif; margin: 0; background: var(--bg); color: #1e293b; transition: 0.3s; }
-        .app { width: 100%; max-width: 480px; min-height: 100vh; background: var(--white); margin: 0 auto; position: relative; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1); padding-bottom: 90px; }
+        :root { --blue: #007BFF; --navy: #0d1b3e; --bg: #f4f7fa; --white: #ffffff; }
+        body { font-family: 'Segoe UI', sans-serif; margin: 0; background: var(--bg); color: #333; overflow-x: hidden; }
+        .app { width: 100%; max-width: 480px; min-height: 100vh; background: var(--white); margin: 0 auto; position: relative; padding-bottom: 100px; box-shadow: 0 0 20px rgba(0,0,0,0.1); }
         .hidden { display: none !important; }
 
-        /* UI Elements */
-        .top-bar { background: var(--navy); color: white; padding: 20px; font-weight: 700; display: flex; justify-content: space-between; align-items: center; border-radius: 0 0 20px 20px; }
-        .badge { background: var(--blue); padding: 2px 8px; border-radius: 10px; font-size: 10px; }
-        
-        /* Grid */
-        .section-title { padding: 20px 20px 5px; font-size: 14px; text-transform: uppercase; letter-spacing: 1px; color: #64748b; font-weight: 800; }
+        /* Smooth Transitions */
+        .page { animation: fadeIn 0.4s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Header & Profile */
+        .header { background: var(--navy); color: white; padding: 20px; display: flex; justify-content: space-between; align-items: center; border-radius: 0 0 20px 20px; }
+        .profile-card { display: flex; align-items: center; gap: 15px; padding: 20px; background: #fff; }
+        .p-img { width: 65px; height: 65px; border-radius: 50%; object-fit: cover; border: 3px solid var(--blue); background: #eee; }
+
+        /* Grid Category Styling */
+        .section-label { padding: 15px 20px 5px; font-weight: bold; color: var(--navy); font-size: 14px; text-transform: uppercase; }
         .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; padding: 10px 20px; }
-        .card-btn { background: #fff; border: 1px solid var(--border); border-radius: 16px; padding: 20px 5px; text-align: center; cursor: pointer; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
-        .card-btn:active { transform: scale(0.9); background: #f1f5f9; border-color: var(--blue); }
-        .card-btn i { font-size: 24px; display: block; margin-bottom: 8px; }
-        .card-btn span { font-size: 11px; font-weight: 600; color: #475569; display: block; line-height: 1.2; }
+        .item { background: #fff; border: 1px solid #eee; border-radius: 15px; padding: 18px 5px; text-align: center; cursor: pointer; transition: 0.2s; box-shadow: 0 2px 5px rgba(0,0,0,0.03); }
+        .item:active { transform: scale(0.95); background: #f0f7ff; }
+        .item i { font-size: 24px; display: block; margin-bottom: 8px; }
+        .item span { font-size: 11px; font-weight: 600; color: #555; }
 
-        /* Admin Forms */
-        .admin-box { background: #fff; margin: 15px; padding: 20px; border-radius: 20px; border: 1px solid var(--border); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
-        input, textarea, select { width: 100%; padding: 14px; margin: 10px 0; border: 1.5px solid var(--border); border-radius: 12px; font-size: 14px; outline: none; }
-        input:focus { border-color: var(--blue); }
-        .btn-action { background: var(--blue); color: white; border: none; padding: 16px; width: 100%; border-radius: 12px; font-weight: 700; cursor: pointer; margin-top: 10px; }
-
-        /* Bottom Nav */
-        .bottom-nav { position: fixed; bottom: 0; width: 100%; max-width: 480px; background: white; display: flex; height: 80px; border-top: 1px solid var(--border); align-items: center; justify-content: space-around; z-index: 1000; }
-        .nav-link { flex: 1; text-align: center; color: #94a3b8; font-size: 10px; font-weight: 700; cursor: pointer; }
+        /* Floating Bottom Navigation (Exact match to your Image) */
+        .nav-bar { position: fixed; bottom: 0; width: 100%; max-width: 480px; background: white; display: flex; height: 75px; border-top: 1px solid #eee; align-items: center; z-index: 1000; }
+        .nav-link { flex: 1; text-align: center; color: #888; font-size: 11px; cursor: pointer; font-weight: bold; }
         .nav-link.active { color: var(--blue); }
-        .center-fab { background: var(--blue); color: white !important; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; transform: translateY(-25px); box-shadow: 0 8px 15px rgba(0,123,255,0.3); font-size: 20px; }
+        .nav-center { position: relative; }
+        .nav-center-btn { background: var(--blue); color: white; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 25px; margin-top: -45px; box-shadow: 0 5px 15px rgba(0,123,255,0.4); border: 5px solid white; }
+
+        /* Admin/Teacher Panel Forms */
+        .card { background: white; margin: 15px; padding: 20px; border-radius: 15px; border: 1px solid #eee; }
+        input, textarea, select { width: 100%; padding: 12px; margin: 8px 0; border: 1.5px solid #ddd; border-radius: 10px; font-size: 14px; }
+        .btn { background: var(--blue); color: white; border: none; padding: 15px; width: 100%; border-radius: 12px; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        .btn:hover { background: var(--navy); }
     </style>
 </head>
 <body>
 
 <div class="app">
 
-    <div id="sc-login" style="padding: 120px 40px; text-align: center;">
-        <h1 style="font-size: 32px; color: var(--navy); margin-bottom: 8px;">RPS Portal</h1>
-        <p style="color: #64748b; margin-bottom: 40px;">Management & Learning System</p>
-        <input type="text" id="login-input" placeholder="Enter Mobile Number">
-        <button class="btn-action" onclick="core.login()">Log In</button>
+    <div id="sc-login" class="page" style="padding: 100px 40px; text-align: center;">
+        <h1 style="color: var(--navy); font-size: 32px;">RPS PORTAL</h1>
+        <p style="color: #666; margin-bottom: 40px;">Rajasthan Public School, Jajod</p>
+        <input type="text" id="log-val" placeholder="Mobile Number or Username">
+        <button class="btn" style="margin-top: 20px;" onclick="core.login()">Access Account</button>
     </div>
 
-    <div id="sc-admin" class="hidden">
-        <div class="top-bar"><span>ADMIN CONSOLE</span> <span class="badge" onclick="location.reload()">LOGOUT</span></div>
-        <div class="admin-box">
-            <h3>Update Student Data</h3>
-            <select id="adm-stu-select"></select>
-            <select id="adm-feat-key">
-                <optgroup label="Academic">
-                    <option value="exam">Exam Table</option>
-                    <option value="hw">Daily Homework</option>
-                    <option value="sy">Syllabus</option>
-                    <option value="tt">Timetable</option>
-                </optgroup>
-                <optgroup label="Records">
-                    <option value="rep">Competition Report</option>
-                    <option value="rc">Report Card</option>
-                    <option value="cc">Copy Checking</option>
-                    <option value="fees">Fees Overview</option>
-                </optgroup>
-                <optgroup label="Facilities">
-                    <option value="tr">Transport</option>
-                    <option value="no">Notices</option>
-                    <option value="lec">Lectures</option>
-                    <option value="lib">Library</option>
-                    <option value="ev">Events</option>
-                </optgroup>
-            </select>
-            <textarea id="adm-feat-val" rows="4" placeholder="Enter data, links, or info..."></textarea>
-            <button class="btn-action" onclick="core.pushUpdate()">Push to Student</button>
-        </div>
-
-        <div class="admin-box">
-            <h3>Registration</h3>
-            <input type="text" id="new-mob" placeholder="Mobile Number">
-            <input type="text" id="new-name" placeholder="Full Name">
-            <button class="btn-action" style="background:#1e293b;" onclick="core.register()">Register Student</button>
-        </div>
-    </div>
-
-    <div id="sc-student" class="hidden">
-        <div class="top-bar"><span id="stu-name-display">Student</span> <i class="badge">Active</i></div>
+    <div id="sc-admin" class="hidden page">
+        <div class="header"><span>TEACHER DASHBOARD</span> <button onclick="location.reload()" style="background:none; border:1px solid white; color:white; border-radius:5px; padding:5px 10px; cursor:pointer;">Logout</button></div>
         
-        <div id="v-home">
-            <div class="section-title">Academic Overview</div>
-            <div class="grid">
-                <div class="card-btn" onclick="core.open('exam', 'Exam Schedule')"><i>📅</i><span>Exam</span></div>
-                <div class="card-btn" onclick="core.open('hw', 'Homework')"><i>✍️</i><span>Homework</span></div>
-                <div class="card-btn" onclick="core.open('sy', 'Syllabus')"><i>📖</i><span>Syllabus</span></div>
-                <div class="card-btn" onclick="core.open('tt', 'Timetable')"><i>🕰️</i><span>Timetable</span></div>
-                <div class="card-btn" onclick="core.open('rep', 'Competition Report')"><i>🏆</i><span>Comp. Exam</span></div>
-            </div>
-
-            <div class="section-title">Student Records</div>
-            <div class="grid">
-                <div class="card-btn" onclick="core.open('att', 'Attendance Record')"><i>📊</i><span>Attendance</span></div>
-                <div class="card-btn" onclick="core.showLeave()"><i>✉️</i><span>Leave App.</span></div>
-                <div class="card-btn" onclick="core.open('rc', 'Report Card')"><i>📜</i><span>Report Card</span></div>
-                <div class="card-btn" onclick="core.open('cc', 'Copy Checking')"><i>🖊️</i><span>Copy Check</span></div>
-            </div>
-
-            <div class="section-title">School Facilities</div>
-            <div class="grid">
-                <div class="card-btn" onclick="core.open('fees', 'Fees Overview')"><i>💰</i><span>Fees</span></div>
-                <div class="card-btn" onclick="core.open('tr', 'Transport Info')"><i>🚌</i><span>Transport</span></div>
-                <div class="card-btn" onclick="core.open('no', 'Notices')"><i>📢</i><span>Notices</span></div>
-                <div class="card-btn" onclick="core.open('lec', 'Video Lectures')"><i>📺</i><span>Lectures</span></div>
-                <div class="card-btn" onclick="core.open('lib', 'Library Status')"><i>📚</i><span>Library</span></div>
-                <div class="card-btn" onclick="core.open('ev', 'Upcoming Events')"><i>🎭</i><span>Events</span></div>
-            </div>
+        <div class="card">
+            <h3>Step 1: Register/Update Student</h3>
+            <input type="text" id="t-id" placeholder="Mobile ID (Required)">
+            <input type="text" id="t-name" placeholder="Full Name">
+            <label style="font-size:12px; color:var(--blue);">Upload Profile Photo:</label>
+            <input type="file" id="t-photo" accept="image/*">
+            <button class="btn" onclick="core.saveStudent()">Save Profile</button>
         </div>
 
-        <div id="v-content" class="hidden" style="padding:20px;">
-            <h2 id="view-title">Details</h2>
-            <div id="view-body" style="background:#f8fafc; padding:20px; border-radius:15px; border:1px solid #e2e8f0; white-space: pre-wrap; min-height: 250px;"></div>
-            <button class="btn-action" onclick="core.nav('home')">Back to Home</button>
-        </div>
-
-        <div id="v-leave" class="hidden" style="padding:20px;">
-            <h2>Apply Leave</h2>
-            <textarea id="leave-reason" rows="5" placeholder="Reason and Dates..."></textarea>
-            <button class="btn-action" onclick="core.submitLeave()">Submit Leave</button>
-            <button class="btn-action" style="background:#94a3b8" onclick="core.nav('home')">Cancel</button>
-        </div>
-
-        <div class="bottom-nav">
-            <div class="nav-link active" onclick="core.nav('home')"><i>🏠</i><span>Home</span></div>
-            <div class="nav-link"><i>👤</i><span>My Child</span></div>
-            <div class="nav-link center-fab" onclick="core.nav('home')"><b>+</b></div>
-            <div class="nav-link"><i>🔔</i><span>Updates</span></div>
-            <div class="nav-link"><i>🏢</i><span>Newsfeed</span></div>
+        <div class="card" style="background:#f0f7ff;">
+            <h3>Step 2: Update Features</h3>
+            <select id="t-select-stu"></select>
+            <select id="t-feat-key">
+                <option value="exam">Exam Table</option>
+                <option value="hw">Daily Homework</option>
+                <option value="sy">Syllabus</option>
+                <option value="tt">Timetable</option>
+                <option value="rep">Competition Report</option>
+                <option value="rc">Report Card</option>
+                <option value="fees">Fees Status</option>
+                <option value="tr">Transport Info</option>
+                <option value="no">Notices</option>
+                <option value="lec">Lectures/Videos</option>
+            </select>
+            <textarea id="t-feat-val" placeholder="Type info or paste link here..."></textarea>
+            <button class="btn" onclick="core.updateFeature()">Update Student Data</button>
         </div>
     </div>
+
+    <div id="sc-student" class="hidden page">
+        <div class="header"><span>RPS STUDENT APP</span></div>
+        
+        <div class="profile-card">
+            <img id="s-img" src="" class="p-img">
+            <div>
+                <h2 id="s-name" style="margin:0; font-size: 20px;">Student Name</h2>
+                <span id="s-id-display" style="color:#666; font-size:13px;">ID: 0000</span>
+            </div>
+        </div>
+
+        <div id="v-home">
+            <div class="section-label">Academic Overview</div>
+            <div class="grid">
+                <div class="item" onclick="core.open('exam', 'Exam')"><i>📝</i><span>Exam</span></div>
+                <div class="item" onclick="core.open('hw', 'Homework')"><i>✍️</i><span>Homework</span></div>
+                <div class="item" onclick="core.open('sy', 'Syllabus')"><i>📖</i><span>Syllabus</span></div>
+                <div class="item" onclick="core.open('tt', 'Timetable')"><i>🕰️</i><span>Timetable</span></div>
+                <div class="item" onclick="core.open('rep', 'Competition Report')"><i>🏆</i><span>Competition Report</span></div>
+            </div>
+
+            <div class="section-label">Records & Facilities</div>
+            <div class="grid">
+                <div class="item" onclick="core.open('fees', 'Fees Overview')"><i>💰</i><span>Fees Overview</span></div>
+                <div class="item" onclick="core.open('tr', 'Transport')"><i>🚌</i><span>Transport</span></div>
+                <div class="item" onclick="core.open('lec', 'Lectures')"><i>📺</i><span>Lectures</span></div>
+                <div class="item" onclick="core.open('no', 'Notices')"><i>📢</i><span>Notices</span></div>
+                <div class="item" onclick="core.open('rc', 'Report Card')"><i>📜</i><span>Report Card</span></div>
+            </div>
+        </div>
+
+        <div id="v-detail" class="hidden page" style="padding:20px;">
+            <h2 id="det-title" style="color:var(--navy)">Title</h2>
+            <div id="det-body" style="white-space: pre-wrap; background:#f9f9f9; padding:20px; border-radius:15px; border:1px solid #eee; min-height:200px;"></div>
+            <button class="submit-btn btn" style="margin-top:20px;" onclick="core.nav('home')">Back to Home</button>
+        </div>
+
+        <div class="nav-bar">
+            <div class="nav-link active" onclick="core.nav('home')">🏠<br>Home</div>
+            <div class="nav-link" onclick="alert('Profile info locked')">👤<br>My Child</div>
+            <div class="nav-center" onclick="core.nav('home')">
+                <div class="nav-center-btn">🔳</div>
+            </div>
+            <div class="nav-link" onclick="core.open('no', 'Updates')">🔔<br>Updates</div>
+            <div class="nav-link" onclick="alert('Newsfeed is empty')">🏢<br>Newsfeed</div>
+        </div>
+    </div>
+
 </div>
 
 <script>
 const core = {
-    db: JSON.parse(localStorage.getItem('rps_v10_final')) || [],
-    session: null,
+    db: JSON.parse(localStorage.getItem('rps_v11_fixed')) || [],
+    user: null,
 
     login: function() {
-        const val = document.getElementById('login-input').value.trim();
-        if(val === "9999") { this.show('sc-admin'); this.loadAdmin(); return; }
-        const user = this.db.find(x => x.mobile === val);
-        if(user) { this.session = user; this.show('sc-student'); document.getElementById('stu-name-display').innerText = user.name; } 
-        else { alert("User not found!"); }
+        const val = document.getElementById('log-val').value.trim();
+        if(val === "9999") { this.show('sc-admin'); this.refreshAdmin(); return; }
+        const u = this.db.find(x => x.mobile === val || x.name.toLowerCase() === val.toLowerCase());
+        if(u) { this.user = u; this.loadStudent(); } else { alert("Login failed. Mobile not registered."); }
     },
 
-    register: function() {
-        const m = document.getElementById('new-mob').value;
-        const n = document.getElementById('new-name').value;
-        if(!m || !n) return alert("Fill all fields");
-        const data = { mobile: m, name: n, exam:'', hw:'', sy:'', tt:'', rep:'', rc:'', cc:'', fees:'', tr:'', no:'', lec:'', lib:'', ev:'', leaves:[] };
-        this.db.push(data);
-        this.save();
-        alert("Registered!");
-        this.loadAdmin();
+    saveStudent: function() {
+        const id = document.getElementById('t-id').value;
+        const name = document.getElementById('t-name').value;
+        if(!id || !name) return alert("Fill Name and Mobile ID!");
+        
+        const photoFile = document.getElementById('t-photo').files[0];
+        const processSave = (imgData) => {
+            const existing = this.db.find(x => x.mobile === id);
+            const data = {
+                mobile: id, name: name, 
+                img: imgData || (existing ? existing.img : ""),
+                exam: existing?existing.exam:'', hw: existing?existing.hw:'', sy: existing?existing.sy:'', 
+                tt: existing?existing.tt:'', rep: existing?existing.rep:'', rc: existing?existing.rc:'',
+                fees: existing?existing.fees:'', tr: existing?existing.tr:'', no: existing?existing.no:'', lec: existing?existing.lec:''
+            };
+            const idx = this.db.findIndex(x => x.mobile === id);
+            if(idx > -1) this.db[idx] = data; else this.db.push(data);
+            localStorage.setItem('rps_v11_fixed', JSON.stringify(this.db));
+            alert("Student Registered with Profile Picture!");
+            this.refreshAdmin();
+        };
+
+        if(photoFile) {
+            const reader = new FileReader();
+            reader.readAsDataURL(photoFile);
+            reader.onload = () => processSave(reader.result);
+        } else { processSave(); }
     },
 
-    loadAdmin: function() {
-        const sel = document.getElementById('adm-stu-select');
-        sel.innerHTML = this.db.map(s => `<option value="${s.mobile}">${s.name}</option>`).join('');
+    refreshAdmin: function() {
+        document.getElementById('t-select-stu').innerHTML = this.db.map(s => `<option value="${s.mobile}">${s.name}</option>`).join('');
     },
 
-    pushUpdate: function() {
-        const mob = document.getElementById('adm-stu-select').value;
-        const key = document.getElementById('adm-feat-key').value;
-        const val = document.getElementById('adm-feat-val').value;
-        const idx = this.db.findIndex(x => x.mobile === mob);
-        if(idx > -1) {
-            this.db[idx][key] = val;
-            this.save();
-            alert("Updated " + key + " for " + this.db[idx].name);
-        }
+    updateFeature: function() {
+        const id = document.getElementById('t-select-stu').value;
+        const key = document.getElementById('t-feat-key').value;
+        const val = document.getElementById('t-feat-val').value;
+        const idx = this.db.findIndex(x => x.mobile === id);
+        this.db[idx][key] = val;
+        localStorage.setItem('rps_v11_fixed', JSON.stringify(this.db));
+        alert("Feature updated successfully!");
+    },
+
+    loadStudent: function() {
+        this.show('sc-student');
+        document.getElementById('s-name').innerText = this.user.name;
+        document.getElementById('s-id-display').innerText = "ID: " + this.user.mobile;
+        document.getElementById('s-img').src = this.user.img || "https://via.placeholder.com/65";
     },
 
     open: function(key, title) {
-        this.nav('content');
-        document.getElementById('view-title').innerText = title;
-        document.getElementById('view-body').innerText = this.session[key] || "No records found.";
+        this.nav('detail');
+        document.getElementById('det-title').innerText = title;
+        document.getElementById('det-body').innerText = this.user[key] || "No data shared by teacher for " + title;
     },
 
-    submitLeave: function() {
-        const msg = document.getElementById('leave-reason').value;
-        const idx = this.db.findIndex(x => x.mobile === this.session.mobile);
-        this.db[idx].leaves.push(new Date().toLocaleDateString() + ": " + msg);
-        this.save();
-        alert("Leave sent!");
-        this.nav('home');
-    },
-
-    showLeave: function() { this.nav('leave'); },
     nav: function(v) {
         document.getElementById('v-home').classList.add('hidden');
-        document.getElementById('v-content').classList.add('hidden');
-        document.getElementById('v-leave').classList.add('hidden');
+        document.getElementById('v-detail').classList.add('hidden');
         document.getElementById('v-' + v).classList.remove('hidden');
     },
+
     show: function(id) {
         document.querySelectorAll('.app > div').forEach(d => d.classList.add('hidden'));
         document.getElementById(id).classList.remove('hidden');
-    },
-    save: function() { localStorage.setItem('rps_v10_final', JSON.stringify(this.db)); }
+    }
 };
 </script>
 </body>
-                    </html>
-            
+</html>
