@@ -3,66 +3,75 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RPS Jajod Portal</title>
+    <title>RPS Jajod - Smart Portal</title>
     <style>
-        :root { --rps-blue: #007BFF; --rps-dark: #0d1b3e; --gray: #f4f7f6; }
-        body { font-family: 'Segoe UI', sans-serif; background: #eef2f7; margin: 0; display: flex; justify-content: center; }
-        .app-container { width: 100%; max-width: 450px; background: white; min-height: 100vh; box-shadow: 0 0 15px rgba(0,0,0,0.1); position: relative; padding-bottom: 80px;}
+        :root { --rps-blue: #007BFF; --rps-dark: #0d1b3e; --bg: #f0f2f5; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); margin: 0; display: flex; justify-content: center; }
+        .app-container { width: 100%; max-width: 450px; background: white; min-height: 100vh; box-shadow: 0 0 20px rgba(0,0,0,0.1); position: relative; padding-bottom: 70px; overflow-x: hidden; }
         .hidden { display: none !important; }
         
         /* Header */
-        .header { background: var(--rps-dark); color: white; padding: 20px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 10; }
+        .header { background: var(--rps-dark); color: white; padding: 20px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; }
         
-        /* Cards */
-        .card { background: white; margin: 15px; padding: 15px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); border: 1px solid #eee; }
-        .fee-card { background: #fff5f5; border: 1px solid #feb2b2; color: #c53030; }
+        /* Cards & UI */
+        .card { background: white; margin: 12px; padding: 15px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); border: 1px solid #eee; }
+        .fee-card { background: #fff5f5; border: 1px solid #feb2b2; color: #c53030; display: flex; justify-content: space-between; align-items: center; }
         
         /* Grid Menu */
-        .grid-container { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; padding: 15px; text-align: center; }
-        .grid-item { background: #fdfdfd; padding: 15px 5px; border-radius: 10px; font-size: 12px; border: 1px solid #f0f0f0; cursor: pointer;}
-        .grid-item:active { background: #e3f2fd; transform: scale(0.95); }
-        .grid-icon { font-size: 24px; margin-bottom: 8px; display: block; }
+        .grid-container { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; padding: 12px; }
+        .grid-item { background: #fff; padding: 15px 5px; border-radius: 12px; text-align: center; font-size: 12px; border: 1px solid #f0f0f0; cursor: pointer; transition: 0.2s; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
+        .grid-item:active { transform: scale(0.95); background: #e3f2fd; }
+        .grid-icon { font-size: 24px; margin-bottom: 5px; display: block; }
 
-        /* Form Elements */
-        input { width: 100%; padding: 12px; margin: 8px 0; border-radius: 8px; border: 1px solid #ddd; box-sizing: border-box; }
-        .btn-blue { background: var(--rps-blue); color: white; border: none; padding: 15px; width: 100%; border-radius: 50px; font-weight: bold; cursor: pointer; }
+        /* Inputs */
+        input, textarea, select { width: 100%; padding: 12px; margin: 8px 0; border-radius: 8px; border: 1px solid #ddd; box-sizing: border-box; font-family: inherit; }
+        .btn-blue { background: var(--rps-blue); color: white; border: none; padding: 15px; width: 100%; border-radius: 50px; font-weight: bold; cursor: pointer; font-size: 16px; margin-top: 10px; }
 
-        /* Profile Details */
-        .profile-info { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
-        .info-box { background: #f9f9f9; padding: 10px; border-radius: 8px; font-size: 13px; border: 1px solid #eee; }
-        .label { color: #888; display: block; font-size: 11px; }
-
-        /* Bottom Nav */
-        .bottom-nav { position: fixed; bottom: 0; width: 100%; max-width: 450px; background: white; display: flex; justify-content: space-around; padding: 10px 0; border-top: 1px solid #eee; }
-        .nav-item { text-align: center; color: #888; font-size: 11px; cursor: pointer;}
+        /* Navigation */
+        .bottom-nav { position: fixed; bottom: 0; width: 100%; max-width: 450px; background: white; display: flex; justify-content: space-around; padding: 10px 0; border-top: 1px solid #eee; z-index: 100; }
+        .nav-item { text-align: center; color: #888; font-size: 11px; cursor: pointer; flex: 1; }
         .nav-active { color: var(--rps-blue); font-weight: bold; }
+
+        .profile-img { width: 70px; height: 70px; border-radius: 50%; object-fit: cover; background: #eee; border: 2px solid var(--rps-blue); }
     </style>
 </head>
 <body>
 
 <div class="app-container">
 
-    <div id="screen-login" class="card" style="margin-top: 100px; text-align: center; padding: 40px 20px;">
-        <h1 style="color: var(--rps-dark);">RPS Jajod</h1>
-        <p>Student & Teacher Login</p>
-        <input type="text" id="login-input" placeholder="Enter Mobile Number...">
-        <button class="btn-blue" onclick="portal.handleLogin()">Continue →</button>
-        <p style="color: var(--rps-blue); margin-top: 20px; font-size: 14px; cursor: pointer;">or Login with username</p>
+    <div id="screen-login" style="padding: 60px 25px; text-align: center;">
+        <h1 style="color: var(--rps-dark); margin-bottom: 0;">RPS Jajod</h1>
+        <p style="color: #666;">Portal for Students & Teachers</p>
+        <div style="margin-top: 50px;">
+            <input type="text" id="login-input" placeholder="Enter Mobile Number...">
+            <button class="btn-blue" onclick="portal.handleLogin()">Continue →</button>
+            <p style="color: var(--rps-blue); margin-top: 25px; font-size: 14px; cursor: pointer;">or Login with username</p>
+        </div>
     </div>
 
     <div id="screen-teacher" class="hidden">
-        <div class="header"><span>Teacher Panel</span><button onclick="location.reload()" style="background:none; color:white; border:1px solid white; border-radius:4px;">Logout</button></div>
+        <div class="header"><span>Admin Control</span><button onclick="location.reload()" style="background:transparent; color:white; border:1px solid white; border-radius:5px; padding:4px 8px;">Logout</button></div>
+        
         <div class="card">
-            <h3>Register/Update Student</h3>
-            <input type="text" id="reg-name" placeholder="Name">
-            <input type="text" id="reg-mobile" placeholder="Mobile (Login ID)">
-            <input type="text" id="reg-class" placeholder="Class">
-            <input type="text" id="reg-sr" placeholder="SR No.">
+            <h3>Manage Student Details</h3>
+            <input type="text" id="reg-mobile" placeholder="Mobile Number (Login ID) *">
+            <input type="text" id="reg-name" placeholder="Full Student Name">
+            <input type="text" id="reg-photo" placeholder="Photo URL (Link)">
+            <input type="text" id="reg-class" placeholder="Class & Section">
             <input type="number" id="reg-fees" placeholder="Pending Fees (₹)">
-            <input type="number" id="reg-att" placeholder="Attendance % (e.g. 95)">
-            <button class="btn-blue" onclick="portal.register()">Save Student Data</button>
+            <input type="number" id="reg-att" placeholder="Attendance %">
+            
+            <h4 style="margin-bottom: 0;">Academic Content</h4>
+            <textarea id="reg-hw" placeholder="Enter Homework..."></textarea>
+            <textarea id="reg-exam" placeholder="Enter Exam Date/Details..."></textarea>
+            
+            <button class="btn-blue" onclick="portal.saveData()">Save / Update Record</button>
         </div>
-        <div class="card"><h4>Live Database</h4><div id="master-list"></div></div>
+
+        <div class="card">
+            <h4>Database List</h4>
+            <div id="master-list" style="max-height: 200px; overflow-y: auto;"></div>
+        </div>
     </div>
 
     <div id="screen-student" class="hidden">
@@ -70,114 +79,128 @@
 
         <div id="view-home">
             <div class="card" style="display:flex; align-items:center; gap:15px;">
-                <div style="width:50px; height:50px; background:#007BFF; color:white; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:bold;">RPS</div>
-                <div><h3 id="stu-name" style="margin:0;">Student Name</h3><span id="stu-class">Class</span></div>
+                <img id="stu-img" class="profile-img" src="">
+                <div>
+                    <h3 id="stu-name" style="margin:0;">Student Name</h3>
+                    <span id="stu-class" style="color:#666;">Class Details</span>
+                </div>
             </div>
 
-            <div style="display:flex; gap:10px; padding:0 15px;">
+            <div style="display:flex; gap:10px; padding:0 12px;">
                 <div class="card" style="flex:1; margin:0; text-align:center;">
                     <small>Attendance</small><br><strong id="stu-att" style="color:green; font-size:18px;">0%</strong>
                 </div>
                 <div class="card" style="flex:1; margin:0; text-align:center;">
-                    <small>Status</small><br><strong style="color:#666; font-size:18px;">Active</strong>
+                    <small>Status</small><br><strong style="color:var(--rps-blue); font-size:18px;">Active</strong>
                 </div>
             </div>
 
-            <div class="card fee-card" style="display:flex; justify-content:space-between; align-items:center;">
+            <div class="card fee-card">
                 <div><small>Pending Fees</small><br><strong id="stu-fees" style="font-size:20px;">₹ 0</strong></div>
-                <button style="background:none; border:1px solid #c53030; color:#c53030; border-radius:5px; padding:5px;">Pay Now</button>
+                <button style="background:transparent; border:1px solid #c53030; color:#c53030; border-radius:5px; padding:5px 10px;">Pay Online</button>
             </div>
 
             <div class="grid-container">
-                <div class="grid-item" onclick="portal.switchSubView('Homework')"><span class="grid-icon">📚</span>Homework</div>
-                <div class="grid-item" onclick="portal.switchSubView('Exam')"><span class="grid-icon">📝</span>Exam</div>
-                <div class="grid-item" onclick="portal.switchSubView('Timetable')"><span class="grid-icon">📅</span>Timetable</div>
-                <div class="grid-item" onclick="portal.switchSubView('Syllabus')"><span class="grid-icon">📋</span>Syllabus</div>
-                <div class="grid-item" onclick="portal.switchSubView('Transport')"><span class="grid-icon">🚌</span>Transport</div>
-                <div class="grid-item" onclick="portal.switchSubView('Library')"><span class="grid-icon">📖</span>Library</div>
+                <div class="grid-item" onclick="portal.showFeature('Homework', 'hw')"><span class="grid-icon">📚</span>Homework</div>
+                <div class="grid-item" onclick="portal.showFeature('Exam', 'exam')"><span class="grid-icon">📝</span>Exam</div>
+                <div class="grid-item" onclick="portal.showFeature('Timetable', 'tt')"><span class="grid-icon">📅</span>Timetable</div>
+                <div class="grid-item" onclick="portal.showFeature('Syllabus', 'sy')"><span class="grid-icon">📋</span>Syllabus</div>
+                <div class="grid-item" onclick="portal.showFeature('Transport', 'tr')"><span class="grid-icon">🚌</span>Transport</div>
+                <div class="grid-item" onclick="portal.showFeature('Notice', 'no')"><span class="grid-icon">🔔</span>Notice</div>
             </div>
         </div>
 
-        <div id="view-profile" class="hidden">
+        <div id="view-feature" class="hidden">
+            <div class="card" style="min-height: 300px;">
+                <h2 id="feature-title" style="color:var(--rps-dark); border-bottom: 2px solid var(--rps-blue); padding-bottom:10px;">Section</h2>
+                <div id="feature-content" style="padding: 20px 0; line-height: 1.6; font-size: 16px; white-space: pre-wrap;">No data available.</div>
+                <button class="btn-blue" onclick="portal.switchView('home')">← Back to Dashboard</button>
+            </div>
+        </div>
+
+        <div id="view-profile" class="hidden" style="padding-bottom: 20px;">
             <div class="card" style="text-align:center;">
-                <h3 id="prof-name">Name</h3>
-                <div class="profile-info">
-                    <div class="info-box"><span class="label">Roll No.</span><span id="prof-roll">0</span></div>
-                    <div class="info-box"><span class="label">SR No.</span><span id="prof-sr">0</span></div>
-                    <div class="info-box"><span class="label">Class</span><span id="prof-class">N/A</span></div>
-                    <div class="info-box"><span class="label">Mobile</span><span id="prof-mobile">N/A</span></div>
+                <img id="prof-img" class="profile-img" style="width:100px; height:100px;" src="">
+                <h3 id="prof-name">Student Name</h3>
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top:20px; text-align:left;">
+                    <div style="background:#f9f9f9; padding:10px; border-radius:8px;"><small style="color:#888;">Class</small><br><span id="prof-class">N/A</span></div>
+                    <div style="background:#f9f9f9; padding:10px; border-radius:8px;"><small style="color:#888;">ID (Mobile)</small><br><span id="prof-mobile">N/A</span></div>
                 </div>
-            </div>
-        </div>
-
-        <div id="view-sub" class="hidden">
-            <div class="card" style="min-height: 200px; text-align: center;">
-                <h2 id="sub-title">Section</h2>
-                <div style="color:#888; margin-top:50px;">No data available for this section yet.</div>
-                <button onclick="portal.switchView('home')" class="btn-blue" style="margin-top:50px; width:auto; padding:10px 30px;">Go Back</button>
             </div>
         </div>
 
         <div class="bottom-nav">
-            <div class="nav-item nav-active" id="nav-home" onclick="portal.switchView('home')">🏠<br>Home</div>
-            <div class="nav-item" id="nav-profile" onclick="portal.switchView('profile')">👤<br>My Child</div>
-            <div class="nav-item">🔔<br>Updates</div>
+            <div class="nav-item nav-active" id="btn-nav-home" onclick="portal.switchView('home')">🏠<br>Home</div>
+            <div class="nav-item" id="btn-nav-profile" onclick="portal.switchView('profile')">👤<br>My Profile</div>
+            <div class="nav-item" onclick="alert('Feature coming soon!')">🔔<br>Updates</div>
         </div>
     </div>
+
 </div>
 
 <script>
     const portal = {
-        db: JSON.parse(localStorage.getItem('rps_db')) || [],
+        db: JSON.parse(localStorage.getItem('rps_db_v2')) || [],
+        currentStudent: null,
 
         handleLogin: function() {
             const val = document.getElementById('login-input').value.trim();
             if (val === "9999") {
                 this.showScreen('screen-teacher');
-                this.updateMasterList();
+                this.renderMasterList();
             } else {
-                const student = this.db.find(s => s.mobile === val);
-                if (student) this.loadStudent(student);
-                else alert("Student ID not found. Teacher must register you first!");
+                const stu = this.db.find(s => s.mobile === val);
+                if (stu) { this.currentStudent = stu; this.loadDashboard(); }
+                else alert("Login failed! Contact RPS Teacher.");
             }
         },
 
-        register: function() {
-            const mobile = document.getElementById('reg-mobile').value;
-            const name = document.getElementById('reg-name').value;
-            if(!mobile || !name) return alert("Fill Name and Mobile!");
+        saveData: function() {
+            const mobile = document.getElementById('reg-mobile').value.trim();
+            if(!mobile) return alert("Mobile Number is compulsory!");
 
-            const student = {
-                name, mobile,
+            const data = {
+                mobile: mobile,
+                name: document.getElementById('reg-name').value,
+                photo: document.getElementById('reg-photo').value || "https://cdn-icons-png.flaticon.com/512/149/149071.png",
                 class: document.getElementById('reg-class').value,
-                sr: document.getElementById('reg-sr').value,
                 fees: document.getElementById('reg-fees').value || 0,
                 att: document.getElementById('reg-att').value || 0,
-                roll: Math.floor(Math.random() * 9000) + 1000
+                hw: document.getElementById('reg-hw').value || "No Homework assigned today.",
+                exam: document.getElementById('reg-exam').value || "No upcoming exams.",
+                notice: "Welcome to Rajasthan Public School, Jajod."
             };
 
-            // Update if exists, otherwise add
-            const index = this.db.findIndex(s => s.mobile === mobile);
-            if(index > -1) this.db[index] = student;
-            else this.db.push(student);
+            const idx = this.db.findIndex(s => s.mobile === mobile);
+            if(idx > -1) this.db[idx] = data; else this.db.push(data);
 
-            localStorage.setItem('rps_db', JSON.stringify(this.db));
-            alert("Data Saved Successfully!");
-            this.updateMasterList();
+            localStorage.setItem('rps_db_v2', JSON.stringify(this.db));
+            alert("Data Saved for " + data.name);
+            this.renderMasterList();
+            document.querySelectorAll('#screen-teacher input, #screen-teacher textarea').forEach(i => i.value = '');
         },
 
-        loadStudent: function(data) {
+        loadDashboard: function() {
+            const s = this.currentStudent;
             this.showScreen('screen-student');
             this.switchView('home');
-            document.getElementById('stu-name').innerText = data.name;
-            document.getElementById('prof-name').innerText = data.name;
-            document.getElementById('stu-class').innerText = "Class: " + data.class;
-            document.getElementById('prof-class').innerText = data.class;
-            document.getElementById('stu-fees').innerText = "₹ " + data.fees;
-            document.getElementById('stu-att').innerText = data.att + "%";
-            document.getElementById('prof-roll').innerText = data.roll;
-            document.getElementById('prof-sr').innerText = data.sr;
-            document.getElementById('prof-mobile').innerText = data.mobile;
+            
+            document.getElementById('stu-name').innerText = s.name;
+            document.getElementById('prof-name').innerText = s.name;
+            document.getElementById('stu-class').innerText = "Class: " + s.class;
+            document.getElementById('prof-class').innerText = s.class;
+            document.getElementById('stu-fees').innerText = "₹ " + s.fees;
+            document.getElementById('stu-att').innerText = s.att + "%";
+            document.getElementById('prof-mobile').innerText = s.mobile;
+            document.getElementById('stu-img').src = s.photo;
+            document.getElementById('prof-img').src = s.photo;
+        },
+
+        showFeature: function(title, type) {
+            this.switchView('feature');
+            document.getElementById('feature-title').innerText = title;
+            const content = this.currentStudent[type] || "No data updated by teacher.";
+            document.getElementById('feature-content').innerText = content;
         },
 
         showScreen: function(id) {
@@ -188,26 +211,21 @@
         switchView: function(view) {
             document.getElementById('view-home').classList.add('hidden');
             document.getElementById('view-profile').classList.add('hidden');
-            document.getElementById('view-sub').classList.add('hidden');
+            document.getElementById('view-feature').classList.add('hidden');
             document.getElementById('view-' + view).classList.remove('hidden');
             
-            document.getElementById('nav-home').classList.toggle('nav-active', view === 'home');
-            document.getElementById('nav-profile').classList.toggle('nav-active', view === 'profile');
-            document.getElementById('nav-title').innerText = view === 'home' ? 'Home' : 'My Profile';
+            document.getElementById('btn-nav-home').classList.toggle('nav-active', view === 'home');
+            document.getElementById('btn-nav-profile').classList.toggle('nav-active', view === 'profile');
+            document.getElementById('nav-title').innerText = view === 'home' ? 'Home Dashboard' : (view === 'profile' ? 'My Profile' : 'Details');
         },
 
-        switchSubView: function(title) {
-            this.switchView('sub');
-            document.getElementById('sub-title').innerText = title;
-            document.getElementById('nav-title').innerText = title;
-        },
-
-        updateMasterList: function() {
+        renderMasterList: function() {
             const list = document.getElementById('master-list');
-            list.innerHTML = this.db.map(s => `<div style="padding:10px; border-bottom:1px solid #eee;"><b>${s.name}</b> - ${s.att}% Att. <br> <small>ID: ${s.mobile}</small></div>`).join('');
+            list.innerHTML = this.db.length === 0 ? "No records." : 
+                this.db.map(s => `<div style="padding:10px; border-bottom:1px solid #eee; font-size:13px;"><b>${s.name}</b> (${s.mobile})</div>`).join('');
         }
     };
 </script>
 </body>
-    </html>
-    
+                    </html>
+            
