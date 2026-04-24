@@ -3,221 +3,212 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RPS Jajod - Ultimate Management</title>
+    <title>RPS Jajod - Master Edition</title>
     <style>
-        :root { --blue: #007BFF; --navy: #0d1b3e; --bg: #f5f7fa; --white: #ffffff; }
-        body { font-family: 'Segoe UI', sans-serif; margin: 0; background: var(--bg); color: #333; overflow-x: hidden; }
-        .app { width: 100%; max-width: 480px; min-height: 100vh; background: var(--white); margin: 0 auto; position: relative; box-shadow: 0 0 25px rgba(0,0,0,0.1); padding-bottom: 80px; }
+        :root { --blue: #007BFF; --navy: #0d1b3e; --bg: #f8fafc; --white: #ffffff; --border: #e2e8f0; }
+        body { font-family: 'Inter', system-ui, sans-serif; margin: 0; background: var(--bg); color: #1e293b; transition: 0.3s; }
+        .app { width: 100%; max-width: 480px; min-height: 100vh; background: var(--white); margin: 0 auto; position: relative; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1); padding-bottom: 90px; }
         .hidden { display: none !important; }
 
-        /* Animations */
-        .page-entry { animation: slideIn 0.3s ease-out; }
-        @keyframes slideIn { from { transform: translateX(50px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        /* UI Elements */
+        .top-bar { background: var(--navy); color: white; padding: 20px; font-weight: 700; display: flex; justify-content: space-between; align-items: center; border-radius: 0 0 20px 20px; }
+        .badge { background: var(--blue); padding: 2px 8px; border-radius: 10px; font-size: 10px; }
+        
+        /* Grid */
+        .section-title { padding: 20px 20px 5px; font-size: 14px; text-transform: uppercase; letter-spacing: 1px; color: #64748b; font-weight: 800; }
+        .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; padding: 10px 20px; }
+        .card-btn { background: #fff; border: 1px solid var(--border); border-radius: 16px; padding: 20px 5px; text-align: center; cursor: pointer; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
+        .card-btn:active { transform: scale(0.9); background: #f1f5f9; border-color: var(--blue); }
+        .card-btn i { font-size: 24px; display: block; margin-bottom: 8px; }
+        .card-btn span { font-size: 11px; font-weight: 600; color: #475569; display: block; line-height: 1.2; }
 
-        /* UI Headers */
-        .top-bar { background: var(--navy); color: white; padding: 18px 20px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; }
-        .logout { font-size: 12px; border: 1px solid #ffffff66; padding: 4px 8px; border-radius: 4px; cursor: pointer; }
+        /* Admin Forms */
+        .admin-box { background: #fff; margin: 15px; padding: 20px; border-radius: 20px; border: 1px solid var(--border); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
+        input, textarea, select { width: 100%; padding: 14px; margin: 10px 0; border: 1.5px solid var(--border); border-radius: 12px; font-size: 14px; outline: none; }
+        input:focus { border-color: var(--blue); }
+        .btn-action { background: var(--blue); color: white; border: none; padding: 16px; width: 100%; border-radius: 12px; font-weight: 700; cursor: pointer; margin-top: 10px; }
 
-        /* Dashboard Grid Styling */
-        .section-header { padding: 15px 20px 5px; font-size: 16px; font-weight: bold; color: var(--navy); }
-        .menu-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; padding: 10px 20px; }
-        .item { background: #fff; border: 1px solid #f0f0f0; border-radius: 12px; padding: 18px 5px; text-align: center; cursor: pointer; transition: 0.2s; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
-        .item:active { transform: scale(0.92); background: #f0f7ff; }
-        .item i { font-size: 26px; display: block; margin-bottom: 8px; }
-        .item span { font-size: 11px; font-weight: 500; color: #555; display: block; line-height: 1.2; }
-
-        /* Bottom Nav Bar */
-        .nav-bar { position: fixed; bottom: 0; width: 100%; max-width: 480px; background: white; display: flex; height: 70px; border-top: 1px solid #eee; z-index: 100; }
-        .nav-link { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #888; font-size: 10px; cursor: pointer; font-weight: bold; }
+        /* Bottom Nav */
+        .bottom-nav { position: fixed; bottom: 0; width: 100%; max-width: 480px; background: white; display: flex; height: 80px; border-top: 1px solid var(--border); align-items: center; justify-content: space-around; z-index: 1000; }
+        .nav-link { flex: 1; text-align: center; color: #94a3b8; font-size: 10px; font-weight: 700; cursor: pointer; }
         .nav-link.active { color: var(--blue); }
-        .nav-link.center-btn { background: var(--blue); color: white; width: 55px; height: 55px; border-radius: 50%; margin-top: -25px; box-shadow: 0 4px 10px rgba(0,123,255,0.3); }
-
-        /* Forms */
-        .card { background: white; margin: 15px; padding: 15px; border-radius: 15px; border: 1px solid #eee; }
-        input, textarea, select { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; font-size: 14px; }
-        .submit-btn { background: var(--blue); color: white; border: none; padding: 15px; width: 100%; border-radius: 10px; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        .center-fab { background: var(--blue); color: white !important; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; transform: translateY(-25px); box-shadow: 0 8px 15px rgba(0,123,255,0.3); font-size: 20px; }
     </style>
 </head>
 <body>
 
 <div class="app">
 
-    <div id="sc-login" style="padding: 100px 40px; text-align: center;">
-        <h1 style="color: var(--navy);">RPS LOGIN</h1>
-        <input type="text" id="log-val" placeholder="Mobile Number or Username">
-        <button class="submit-btn" onclick="app.login()">Sign In</button>
+    <div id="sc-login" style="padding: 120px 40px; text-align: center;">
+        <h1 style="font-size: 32px; color: var(--navy); margin-bottom: 8px;">RPS Portal</h1>
+        <p style="color: #64748b; margin-bottom: 40px;">Management & Learning System</p>
+        <input type="text" id="login-input" placeholder="Enter Mobile Number">
+        <button class="btn-action" onclick="core.login()">Log In</button>
     </div>
 
-    <div id="sc-admin" class="hidden page-entry">
-        <div class="top-bar"><span>TEACHER CONTROL</span> <span class="logout" onclick="location.reload()">Logout</span></div>
-        
-        <div class="card">
-            <h3>Student Profile Management</h3>
-            <input type="text" id="t-id" placeholder="Mobile ID (Required)">
-            <input type="text" id="t-name" placeholder="Full Name">
-            <input type="file" id="t-photo">
-            <button class="submit-btn" onclick="app.saveStudent()">Register/Update Student</button>
-        </div>
-
-        <div class="card" style="background:#f0f7ff;">
-            <h3>Academic Update (Select Student)</h3>
-            <select id="t-select-stu"></select>
-            <select id="t-feat-key">
-                <option value="exam">Exam Table</option>
-                <option value="hw">Daily Homework</option>
-                <option value="sy">Syllabus</option>
-                <option value="tt">Timetable</option>
-                <option value="fees">Fees Overview</option>
-                <option value="tr">Transport Info</option>
-                <option value="no">Notice Board</option>
-                <option value="lec">Lectures/Videos</option>
-                <option value="rep">Competition Exam Report</option>
-                <option value="rc">Report Card Data</option>
+    <div id="sc-admin" class="hidden">
+        <div class="top-bar"><span>ADMIN CONSOLE</span> <span class="badge" onclick="location.reload()">LOGOUT</span></div>
+        <div class="admin-box">
+            <h3>Update Student Data</h3>
+            <select id="adm-stu-select"></select>
+            <select id="adm-feat-key">
+                <optgroup label="Academic">
+                    <option value="exam">Exam Table</option>
+                    <option value="hw">Daily Homework</option>
+                    <option value="sy">Syllabus</option>
+                    <option value="tt">Timetable</option>
+                </optgroup>
+                <optgroup label="Records">
+                    <option value="rep">Competition Report</option>
+                    <option value="rc">Report Card</option>
+                    <option value="cc">Copy Checking</option>
+                    <option value="fees">Fees Overview</option>
+                </optgroup>
+                <optgroup label="Facilities">
+                    <option value="tr">Transport</option>
+                    <option value="no">Notices</option>
+                    <option value="lec">Lectures</option>
+                    <option value="lib">Library</option>
+                    <option value="ev">Events</option>
+                </optgroup>
             </select>
-            <textarea id="t-feat-val" placeholder="Paste link or type text here..."></textarea>
-            <button class="submit-btn" onclick="app.updateFeat()">Push Update to Student</button>
+            <textarea id="adm-feat-val" rows="4" placeholder="Enter data, links, or info..."></textarea>
+            <button class="btn-action" onclick="core.pushUpdate()">Push to Student</button>
         </div>
 
-        <div class="card">
-            <h3>Incoming Leave Applications</h3>
-            <div id="admin-leaves" style="font-size: 13px;">No applications yet.</div>
+        <div class="admin-box">
+            <h3>Registration</h3>
+            <input type="text" id="new-mob" placeholder="Mobile Number">
+            <input type="text" id="new-name" placeholder="Full Name">
+            <button class="btn-action" style="background:#1e293b;" onclick="core.register()">Register Student</button>
         </div>
     </div>
 
-    <div id="sc-student" class="hidden page-entry">
-        <div class="top-bar"><span>RPS JAJOD</span> <span id="s-user-display" style="font-size:12px;">Welcome</span></div>
+    <div id="sc-student" class="hidden">
+        <div class="top-bar"><span id="stu-name-display">Student</span> <i class="badge">Active</i></div>
         
         <div id="v-home">
-            <div class="section-header">Academic Overview</div>
-            <div class="menu-grid">
-                <div class="item" onclick="app.open('exam', 'Exam Schedule')"><i>📅</i><span>Exam</span></div>
-                <div class="item" onclick="app.open('hw', 'Daily Homework')"><i>📝</i><span>Homework</span></div>
-                <div class="item" onclick="app.open('sy', 'Syllabus')"><i>📑</i><span>Syllabus</span></div>
-                <div class="item" onclick="app.open('tt', 'Timetable')"><i>🕰️</i><span>Timetable</span></div>
-                <div class="item" onclick="app.open('rep', 'Competition Report')"><i>🏆</i><span>Competition Exam Report</span></div>
+            <div class="section-title">Academic Overview</div>
+            <div class="grid">
+                <div class="card-btn" onclick="core.open('exam', 'Exam Schedule')"><i>📅</i><span>Exam</span></div>
+                <div class="card-btn" onclick="core.open('hw', 'Homework')"><i>✍️</i><span>Homework</span></div>
+                <div class="card-btn" onclick="core.open('sy', 'Syllabus')"><i>📖</i><span>Syllabus</span></div>
+                <div class="card-btn" onclick="core.open('tt', 'Timetable')"><i>🕰️</i><span>Timetable</span></div>
+                <div class="card-btn" onclick="core.open('rep', 'Competition Report')"><i>🏆</i><span>Comp. Exam</span></div>
             </div>
 
-            <div class="section-header">Student Records</div>
-            <div class="menu-grid">
-                <div class="item" onclick="app.open('att', 'Attendance History')"><i>📅</i><span>Attendance</span></div>
-                <div class="item" onclick="app.viewLeave()"><i>✉️</i><span>Leave Application</span></div>
-                <div class="item" onclick="app.open('fb', 'Feedback')"><i>💬</i><span>Feedback/ Suggestions</span></div>
-                <div class="item" onclick="app.open('rc', 'Report Card')"><i>📜</i><span>Report Card</span></div>
-                <div class="item" onclick="app.open('cc', 'Copy Checking')"><i>🖊️</i><span>Copy Checking</span></div>
+            <div class="section-title">Student Records</div>
+            <div class="grid">
+                <div class="card-btn" onclick="core.open('att', 'Attendance Record')"><i>📊</i><span>Attendance</span></div>
+                <div class="card-btn" onclick="core.showLeave()"><i>✉️</i><span>Leave App.</span></div>
+                <div class="card-btn" onclick="core.open('rc', 'Report Card')"><i>📜</i><span>Report Card</span></div>
+                <div class="card-btn" onclick="core.open('cc', 'Copy Checking')"><i>🖊️</i><span>Copy Check</span></div>
             </div>
 
-            <div class="section-header">School Facilities</div>
-            <div class="menu-grid">
-                <div class="item" onclick="app.open('ev', 'School Events')"><i>🎭</i><span>Events</span></div>
-                <div class="item" onclick="app.open('fees', 'Fees Status')"><i>💳</i><span>Fees Overview</span></div>
-                <div class="item" onclick="app.open('tr', 'Transport Details')"><i>🚌</i><span>Transport</span></div>
-                <div class="item" onclick="app.open('lib', 'Library')"><i>📚</i><span>Library</span></div>
-                <div class="item" onclick="app.open('no', 'Notices')"><i>📢</i><span>Notices</span></div>
-                <div class="item" onclick="app.open('lec', 'Video Lectures')"><i>📺</i><span>Lectures</span></div>
+            <div class="section-title">School Facilities</div>
+            <div class="grid">
+                <div class="card-btn" onclick="core.open('fees', 'Fees Overview')"><i>💰</i><span>Fees</span></div>
+                <div class="card-btn" onclick="core.open('tr', 'Transport Info')"><i>🚌</i><span>Transport</span></div>
+                <div class="card-btn" onclick="core.open('no', 'Notices')"><i>📢</i><span>Notices</span></div>
+                <div class="card-btn" onclick="core.open('lec', 'Video Lectures')"><i>📺</i><span>Lectures</span></div>
+                <div class="card-btn" onclick="core.open('lib', 'Library Status')"><i>📚</i><span>Library</span></div>
+                <div class="card-btn" onclick="core.open('ev', 'Upcoming Events')"><i>🎭</i><span>Events</span></div>
             </div>
         </div>
 
-        <div id="v-detail" class="hidden" style="padding:20px;">
-            <h2 id="det-title" style="color:var(--navy)">Title</h2>
-            <hr>
-            <div id="det-body" style="white-space: pre-wrap; background:#f9f9f9; padding:15px; border-radius:10px; min-height:200px;"></div>
-            <button class="submit-btn" onclick="app.nav('home')">Go Back</button>
+        <div id="v-content" class="hidden" style="padding:20px;">
+            <h2 id="view-title">Details</h2>
+            <div id="view-body" style="background:#f8fafc; padding:20px; border-radius:15px; border:1px solid #e2e8f0; white-space: pre-wrap; min-height: 250px;"></div>
+            <button class="btn-action" onclick="core.nav('home')">Back to Home</button>
         </div>
 
         <div id="v-leave" class="hidden" style="padding:20px;">
-            <h2>Apply for Leave</h2>
-            <textarea id="leave-msg" placeholder="Write reason for leave and dates..." style="height:150px;"></textarea>
-            <button class="submit-btn" onclick="app.submitLeave()">Submit Application</button>
-            <button class="submit-btn" style="background:#666;" onclick="app.nav('home')">Cancel</button>
+            <h2>Apply Leave</h2>
+            <textarea id="leave-reason" rows="5" placeholder="Reason and Dates..."></textarea>
+            <button class="btn-action" onclick="core.submitLeave()">Submit Leave</button>
+            <button class="btn-action" style="background:#94a3b8" onclick="core.nav('home')">Cancel</button>
         </div>
 
-        <div class="nav-bar">
-            <div class="nav-link active" onclick="app.nav('home')">🏠<br>Home</div>
-            <div class="nav-link" onclick="alert('Profile Coming Soon')">👤<br>My Child</div>
-            <div class="nav-link center-btn" onclick="app.nav('home')">🔳<br>Menu</div>
-            <div class="nav-link" onclick="app.open('no', 'Latest Updates')">🔔<br>Updates</div>
-            <div class="nav-link" onclick="alert('No News today')">🏢<br>Newsfeed</div>
+        <div class="bottom-nav">
+            <div class="nav-link active" onclick="core.nav('home')"><i>🏠</i><span>Home</span></div>
+            <div class="nav-link"><i>👤</i><span>My Child</span></div>
+            <div class="nav-link center-fab" onclick="core.nav('home')"><b>+</b></div>
+            <div class="nav-link"><i>🔔</i><span>Updates</span></div>
+            <div class="nav-link"><i>🏢</i><span>Newsfeed</span></div>
         </div>
     </div>
-
 </div>
 
 <script>
-const app = {
-    db: JSON.parse(localStorage.getItem('rps_full_system')) || [],
-    user: null,
+const core = {
+    db: JSON.parse(localStorage.getItem('rps_v10_final')) || [],
+    session: null,
 
     login: function() {
-        const val = document.getElementById('log-val').value.trim();
-        if(val === "9999") { this.show('sc-admin'); this.refreshAdmin(); return; }
-        const s = this.db.find(x => x.mobile === val || x.name.toLowerCase() === val.toLowerCase());
-        if(s) { this.user = s; this.show('sc-student'); document.getElementById('s-user-display').innerText = s.name; } 
-        else { alert("User not registered!"); }
+        const val = document.getElementById('login-input').value.trim();
+        if(val === "9999") { this.show('sc-admin'); this.loadAdmin(); return; }
+        const user = this.db.find(x => x.mobile === val);
+        if(user) { this.session = user; this.show('sc-student'); document.getElementById('stu-name-display').innerText = user.name; } 
+        else { alert("User not found!"); }
     },
 
-    saveStudent: function() {
-        const id = document.getElementById('t-id').value;
-        if(!id) return alert("Mobile ID required!");
-        const existing = this.db.find(x => x.mobile === id);
-        const data = {
-            mobile: id, name: document.getElementById('t-name').value,
-            exam:'', hw:'', sy:'', tt:'', fees:'', tr:'', no:'', lec:'', rep:'', rc:'', att:[], leaves:[], fb:'', cc:'', ev:'', lib:''
-        };
-        const idx = this.db.findIndex(x => x.mobile === id);
-        if(idx > -1) this.db[idx].name = data.name; else this.db.push(data);
-        localStorage.setItem('rps_full_system', JSON.stringify(this.db));
-        this.refreshAdmin(); alert("Student Record Updated!");
+    register: function() {
+        const m = document.getElementById('new-mob').value;
+        const n = document.getElementById('new-name').value;
+        if(!m || !n) return alert("Fill all fields");
+        const data = { mobile: m, name: n, exam:'', hw:'', sy:'', tt:'', rep:'', rc:'', cc:'', fees:'', tr:'', no:'', lec:'', lib:'', ev:'', leaves:[] };
+        this.db.push(data);
+        this.save();
+        alert("Registered!");
+        this.loadAdmin();
     },
 
-    updateFeat: function() {
-        const id = document.getElementById('t-select-stu').value;
-        const key = document.getElementById('t-feat-key').value;
-        const val = document.getElementById('t-feat-val').value;
-        const idx = this.db.findIndex(x => x.mobile === id);
-        this.db[idx][key] = val;
-        localStorage.setItem('rps_full_system', JSON.stringify(this.db));
-        alert("Pushed successfully to " + this.db[idx].name);
+    loadAdmin: function() {
+        const sel = document.getElementById('adm-stu-select');
+        sel.innerHTML = this.db.map(s => `<option value="${s.mobile}">${s.name}</option>`).join('');
     },
 
-    refreshAdmin: function() {
-        document.getElementById('t-select-stu').innerHTML = this.db.map(s => `<option value="${s.mobile}">${s.name}</option>`).join('');
-        const leaveBox = document.getElementById('admin-leaves');
-        let allLeaves = "";
-        this.db.forEach(s => {
-            s.leaves.forEach(l => {
-                allLeaves += `<div style="border-bottom:1px solid #eee; padding:5px;"><b>${s.name}:</b> ${l}</div>`;
-            });
-        });
-        leaveBox.innerHTML = allLeaves || "No pending leaves.";
-    },
-
-    submitLeave: function() {
-        const msg = document.getElementById('leave-msg').value;
-        const idx = this.db.findIndex(x => x.mobile === this.user.mobile);
-        this.db[idx].leaves.push(new Date().toLocaleDateString() + ": " + msg);
-        localStorage.setItem('rps_full_system', JSON.stringify(this.db));
-        alert("Leave sent to teacher!");
-        this.nav('home');
+    pushUpdate: function() {
+        const mob = document.getElementById('adm-stu-select').value;
+        const key = document.getElementById('adm-feat-key').value;
+        const val = document.getElementById('adm-feat-val').value;
+        const idx = this.db.findIndex(x => x.mobile === mob);
+        if(idx > -1) {
+            this.db[idx][key] = val;
+            this.save();
+            alert("Updated " + key + " for " + this.db[idx].name);
+        }
     },
 
     open: function(key, title) {
-        this.nav('detail');
-        document.getElementById('det-title').innerText = title;
-        document.getElementById('det-body').innerText = this.user[key] || "No data available yet.";
+        this.nav('content');
+        document.getElementById('view-title').innerText = title;
+        document.getElementById('view-body').innerText = this.session[key] || "No records found.";
     },
 
+    submitLeave: function() {
+        const msg = document.getElementById('leave-reason').value;
+        const idx = this.db.findIndex(x => x.mobile === this.session.mobile);
+        this.db[idx].leaves.push(new Date().toLocaleDateString() + ": " + msg);
+        this.save();
+        alert("Leave sent!");
+        this.nav('home');
+    },
+
+    showLeave: function() { this.nav('leave'); },
     nav: function(v) {
         document.getElementById('v-home').classList.add('hidden');
-        document.getElementById('v-detail').classList.add('hidden');
+        document.getElementById('v-content').classList.add('hidden');
         document.getElementById('v-leave').classList.add('hidden');
         document.getElementById('v-' + v).classList.remove('hidden');
     },
-    viewLeave: function() { this.nav('leave'); },
     show: function(id) {
         document.querySelectorAll('.app > div').forEach(d => d.classList.add('hidden'));
         document.getElementById(id).classList.remove('hidden');
-    }
+    },
+    save: function() { localStorage.setItem('rps_v10_final', JSON.stringify(this.db)); }
 };
 </script>
 </body>
-</html>
+                    </html>
+            
