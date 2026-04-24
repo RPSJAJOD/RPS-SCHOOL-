@@ -3,305 +3,355 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>RPS Portal - Designer Edition</title>
+    <title>RPS Digital Campus</title>
     <style>
         :root {
-            --primary: #6366f1;
-            --primary-dark: #4f46e5;
-            --surface: #ffffff;
-            --background: #f1f5f9;
-            --text-main: #1e293b;
-            --text-sub: #64748b;
+            --accent: #3b82f6;
+            --accent-glow: rgba(59, 130, 246, 0.5);
+            --glass-bg: rgba(20, 25, 40, 0.6);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --text-main: #ffffff;
+            --text-dim: #94a3b8;
             --success: #10b981;
             --danger: #ef4444;
-            --shadow-sm: 0 4px 6px -1px rgb(0 0 0 / 0.1);
-            --shadow-lg: 0 20px 25px -5px rgb(0 0 0 / 0.1);
-            --radius: 24px;
+            --ease: cubic-bezier(0.25, 1, 0.5, 1);
         }
 
-        * { box-sizing: border-box; font-family: 'Inter', system-ui, -apple-system, sans-serif; -webkit-tap-highlight-color: transparent; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; -webkit-tap-highlight-color: transparent; }
+
+        body { 
+            background: #0f1219; 
+            color: var(--text-main); 
+            display: flex; 
+            justify-content: center; 
+            height: 100vh; 
+            overflow: hidden; 
+        }
+
+        /* Animated Aurora Background */
+        .bg-fx { position: fixed; inset: 0; z-index: 0; overflow: hidden; background: #0f1219; }
+        .orb { position: absolute; border-radius: 50%; filter: blur(70px); opacity: 0.5; animation: float 10s infinite alternate ease-in-out; }
+        .orb-1 { width: 300px; height: 300px; background: #3b82f6; top: -50px; left: -100px; }
+        .orb-2 { width: 250px; height: 250px; background: #8b5cf6; bottom: -50px; right: -50px; animation-delay: -5s; }
+        @keyframes float { 0% { transform: translate(0, 0) scale(1); } 100% { transform: translate(50px, 50px) scale(1.2); } }
+
+        /* Mobile App Container */
+        .app {
+            width: 100%; max-width: 420px; height: 100%;
+            position: relative; z-index: 1; display: flex; flex-direction: column;
+            box-shadow: 0 0 50px rgba(0,0,0,0.5); border-left: 1px solid rgba(255,255,255,0.05); border-right: 1px solid rgba(255,255,255,0.05);
+        }
+
+        /* View Routing */
+        .view {
+            position: absolute; inset: 0; padding: 25px; padding-bottom: 100px;
+            overflow-y: auto; transition: transform 0.6s var(--ease), opacity 0.4s;
+            will-change: transform, opacity; z-index: 10;
+        }
+        .view.hidden { transform: translateY(40px) scale(0.95); opacity: 0; pointer-events: none; }
+        .view.active { transform: translateY(0) scale(1); opacity: 1; z-index: 20; }
+
+        /* Custom Glass Components */
+        .glass-card {
+            background: var(--glass-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border); border-radius: 24px;
+            padding: 24px; margin-bottom: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            animation: slideUp 0.5s var(--ease) forwards; opacity: 0; transform: translateY(20px);
+        }
         
-        body { margin: 0; background: #0f172a; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; }
+        @keyframes slideUp { to { opacity: 1; transform: translateY(0); } }
 
-        .device-frame {
-            width: 100%;
-            max-width: 420px;
-            height: 100%;
-            background: var(--background);
-            position: relative;
-            overflow: hidden;
-            box-shadow: var(--shadow-lg);
+        /* Inputs & Buttons */
+        input, select {
+            width: 100%; padding: 16px; margin-bottom: 15px;
+            background: rgba(0,0,0,0.3); border: 1px solid var(--glass-border);
+            border-radius: 16px; color: white; font-size: 15px; outline: none; transition: 0.3s;
         }
+        input:focus, select:focus { border-color: var(--accent); box-shadow: 0 0 15px var(--accent-glow); }
 
-        /* 60FPS GPU Accelerated Layering */
-        .screen {
-            position: absolute;
-            inset: 0;
-            background: var(--background);
-            transition: transform 0.45s cubic-bezier(0.32, 0.72, 0, 1), opacity 0.3s ease;
-            will-change: transform;
-            overflow-y: auto;
-            padding-bottom: 100px;
-            z-index: 10;
+        .btn {
+            background: var(--accent); color: white; border: none;
+            padding: 18px; border-radius: 16px; width: 100%; font-size: 15px;
+            font-weight: 700; cursor: pointer; transition: 0.2s;
+            box-shadow: 0 5px 20px var(--accent-glow);
         }
+        .btn:active { transform: scale(0.96); box-shadow: none; }
 
-        .screen.hidden { transform: scale(0.95); opacity: 0; pointer-events: none; z-index: 5; }
-        .screen.active { transform: scale(1); opacity: 1; z-index: 20; }
+        /* Typography */
+        h1, h2, h3 { font-weight: 700; letter-spacing: -0.5px; }
+        .label { font-size: 11px; text-transform: uppercase; color: var(--text-dim); font-weight: 700; letter-spacing: 1px; margin-bottom: 8px; display: block; }
 
-        /* Dynamic Header */
-        .header-viz {
-            background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
-            padding: 50px 24px 80px;
-            color: white;
-            border-bottom-left-radius: 40px;
-            border-bottom-right-radius: 40px;
+        /* Dashboard Grid */
+        .dash-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .dash-item {
+            background: linear-gradient(180deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0) 100%);
+            border: 1px solid var(--glass-border); border-radius: 20px; padding: 20px 15px;
+            text-align: center; cursor: pointer; transition: 0.3s; backdrop-filter: blur(10px);
         }
+        .dash-item:active { transform: scale(0.9); border-color: var(--accent); }
+        .dash-item .icon { font-size: 28px; margin-bottom: 10px; display: inline-block; }
 
-        /* Floating Profile Card */
-        .float-card {
-            background: var(--surface);
-            margin: -50px 20px 20px;
-            padding: 20px;
-            border-radius: var(--radius);
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            box-shadow: var(--shadow-sm);
-            border: 1px solid rgba(255,255,255,0.8);
-        }
+        /* Progress Bars */
+        .progress-track { width: 100%; height: 8px; background: rgba(255,255,255,0.1); border-radius: 4px; overflow: hidden; margin-top: 8px; }
+        .progress-fill { height: 100%; background: var(--accent); border-radius: 4px; transition: width 1s var(--ease); }
 
-        .img-wrap {
-            width: 70px; height: 70px;
-            border-radius: 20px;
-            overflow: hidden;
-            border: 2px solid var(--primary);
-            background: #f8fafc;
+        /* Navigation Bar */
+        .nav-dock {
+            position: absolute; bottom: 20px; left: 20px; right: 20px;
+            background: var(--glass-bg); backdrop-filter: blur(20px); border: 1px solid var(--glass-border);
+            border-radius: 30px; height: 70px; display: flex; align-items: center; justify-content: space-around;
+            z-index: 100; box-shadow: 0 20px 40px rgba(0,0,0,0.4);
         }
-        .img-wrap img { width: 100%; height: 100%; object-fit: cover; }
+        .nav-btn { color: var(--text-dim); font-size: 24px; cursor: pointer; transition: 0.3s; }
+        .nav-btn.active { color: white; text-shadow: 0 0 10px var(--accent-glow); transform: translateY(-3px); }
 
-        /* Neo-Grid */
-        .menu-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; padding: 20px; }
-        .menu-tile {
-            background: var(--surface);
-            aspect-ratio: 1/1;
-            border-radius: var(--radius);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            border: 1px solid transparent;
+        /* Custom Toast Notification */
+        #toast {
+            position: absolute; top: -100px; left: 20px; right: 20px;
+            background: rgba(255,255,255,0.1); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
+            border: 1px solid rgba(255,255,255,0.2); border-radius: 16px; padding: 16px;
+            color: white; font-weight: 600; display: flex; align-items: center; gap: 12px;
+            transition: top 0.5s var(--ease); z-index: 999; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
-        .menu-tile:active { transform: scale(0.9); background: #eef2ff; border-color: var(--primary); }
-        .menu-tile i { font-size: 32px; margin-bottom: 10px; }
-        .menu-tile span { font-size: 11px; font-weight: 700; color: var(--text-sub); text-transform: uppercase; letter-spacing: 0.5px; }
-
-        /* Form Design */
-        .input-box { background: var(--surface); margin: 0 20px 20px; padding: 24px; border-radius: var(--radius); box-shadow: var(--shadow-sm); }
-        h3 { margin: 0 0 16px; font-size: 18px; color: var(--text-main); }
-        
-        input, select, textarea {
-            width: 100%; padding: 14px 18px; margin-bottom: 12px;
-            border: 2px solid #f1f5f9; border-radius: 16px;
-            background: #f8fafc; font-size: 15px; outline: none; transition: 0.2s;
-        }
-        input:focus { border-color: var(--primary); background: #fff; }
-
-        .btn-prime {
-            background: var(--primary); color: white; border: none;
-            padding: 18px; border-radius: 18px; width: 100%;
-            font-weight: 800; cursor: pointer; font-size: 15px;
-            box-shadow: 0 10px 15px -3px rgba(99, 102, 241, 0.3);
-        }
-
-        /* Tab Bar */
-        .tab-bar {
-            position: absolute; bottom: 0; width: 100%; height: 90px;
-            background: rgba(255,255,255,0.9); backdrop-filter: blur(20px);
-            display: flex; align-items: center; z-index: 100;
-            border-top: 1px solid rgba(0,0,0,0.05);
-        }
-        .tab-item { flex: 1; text-align: center; color: var(--text-sub); font-size: 10px; font-weight: 800; cursor: pointer; }
-        .tab-item.active { color: var(--primary); }
-        .tab-item i { font-size: 24px; display: block; margin-bottom: 4px; }
-        
-        .fab-center {
-            background: var(--primary); color: white!important;
-            width: 60px; height: 60px; border-radius: 22px;
-            display: flex; align-items: center; justify-content: center;
-            transform: translateY(-30px); border: 6px solid var(--background);
-            box-shadow: 0 10px 20px rgba(99, 102, 241, 0.4);
-        }
+        #toast.show { top: 30px; }
     </style>
 </head>
 <body>
 
-<div class="device-frame">
+<div class="bg-fx"><div class="orb orb-1"></div><div class="orb orb-2"></div></div>
 
-    <div id="pg-login" class="screen active" style="display:flex; flex-direction:column; justify-content:center; padding:40px;">
-        <div style="text-align:center; margin-bottom:40px;">
-            <div style="background:var(--primary); width:80px; height:80px; border-radius:28px; margin:0 auto 20px; display:flex; align-items:center; justify-content:center; font-size:40px; color:white; box-shadow:0 20px 30px rgba(99,102,241,0.2);">R</div>
-            <h1 style="color:var(--text-main); font-size:32px; margin:0;">RPS Portal</h1>
-            <p style="color:var(--text-sub);">Secure Education Access</p>
-        </div>
-        <div class="input-box">
-            <input type="text" id="l-user" placeholder="Mobile / ID">
-            <input type="password" id="l-pass" placeholder="Password">
-            <button class="btn-prime" onclick="ui.auth()">CONTINUE</button>
+<div class="app">
+
+    <div id="toast"><span>🔔</span> <span id="toast-msg">System Message</span></div>
+
+    <div id="v-login" class="view active" style="display:flex; flex-direction:column; justify-content:center;">
+        <div class="glass-card" style="text-align:center;">
+            <div style="width:70px; height:70px; background:var(--accent); border-radius:20px; display:flex; align-items:center; justify-content:center; font-size:32px; font-weight:800; margin:0 auto 20px; box-shadow:0 0 30px var(--accent-glow);">R</div>
+            <h2>RPS OS Connect</h2>
+            <p style="color:var(--text-dim); font-size:14px; margin-bottom:30px;">Authorized Access Only</p>
+            
+            <input type="text" id="l-id" placeholder="Portal ID">
+            <input type="password" id="l-ps" placeholder="Passcode">
+            <button class="btn" onclick="app.login()">AUTHENTICATE</button>
         </div>
     </div>
 
-    <div id="pg-admin" class="screen hidden">
-        <div class="header-viz"><h2>Admin Studio</h2><p>Manage School Records</p></div>
-        <div class="input-box">
-            <h3>Student Control</h3>
-            <select id="a-sel" onchange="ui.fetchData()"></select>
-            <input type="text" id="a-nm" placeholder="Full Name">
-            <input type="text" id="a-id" placeholder="ID Number">
-            <input type="password" id="a-ps" placeholder="Login Password">
-            <input type="file" id="a-pic" accept="image/*">
+    <div id="v-admin" class="view hidden">
+        <h2 style="margin-bottom:20px;">Admin Studio</h2>
+        
+        <div class="glass-card" style="animation-delay:0.1s;">
+            <span class="label">Identity Management</span>
+            <select id="a-sel" onchange="app.loadUserToForm()"></select>
+            <input type="text" id="a-id" placeholder="Student ID Number">
+            <input type="text" id="a-nm" placeholder="Full Legal Name">
+            <input type="password" id="a-ps" placeholder="Access Password">
+            <input type="file" id="a-pic" accept="image/*" style="font-size:12px;">
             <div style="display:flex; gap:10px;">
-                <button class="btn-prime" onclick="ui.save(false)">+ NEW</button>
-                <button class="btn-prime" style="background:#475569" onclick="ui.save(true)">UPDATE</button>
+                <button class="btn" onclick="app.saveStudent(false)">Create Record</button>
+                <button class="btn" style="background:rgba(255,255,255,0.1);" onclick="app.saveStudent(true)">Update Info</button>
             </div>
         </div>
-        <div class="input-box">
-            <h3>Academic Entry</h3>
-            <input type="text" id="a-sub" placeholder="Subject Name">
+
+        <div class="glass-card" style="animation-delay:0.2s;">
+            <span class="label">Academic Logging</span>
+            <input type="text" id="a-sub" placeholder="Subject / Module">
             <div style="display:flex; gap:10px;">
-                <input type="number" id="a-o" placeholder="Obtained">
-                <input type="number" id="a-t" placeholder="Total">
+                <input type="number" id="a-o" placeholder="Score">
+                <input type="number" id="a-t" placeholder="Out Of">
             </div>
-            <div style="display:flex; gap:10px; margin-top:10px;">
-                <button class="btn-prime" style="background:var(--success)" onclick="ui.mark('Present')">PRESENT</button>
-                <button class="btn-prime" style="background:var(--danger)" onclick="ui.mark('Absent')">ABSENT</button>
+            <button class="btn" onclick="app.postResult()">Publish Marks</button>
+            
+            <div style="height:1px; background:var(--glass-border); margin:20px 0;"></div>
+            
+            <span class="label">Daily Attendance</span>
+            <div style="display:flex; gap:10px;">
+                <button class="btn" style="background:var(--success)" onclick="app.postAtt('Present')">Present</button>
+                <button class="btn" style="background:var(--danger)" onclick="app.postAtt('Absent')">Absent</button>
             </div>
-            <button class="btn-prime" style="margin-top:10px; background:#1e293b" onclick="ui.addRes()">POST RESULT</button>
         </div>
-        <div style="padding:0 20px 40px;"><button class="btn-prime" style="background:#000" onclick="location.reload()">LOGOUT</button></div>
     </div>
 
-    <div id="pg-home" class="screen hidden">
-        <div class="header-viz">
-            <div style="display:flex; justify-content:space-between; align-items:center;">
-                <b style="font-size:22px;">RPS JAJOD</b>
-                <span id="clock" style="font-size:12px; font-weight:bold; opacity:0.7;"></span>
-            </div>
+    <div id="v-home" class="view hidden">
+        <div style="display:flex; justify-content:space-between; margin-bottom:20px;">
+            <h2>Dashboard</h2>
+            <div id="sys-clock" style="color:var(--accent); font-weight:700;"></div>
         </div>
-        <div class="float-card">
-            <div class="img-wrap"><img src="" id="s-img"></div>
+
+        <div class="glass-card" style="display:flex; align-items:center; gap:20px; animation-delay:0.1s;">
+            <img src="" id="s-img" style="width:70px; height:70px; border-radius:20px; object-fit:cover; border:2px solid var(--accent);">
             <div>
-                <h3 id="s-nm" style="margin:0; font-size:20px;">Student</h3>
-                <span id="s-id-v" style="color:var(--primary); font-size:12px; font-weight:800;">VERIFIED ACCOUNT</span>
+                <h3 id="s-nm" style="margin:0;">Student Name</h3>
+                <span style="color:var(--text-dim); font-size:13px;">Reg ID: <span id="s-id">000</span></span>
             </div>
         </div>
-        <div class="menu-grid">
-            <div class="menu-tile" onclick="ui.view('att')"><i>📅</i><span>Attendance</span></div>
-            <div class="menu-tile" onclick="ui.view('res')"><i>📈</i><span>Results</span></div>
-            <div class="menu-tile" onclick="ui.view('hw')"><i>📖</i><span>Homework</span></div>
-            <div class="menu-tile" onclick="ui.view('fee')"><i>💳</i><span>Fees</span></div>
-            <div class="menu-tile" onclick="ui.view('syl')"><i>📋</i><span>Syllabus</span></div>
-            <div class="menu-tile" onclick="ui.view('prof')"><i>👤</i><span>Profile</span></div>
+
+        <div class="dash-grid">
+            <div class="dash-item" style="animation-delay:0.2s;" onclick="app.nav('att')">
+                <span class="icon">📅</span><br><span class="label">Attendance</span>
+            </div>
+            <div class="dash-item" style="animation-delay:0.3s;" onclick="app.nav('res')">
+                <span class="icon">📈</span><br><span class="label">Academics</span>
+            </div>
+            <div class="dash-item" style="animation-delay:0.4s;" onclick="app.notify('Fee module locked by Admin.')">
+                <span class="icon">💳</span><br><span class="label">Financials</span>
+            </div>
+            <div class="dash-item" style="animation-delay:0.5s;" onclick="app.nav('prof')">
+                <span class="icon">👤</span><br><span class="label">Profile</span>
+            </div>
         </div>
     </div>
 
-    <div id="pg-view" class="screen hidden">
-        <div class="header-viz" style="padding-bottom:20px;">
-            <h2 id="v-title" style="margin:0">Details</h2>
-            <button class="btn-prime" style="width:auto; padding:8px 20px; margin-top:20px; background:rgba(255,255,255,0.15)" onclick="ui.nav('home')">BACK</button>
-        </div>
-        <div id="v-body" style="padding:20px;"></div>
+    <div id="v-data" class="view hidden">
+        <h2 id="d-title" style="margin-bottom:20px;">Records</h2>
+        <div id="d-content"></div>
     </div>
 
-    <div id="tabbar" class="tab-bar" style="display:none;">
-        <div class="tab-item active" onclick="ui.nav('home')"><i>🏠</i>Home</div>
-        <div class="tab-item" onclick="ui.view('prof')"><i>👤</i>Profile</div>
-        <div class="tab-item"><div class="fab-center" onclick="ui.nav('home')">R</div></div>
-        <div class="tab-item"><i>🔔</i>Alerts</div>
-        <div class="tab-item" onclick="alert('RPS Support Active')"><i>🎧</i>Help</div>
+    <div id="dock" class="nav-dock" style="display:none;">
+        <div class="nav-btn active" onclick="app.go('home')">⌂</div>
+        <div class="nav-btn" onclick="app.nav('prof')">👤</div>
+        <div class="nav-btn" onclick="app.notify('System synced successfully.')">↻</div>
+        <div class="nav-btn" style="color:var(--danger);" onclick="location.reload()">⏏</div>
     </div>
 
 </div>
 
 <script>
-const ui = {
-    db: JSON.parse(localStorage.getItem('rps_design_v1')) || [],
-    curr: null,
+const app = {
+    db: JSON.parse(localStorage.getItem('rps_aurora_db')) || [],
+    user: null,
 
-    auth() {
-        const u = document.getElementById('l-user').value, p = document.getElementById('l-pass').value;
-        if(u === "RPS" && p === "JAJ12") return ui.nav('admin');
-        const s = this.db.find(x => x.id === u && x.ps === p);
-        if(s) { this.curr = s; this.render(); ui.nav('home'); } else alert("Invalid Access");
+    // 1. Custom UI Notification
+    notify(msg) {
+        const t = document.getElementById('toast');
+        document.getElementById('toast-msg').innerText = msg;
+        t.classList.add('show');
+        setTimeout(() => t.classList.remove('show'), 3000);
     },
 
-    save(upd) {
-        const id = document.getElementById('a-id').value, nm = document.getElementById('a-nm').value, ps = document.getElementById('a-ps').value, f = document.getElementById('a-pic').files[0];
-        const exe = (img) => {
-            if(upd) {
-                const i = this.db.findIndex(x => x.id === document.getElementById('a-sel').value);
-                this.db[i] = {...this.db[i], id, nm, ps};
-                if(img) this.db[i].img = img;
-            } else {
-                this.db.push({ id, nm, ps, img:img||'', att:[], res:[] });
-            }
-            this.sync(); this.prep(); alert("Success!");
-        };
-        if(f) { const r = new FileReader(); r.readAsDataURL(f); r.onload = () => exe(r.result); } else exe();
-    },
-
-    fetchData() {
-        const s = this.db.find(x => x.id === document.getElementById('a-sel').value);
-        if(s) { document.getElementById('a-id').value=s.id; document.getElementById('a-nm').value=s.nm; document.getElementById('a-ps').value=s.ps; }
-    },
-
-    mark(st) {
-        const i = this.db.findIndex(x => x.id === document.getElementById('a-sel').value);
-        this.db[i].att.unshift({ d: new Date().toLocaleDateString(), st });
-        this.sync(); alert("Attendance Logged");
-    },
-
-    addRes() {
-        const i = this.db.findIndex(x => x.id === document.getElementById('a-sel').value);
-        const sub = document.getElementById('a-sub').value, o = document.getElementById('a-o').value, t = document.getElementById('a-t').value;
-        this.db[i].res.push({ sub, o, t });
-        this.sync(); alert("Result Posted");
-    },
-
-    render() {
-        document.getElementById('s-nm').innerText = this.curr.nm;
-        document.getElementById('s-id-v').innerText = "ID: " + this.curr.id;
-        document.getElementById('s-img').src = this.curr.img || "https://ui-avatars.com/api/?name="+this.curr.nm+"&background=6366f1&color=fff";
-    },
-
-    view(t) {
-        ui.nav('view');
-        const b = document.getElementById('v-body'), h = document.getElementById('v-title');
-        if(t === 'att') {
-            h.innerText = "Attendance History";
-            b.innerHTML = this.curr.att.map(a => `<div class="float-card" style="margin:0 0 10px;"><b>${a.d}</b> <span style="margin-left:auto; font-weight:900; color:${a.st=='Present'?'var(--success)':'var(--danger)'}">${a.st}</span></div>`).join('');
-        } else if(t === 'res') {
-            h.innerText = "Marksheet";
-            b.innerHTML = this.curr.res.map(r => `<div class="float-card" style="margin:0 0 10px;"><div><b>${r.sub}</b><br><small>${r.o}/${r.t}</small></div> <span style="margin-left:auto; color:var(--primary); font-weight:900">${((r.o/r.t)*100).toFixed(1)}%</span></div>`).join('');
-        } else if(t === 'prof') {
-            h.innerText = "Student Profile";
-            b.innerHTML = `<div class="input-box" style="text-align:center"><img src="${document.getElementById('s-img').src}" style="width:120px; border-radius:30px;"><br><h2>${this.curr.nm}</h2><p>Roll No: ${this.curr.id}</p><p>Campus: RPS Jajod</p></div>`;
+    // 2. Authentication Logic
+    login() {
+        const i = document.getElementById('l-id').value, p = document.getElementById('l-ps').value;
+        if(i === "RPS" && p === "JAJ12") {
+            this.refreshAdmin(); this.go('admin'); this.notify('Admin Access Granted');
+        } else {
+            const u = this.db.find(x => x.id === i && x.ps === p);
+            if(u) { this.user = u; this.setupDash(); this.go('home'); this.notify(`Welcome, ${u.nm}`); } 
+            else this.notify('Authentication Failed');
         }
     },
 
-    nav(id) {
-        document.querySelectorAll('.screen').forEach(s => s.classList.add('hidden'));
-        document.getElementById('pg-'+id).classList.remove('hidden');
-        setTimeout(() => document.getElementById('pg-'+id).classList.add('active'), 10);
-        document.getElementById('tabbar').style.display = (id === 'login' || id === 'admin') ? 'none' : 'flex';
+    // 3. Complete CRUD Operations
+    saveStudent(isUpdate) {
+        const id = document.getElementById('a-id').value, nm = document.getElementById('a-nm').value, ps = document.getElementById('a-ps').value, f = document.getElementById('a-pic').files[0];
+        if(!id || !nm) return this.notify('ID and Name required.');
+
+        const processData = (imgData) => {
+            if(isUpdate) {
+                const idx = this.db.findIndex(x => x.id === document.getElementById('a-sel').value);
+                if(idx > -1) { this.db[idx].id = id; this.db[idx].nm = nm; this.db[idx].ps = ps; if(imgData) this.db[idx].img = imgData; }
+                else return this.notify('Select a student to update.');
+            } else {
+                if(this.db.find(x => x.id === id)) return this.notify('ID already exists.');
+                this.db.push({ id, nm, ps, img: imgData||'', att: [], res: [] });
+            }
+            this.sync(); this.refreshAdmin(); this.notify('Database Updated.');
+        };
+
+        if(f) { const r = new FileReader(); r.readAsDataURL(f); r.onload = () => processData(r.result); } 
+        else processData();
     },
 
-    sync() { localStorage.setItem('rps_design_v1', JSON.stringify(this.db)); },
-    prep() { document.getElementById('a-sel').innerHTML = '<option>Select Student</option>' + this.db.map(u => `<option value="${u.id}">${u.nm}</option>`).join(''); }
+    loadUserToForm() {
+        const u = this.db.find(x => x.id === document.getElementById('a-sel').value);
+        if(u) { document.getElementById('a-id').value = u.id; document.getElementById('a-nm').value = u.nm; document.getElementById('a-ps').value = u.ps; }
+    },
+
+    postAtt(status) {
+        const idx = this.db.findIndex(x => x.id === document.getElementById('a-sel').value);
+        if(idx < 0) return this.notify('Select a student first.');
+        this.db[idx].att.unshift({ date: new Date().toLocaleDateString(), status });
+        this.sync(); this.notify(`Attendance: ${status}`);
+    },
+
+    postResult() {
+        const idx = this.db.findIndex(x => x.id === document.getElementById('a-sel').value);
+        const sub = document.getElementById('a-sub').value, o = document.getElementById('a-o').value, t = document.getElementById('a-t').value;
+        if(idx < 0 || !sub || !t) return this.notify('Invalid entry.');
+        this.db[idx].res.push({ sub, o, t, perc: ((o/t)*100).toFixed(1) });
+        this.sync(); this.notify('Marks Uploaded.');
+    },
+
+    // 4. UI Rendering Engine
+    setupDash() {
+        document.getElementById('s-nm').innerText = this.user.nm;
+        document.getElementById('s-id').innerText = this.user.id;
+        document.getElementById('s-img').src = this.user.img || "https://ui-avatars.com/api/?name="+this.user.nm+"&background=3b82f6&color=fff";
+    },
+
+    nav(target) {
+        this.go('data');
+        const box = document.getElementById('d-content'), title = document.getElementById('d-title');
+        box.innerHTML = ''; // Clear previous
+
+        if(target === 'att') {
+            title.innerText = "Log";
+            box.innerHTML = this.user.att.map((a, i) => `
+                <div class="glass-card" style="animation-delay:${i*0.1}s; display:flex; justify-content:space-between;">
+                    <b>${a.date}</b> <span style="color:${a.status==='Present'? 'var(--success)':'var(--danger)'}">${a.status}</span>
+                </div>`).join('');
+            if(this.user.att.length === 0) box.innerHTML = '<p class="label">No logs found.</p>';
+        } 
+        else if(target === 'res') {
+            title.innerText = "Performance";
+            box.innerHTML = this.user.res.map((r, i) => `
+                <div class="glass-card" style="animation-delay:${i*0.1}s;">
+                    <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+                        <b>${r.sub}</b> <span>${r.o} / ${r.t}</span>
+                    </div>
+                    <div class="progress-track"><div class="progress-fill" style="width: ${r.perc}%"></div></div>
+                    <div style="text-align:right; font-size:12px; margin-top:5px; color:var(--text-dim);">${r.perc}%</div>
+                </div>`).join('');
+            if(this.user.res.length === 0) box.innerHTML = '<p class="label">No exams found.</p>';
+        }
+        else if(target === 'prof') {
+            title.innerText = "Identity";
+            box.innerHTML = `
+                <div class="glass-card" style="text-align:center;">
+                    <img src="${document.getElementById('s-img').src}" style="width:120px; height:120px; border-radius:30px; margin-bottom:15px; border:3px solid var(--accent);">
+                    <h2>${this.user.nm}</h2>
+                    <p style="color:var(--accent); font-weight:bold;">ID: ${this.user.id}</p>
+                    <div style="margin-top:20px; padding-top:20px; border-top:1px solid var(--glass-border); text-align:left;">
+                        <p class="label">Institution</p>
+                        <p>RPS Jajod Campus</p>
+                    </div>
+                </div>`;
+        }
+    },
+
+    go(viewId) {
+        document.querySelectorAll('.view').forEach(v => {
+            v.classList.remove('active'); setTimeout(() => v.classList.add('hidden'), 400); // Wait for transition
+        });
+        const activeView = document.getElementById('v-' + (viewId==='data' ? 'data' : viewId));
+        activeView.classList.remove('hidden');
+        setTimeout(() => activeView.classList.add('active'), 50);
+
+        // Manage Dock visibility
+        document.getElementById('dock').style.display = (viewId === 'login' || viewId === 'admin') ? 'none' : 'flex';
+    },
+
+    sync() { localStorage.setItem('rps_aurora_db', JSON.stringify(this.db)); },
+    refreshAdmin() { 
+        document.getElementById('a-sel').innerHTML = '<option value="">-- Target Student --</option>' + 
+        this.db.map(x => `<option value="${x.id}">${x.nm} (${x.id})</option>`).join(''); 
+    }
 };
 
-setInterval(() => { document.getElementById('clock').innerText = new Date().toLocaleTimeString(); }, 1000);
+// Live System Clock
+setInterval(() => {
+    const d = new Date();
+    document.getElementById('sys-clock').innerText = d.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+}, 1000);
 </script>
 </body>
 </html>
