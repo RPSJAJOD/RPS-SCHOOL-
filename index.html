@@ -3,304 +3,295 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RAJASTHAN Public School, Jajod</title>
+    <title>RPS Jajod - Official Portal</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        :root { 
-            --school-primary: #b21f1f; /* Royal Red */
-            --school-secondary: #fdbb2d; /* Marwari Gold */
-            --dark: #1a2a6c; 
-            --bg: #f4f7f6;
-        }
+        :root { --main: #b21f1f; --gold: #fdbb2d; --dark: #1a2a6c; --bg: #f8fafc; }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
-        body { background: var(--bg); color: #333; padding-bottom: 90px; }
+        body { background: var(--bg); color: #1e293b; padding-bottom: 80px; }
 
-        /* BRANDING & HEADER */
-        header { 
-            background: linear-gradient(90deg, var(--school-primary), var(--dark)); 
-            color: white; padding: 15px; text-align: center; 
-            position: sticky; top: 0; z-index: 1000; box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-        }
-        .school-name { font-size: 16px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; }
-        .location { font-size: 10px; opacity: 0.9; font-weight: 400; }
+        header { background: linear-gradient(135deg, var(--main), var(--dark)); color: white; padding: 20px; text-align: center; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        .glass { background: white; border-radius: 15px; padding: 20px; box-shadow: 0 8px 20px rgba(0,0,0,0.06); margin-bottom: 20px; border-top: 4px solid var(--main); }
+        
+        input, select, textarea, button { width: 100%; padding: 12px; margin: 8px 0; border-radius: 10px; border: 1px solid #d1d5db; font-size: 14px; outline: none; }
+        button { background: var(--main); color: white; border: none; font-weight: 600; cursor: pointer; transition: 0.3s; }
+        button:hover { background: var(--dark); transform: translateY(-2px); }
+        .btn-sec { background: #e5e7eb; color: #374151; }
 
-        /* UI COMPONENTS */
-        .glass { background: white; border-radius: 15px; padding: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); margin-bottom: 20px; border-left: 5px solid var(--school-primary); }
-        input, select, textarea, button { width: 100%; padding: 12px; margin: 8px 0; border-radius: 10px; border: 1px solid #ddd; font-size: 14px; }
-        button { background: var(--school-primary); color: white; border: none; font-weight: 600; cursor: pointer; transition: 0.3s; }
-        button:hover { background: var(--dark); }
-        .btn-sec { background: #eee; color: #444; }
-
-        /* ATTENDANCE PILLS */
-        .status-badge { font-size: 10px; padding: 4px 10px; border-radius: 20px; color: white; font-weight: 600; }
-        .Present { background: #27ae60; }
-        .Absent { background: #e74c3c; }
-
-        /* NAVIGATION */
-        .bottom-nav { position: fixed; bottom: 0; width: 100%; height: 70px; background: white; display: flex; justify-content: space-around; align-items: center; border-top: 1px solid #eee; z-index: 1000; }
-        .nav-item { text-align: center; font-size: 10px; color: #888; flex: 1; cursor: pointer; }
-        .nav-item.active { color: var(--school-primary); font-weight: 700; }
-        .nav-center { background: var(--school-primary); width: 50px; height: 50px; border-radius: 50%; margin-top: -30px; display: flex; align-items: center; justify-content: center; color: white; box-shadow: 0 4px 12px rgba(178, 31, 31, 0.4); }
-
+        .user-info { font-size: 12px; background: rgba(255,255,255,0.15); padding: 5px 15px; border-radius: 20px; display: inline-block; margin-top: 10px; }
+        .pfp-preview { width: 60px; height: 60px; border-radius: 50%; object-fit: cover; border: 2px solid var(--gold); margin-bottom: 10px; }
+        
+        .bottom-nav { position: fixed; bottom: 0; width: 100%; height: 70px; background: white; display: flex; justify-content: space-around; align-items: center; border-top: 1px solid #e5e7eb; }
+        .nav-item { text-align: center; font-size: 10px; color: #9ca3af; flex: 1; cursor: pointer; }
+        .nav-item.active { color: var(--main); font-weight: 700; }
         .hidden { display: none !important; }
-        .user-tag { font-size: 11px; background: rgba(255,255,255,0.2); padding: 2px 8px; border-radius: 5px; margin-top: 5px; display: inline-block; }
     </style>
 </head>
 <body>
 
 <header>
-    <div class="school-name">Rajasthan Public School</div>
-    <div class="location">JAJOD (Sikar)</div>
-    <div id="user-pill" class="user-tag hidden"></div>
+    <div style="font-size: 18px; font-weight: 800; letter-spacing: 1px;">RAJASTHAN PUBLIC SCHOOL</div>
+    <div style="font-size: 11px; opacity: 0.9;">JAJOD (SIKAR)</div>
+    <div id="status-bar" class="user-info hidden"></div>
 </header>
 
-<div id="login-view" style="padding: 40px 20px;">
-    <div class="glass" style="max-width: 450px; margin: auto; border-left: none; border-top: 5px solid var(--school-primary);">
-        <h2 style="text-align:center; color: var(--dark);">Portal Login</h2>
-        <p style="text-align:center; font-size: 12px; margin-bottom: 20px;">Welcome to the Digital Campus</p>
-        
-        <select id="l-role">
-            <option value="Principal">Principal (Admin)</option>
-            <option value="Teacher">Teacher Portal</option>
-            <option value="Student">Student/Parent</option>
+<div id="login-screen" style="padding: 30px 20px;">
+    <div class="glass" style="max-width: 400px; margin: auto;">
+        <h3 style="text-align:center; margin-bottom: 15px;">Secure Login</h3>
+        <select id="role-input">
+            <option value="Principal">Principal</option>
+            <option value="Teacher">Teacher</option>
+            <option value="Student">Student</option>
         </select>
-        <input type="text" id="l-id" placeholder="User ID">
-        <input type="password" id="l-pass" placeholder="Password">
-        <button onclick="handleLogin()">Log In to Campus</button>
+        <input type="text" id="id-input" placeholder="User ID">
+        <input type="password" id="pass-input" placeholder="Password">
+        <button onclick="app.login()">Login to Dashboard</button>
+        <p style="font-size: 10px; text-align: center; margin-top: 10px; color: #6b7280;">Principal ID: Azizkhan | Pass: khanaziz</p>
     </div>
 </div>
 
-<div id="app-body" class="hidden" style="padding: 15px;">
-
-    <div id="view-principal" class="hidden">
+<div id="main-app" class="hidden" style="padding: 15px;">
+    
+    <div id="panel-principal" class="hidden">
         <div class="glass">
-            <h3>Staff Control</h3>
-            <select id="p-edit-sel" onchange="loadTeacherData()"><option value="">Edit a Teacher</option></select>
-            <div id="p-t-form" class="hidden">
-                <input type="text" id="p-t-name" placeholder="Teacher Name">
-                <input type="text" id="p-t-pass" placeholder="Login Password">
-                <input type="text" id="p-t-sal" placeholder="Salary Info">
-                <button onclick="updateTeacher()">Save Teacher Updates</button>
+            <h4>👨‍🏫 Manage Staff (Teachers)</h4>
+            <select id="t-list-sel" onchange="app.loadTeacherEdit()"><option value="">Select Teacher to Edit</option></select>
+            
+            <div id="t-edit-form" class="hidden" style="margin-top: 15px; border-top: 1px solid #eee; padding-top: 15px;">
+                <label style="font-size: 11px;">Teacher Photo</label>
+                <input type="file" id="t-pic-input" accept="image/*">
+                <input type="text" id="t-name-edit" placeholder="Full Name">
+                <input type="text" id="t-pass-edit" placeholder="Set Password">
+                <input type="text" id="t-sal-edit" placeholder="Salary (e.g. 25000)">
+                <button onclick="app.saveTeacherChanges()">Save Profile Updates</button>
             </div>
-            <button class="btn-sec" onclick="createTeacher()">+ Add New Staff Member</button>
+            <button class="btn-sec" style="margin-top:10px;" onclick="app.addNewTeacher()">+ Add New Teacher</button>
         </div>
 
         <div class="glass">
-            <h3>Teacher Attendance Ledger</h3>
-            <input type="date" id="t-att-date" onchange="renderTAtt()">
-            <div id="t-att-list"></div>
+            <h4>📅 Staff Attendance</h4>
+            <input type="date" id="t-att-date" onchange="app.renderTeacherAtt()">
+            <div id="t-att-container" style="margin-top: 10px;"></div>
         </div>
     </div>
 
-    <div id="view-teacher" class="hidden">
+    <div id="panel-teacher" class="hidden">
         <div class="glass">
-            <h3>Student Management</h3>
-            <select id="t-edit-sel" onchange="loadStudentData()"><option value="">Edit a Student</option></select>
-            <div id="t-s-form" class="hidden">
-                <input type="text" id="t-s-name" placeholder="Student Name">
-                <input type="text" id="t-s-pass" placeholder="Login Password">
-                <input type="text" id="t-s-fee" placeholder="Fees (e.g. ₹15,000)">
-                <textarea id="t-s-hw" placeholder="Write Daily Homework here..."></textarea>
-                <button onclick="updateStudent()">Update Student Profile</button>
+            <h4>👶 Manage Students</h4>
+            <select id="s-list-sel" onchange="app.loadStudentEdit()"><option value="">Select Student</option></select>
+            
+            <div id="s-edit-form" class="hidden" style="margin-top: 15px; border-top: 1px solid #eee; padding-top: 15px;">
+                <input type="text" id="s-name-edit" placeholder="Student Name">
+                <input type="text" id="s-pass-edit" placeholder="Login Password">
+                <input type="text" id="s-fee-edit" placeholder="Fees Status">
+                <textarea id="s-hw-edit" placeholder="Daily Homework..."></textarea>
+                <button onclick="app.saveStudentChanges()">Update Student Data</button>
             </div>
-            <button class="btn-sec" onclick="createStudent()">+ Enroll New Student</button>
+            <button class="btn-sec" style="margin-top:10px;" onclick="app.addNewStudent()">+ Enroll New Student</button>
         </div>
 
         <div class="glass">
-            <h3>Student Daily Attendance</h3>
-            <input type="date" id="s-att-date" onchange="renderSAtt()">
-            <div id="s-att-list"></div>
+            <h4>📅 Student Attendance</h4>
+            <input type="date" id="s-att-date" onchange="app.renderStudentAtt()">
+            <div id="s-att-container" style="margin-top: 10px;"></div>
         </div>
     </div>
 
-    <div id="view-student" class="hidden">
-        <div class="glass" style="background: var(--dark); color: white;">
-            <p style="font-size: 12px; opacity: 0.8;">Student Profile</p>
-            <h2 id="st-name-ui">Name</h2>
-            <p id="st-id-ui" style="font-size: 12px;"></p>
+    <div id="panel-student" class="hidden">
+        <div class="glass" style="background: var(--dark); color: white; border: none;">
+            <h2 id="st-name-disp">Student Name</h2>
+            <p id="st-id-disp" style="font-size: 12px; opacity: 0.8;"></p>
         </div>
-
         <div class="glass">
-            <h4 style="color: var(--school-primary);">📖 Today's Homework</h4>
-            <div id="st-hw-ui" style="padding: 10px; background: #fffdf0; border-radius: 8px; margin-top: 10px; font-size: 14px;"></div>
+            <h4 style="color: var(--main);">📚 Today's Homework</h4>
+            <p id="st-hw-disp" style="margin-top: 10px; font-size: 14px;"></p>
         </div>
-
         <div class="glass">
-            <h4>💰 Account & Fees</h4>
-            <p id="st-fee-ui" style="font-weight: 700; font-size: 18px; color: #c0392b;"></p>
+            <h4>💰 Fee Record</h4>
+            <p id="st-fee-disp" style="font-weight: 700; font-size: 18px; color: #b21f1f;"></p>
         </div>
     </div>
 
 </div>
 
-<div id="nav" class="bottom-nav hidden">
-    <div class="nav-item active" onclick="location.reload()">🏠<br>Home</div>
-    <div class="nav-item">📚<br>Academic</div>
-    <div class="nav-center">RPS</div>
-    <div class="nav-item">🔔<br>Alerts</div>
-    <div class="nav-item" onclick="location.reload()">🚪<br>Exit</div>
+<div id="footer-nav" class="bottom-nav hidden">
+    <div class="nav-item active" onclick="location.reload()">🏠<br>Dashboard</div>
+    <div class="nav-item">📊<br>Reports</div>
+    <div class="nav-item" onclick="location.reload()">🚪<br>Logout</div>
 </div>
 
 <script>
-    let db = {
-        teachers: JSON.parse(localStorage.getItem('rps_t')) || [],
-        students: JSON.parse(localStorage.getItem('rps_s')) || [],
-        tAttendance: JSON.parse(localStorage.getItem('rps_ta')) || {},
-        sAttendance: JSON.parse(localStorage.getItem('rps_sa')) || {}
-    };
+const app = {
+    db: {
+        teachers: JSON.parse(localStorage.getItem('rps_teachers')) || [],
+        students: JSON.parse(localStorage.getItem('rps_students')) || [],
+        tAtt: JSON.parse(localStorage.getItem('rps_t_att')) || {},
+        sAtt: JSON.parse(localStorage.getItem('rps_s_att')) || {}
+    },
+    user: null,
 
-    let currentUser = null;
+    save: function() {
+        localStorage.setItem('rps_teachers', JSON.stringify(this.db.teachers));
+        localStorage.setItem('rps_students', JSON.stringify(this.db.students));
+        localStorage.setItem('rps_t_att', JSON.stringify(this.db.tAtt));
+        localStorage.setItem('rps_s_att', JSON.stringify(this.db.sAtt));
+    },
 
-    function handleLogin() {
-        const role = document.getElementById('l-role').value;
-        const id = document.getElementById('l-id').value;
-        const pass = document.getElementById('l-pass').value;
+    login: function() {
+        const role = document.getElementById('role-input').value;
+        const id = document.getElementById('id-input').value.trim();
+        const pass = document.getElementById('pass-input').value.trim();
 
-        // Principal hardcoded
         if (role === "Principal" && id === "Azizkhan" && pass === "khanaziz") {
-            currentUser = { role: "Principal", name: "Aziz Khan" };
-        } 
-        else if (role === "Teacher") {
-            currentUser = db.teachers.find(t => t.id === id && t.pass === pass);
-        } 
-        else if (role === "Student") {
-            currentUser = db.students.find(s => s.id === id && s.pass === pass);
+            this.user = { role: "Principal", name: "Aziz Khan" };
+        } else if (role === "Teacher") {
+            this.user = this.db.teachers.find(t => t.id === id && t.pass === pass);
+        } else if (role === "Student") {
+            this.user = this.db.students.find(s => s.id === id && s.pass === pass);
         }
 
-        if (currentUser) {
-            currentUser.role = currentUser.role || role;
-            startApp();
+        if (this.user) {
+            this.user.role = this.user.role || role;
+            document.getElementById('login-screen').classList.add('hidden');
+            document.getElementById('main-app').classList.remove('hidden');
+            document.getElementById('footer-nav').classList.remove('hidden');
+            document.getElementById('status-bar').classList.remove('hidden');
+            document.getElementById('status-bar').innerText = this.user.name + " (" + this.user.role + ")";
+            this.initPanel();
         } else {
-            alert("Login Denied: Rajasthan Public School credentials required.");
+            alert("Login Denied! Please check ID and Password.");
         }
-    }
+    },
 
-    function startApp() {
-        document.getElementById('login-view').classList.add('hidden');
-        document.getElementById('app-body').classList.remove('hidden');
-        document.getElementById('nav').classList.remove('hidden');
-        document.getElementById('user-pill').classList.remove('hidden');
-        document.getElementById('user-pill').innerText = currentUser.name + " | " + currentUser.role;
+    initPanel: function() {
+        ['panel-principal', 'panel-teacher', 'panel-student'].forEach(p => document.getElementById(p).classList.add('hidden'));
         
-        showModule();
-    }
-
-    function showModule() {
-        ['view-principal', 'view-teacher', 'view-student'].forEach(m => document.getElementById(m).classList.add('hidden'));
-        
-        if (currentUser.role === "Principal") {
-            document.getElementById('view-principal').classList.remove('hidden');
-            syncList('p-edit-sel', db.teachers);
-        } else if (currentUser.role === "Teacher") {
-            document.getElementById('view-teacher').classList.remove('hidden');
-            syncList('t-edit-sel', db.students);
+        if (this.user.role === "Principal") {
+            document.getElementById('panel-principal').classList.remove('hidden');
+            this.syncSelect('t-list-sel', this.db.teachers);
+        } else if (this.user.role === "Teacher") {
+            document.getElementById('panel-teacher').classList.remove('hidden');
+            this.syncSelect('s-list-sel', this.db.students);
         } else {
-            document.getElementById('view-student').classList.remove('hidden');
-            document.getElementById('st-name-ui').innerText = currentUser.name;
-            document.getElementById('st-id-ui').innerText = "Enrollment ID: " + currentUser.id;
-            document.getElementById('st-hw-ui').innerText = currentUser.hw || "No homework assigned for today.";
-            document.getElementById('st-fee-ui').innerText = "Balance Due: " + (currentUser.fee || "₹ 0");
+            document.getElementById('panel-student').classList.remove('hidden');
+            document.getElementById('st-name-disp').innerText = this.user.name;
+            document.getElementById('st-id-disp').innerText = "ID: " + this.user.id;
+            document.getElementById('st-hw-disp').innerText = this.user.hw || "No homework assigned.";
+            document.getElementById('st-fee-disp').innerText = "Status: " + (this.user.fee || "₹ 0 Pending");
         }
-    }
+    },
 
-    // PRINCIPAL FUNCTIONS
-    function createTeacher() {
-        let id = "RPS-T" + Math.floor(1000 + Math.random() * 9000);
-        db.teachers.push({ id: id, name: "New Staff", pass: "1234", sal: "₹ 0" });
-        save(); syncList('p-edit-sel', db.teachers);
-        alert("New Teacher Profile Created. ID: " + id);
-    }
+    // --- PRINCIPAL LOGIC ---
+    addNewTeacher: function() {
+        const id = "T-" + Math.floor(1000 + Math.random() * 9000);
+        this.db.teachers.push({ id: id, name: "New Teacher", pass: "123", sal: "0", pic: "" });
+        this.save();
+        this.syncSelect('t-list-sel', this.db.teachers);
+        alert("Teacher Added! ID: " + id + " | Pass: 123");
+    },
 
-    function loadTeacherData() {
-        let t = db.teachers.find(x => x.id === document.getElementById('p-edit-sel').value);
-        if(!t) return document.getElementById('p-t-form').classList.add('hidden');
-        document.getElementById('p-t-form').classList.remove('hidden');
-        document.getElementById('p-t-name').value = t.name;
-        document.getElementById('p-t-pass').value = t.pass;
-        document.getElementById('p-t-sal').value = t.sal;
-    }
+    loadTeacherEdit: function() {
+        const id = document.getElementById('t-list-sel').value;
+        const t = this.db.teachers.find(x => x.id === id);
+        if(!t) return document.getElementById('t-edit-form').classList.add('hidden');
+        document.getElementById('t-edit-form').classList.remove('hidden');
+        document.getElementById('t-name-edit').value = t.name;
+        document.getElementById('t-pass-edit').value = t.pass;
+        document.getElementById('t-sal-edit').value = t.sal;
+    },
 
-    function updateTeacher() {
-        let tid = document.getElementById('p-edit-sel').value;
-        let t = db.teachers.find(x => x.id === tid);
-        t.name = document.getElementById('p-t-name').value;
-        t.pass = document.getElementById('p-t-pass').value;
-        t.sal = document.getElementById('p-t-sal').value;
-        save(); alert("Staff Record Updated.");
-    }
+    saveTeacherChanges: function() {
+        const id = document.getElementById('t-list-sel').value;
+        const t = this.db.teachers.find(x => x.id === id);
+        t.name = document.getElementById('t-name-edit').value;
+        t.pass = document.getElementById('t-pass-edit').value;
+        t.sal = document.getElementById('t-sal-edit').value;
 
-    function renderTAtt() {
-        let d = document.getElementById('t-att-date').value;
-        let day = db.tAttendance[d] || {};
-        document.getElementById('t-att-list').innerHTML = db.teachers.map(t => `
+        const file = document.getElementById('t-pic-input').files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (e) => { 
+                t.pic = e.target.result; 
+                this.save(); 
+                alert("Teacher Profile Fully Updated!");
+            };
+            reader.readAsDataURL(file);
+        } else {
+            this.save();
+            alert("Details Updated!");
+        }
+    },
+
+    // --- TEACHER LOGIC ---
+    addNewStudent: function() {
+        const id = "S-" + Math.floor(1000 + Math.random() * 9000);
+        this.db.students.push({ id: id, name: "New Student", pass: "123", fee: "₹ 0", hw: "" });
+        this.save();
+        this.syncSelect('s-list-sel', this.db.students);
+        alert("Student Enrolled! ID: " + id + " | Pass: 123");
+    },
+
+    loadStudentEdit: function() {
+        const id = document.getElementById('s-list-sel').value;
+        const s = this.db.students.find(x => x.id === id);
+        if(!s) return document.getElementById('s-edit-form').classList.add('hidden');
+        document.getElementById('s-edit-form').classList.remove('hidden');
+        document.getElementById('s-name-edit').value = s.name;
+        document.getElementById('s-pass-edit').value = s.pass;
+        document.getElementById('s-fee-edit').value = s.fee;
+        document.getElementById('s-hw-edit').value = s.hw;
+    },
+
+    saveStudentChanges: function() {
+        const id = document.getElementById('s-list-sel').value;
+        const s = this.db.students.find(x => x.id === id);
+        s.name = document.getElementById('s-name-edit').value;
+        s.pass = document.getElementById('s-pass-edit').value;
+        s.fee = document.getElementById('s-fee-edit').value;
+        s.hw = document.getElementById('s-hw-edit').value;
+        this.save();
+        alert("Student Academics Updated!");
+    },
+
+    // --- ATTENDANCE ---
+    renderTeacherAtt: function() {
+        const date = document.getElementById('t-att-date').value;
+        const day = this.db.tAtt[date] || {};
+        document.getElementById('t-att-container').innerHTML = this.db.teachers.map(t => `
             <div style="display:flex; justify-content:space-between; padding:10px; border-bottom:1px solid #eee;">
                 <span>${t.name}</span>
-                <select style="width:auto; margin:0;" onchange="markTAtt('${d}', '${t.id}', this.value)">
-                    <option value="--">--</option>
-                    <option value="Present" ${day[t.id]=='Present'?'selected':''}>Present</option>
-                    <option value="Absent" ${day[t.id]=='Absent'?'selected':''}>Absent</option>
+                <select style="width:auto; margin:0;" onchange="app.markT('${date}','${t.id}',this.value)">
+                    <option value="">--</option>
+                    <option value="P" ${day[t.id]=='P'?'selected':''}>Present</option>
+                    <option value="A" ${day[t.id]=='A'?'selected':''}>Absent</option>
                 </select>
             </div>
         `).join('');
-    }
+    },
 
-    // TEACHER FUNCTIONS
-    function createStudent() {
-        let id = "RPS-S" + Math.floor(1000 + Math.random() * 9000);
-        db.students.push({ id: id, name: "New Student", pass: "1234", fee: "₹ 0", hw: "" });
-        save(); syncList('t-edit-sel', db.students);
-        alert("Enrollment Successful. Student ID: " + id);
-    }
-
-    function loadStudentData() {
-        let s = db.students.find(x => x.id === document.getElementById('t-edit-sel').value);
-        if(!s) return document.getElementById('t-s-form').classList.add('hidden');
-        document.getElementById('t-s-form').classList.remove('hidden');
-        document.getElementById('t-s-name').value = s.name;
-        document.getElementById('t-s-pass').value = s.pass;
-        document.getElementById('t-s-fee').value = s.fee;
-        document.getElementById('t-s-hw').value = s.hw;
-    }
-
-    function updateStudent() {
-        let sid = document.getElementById('t-edit-sel').value;
-        let s = db.students.find(x => x.id === sid);
-        s.name = document.getElementById('t-s-name').value;
-        s.pass = document.getElementById('t-s-pass').value;
-        s.fee = document.getElementById('t-s-fee').value;
-        s.hw = document.getElementById('t-s-hw').value;
-        save(); alert("Student Academics Updated.");
-    }
-
-    function renderSAtt() {
-        let d = document.getElementById('s-att-date').value;
-        let day = db.sAttendance[d] || {};
-        document.getElementById('s-att-list').innerHTML = db.students.map(s => `
+    renderStudentAtt: function() {
+        const date = document.getElementById('s-att-date').value;
+        const day = this.db.sAtt[date] || {};
+        document.getElementById('s-att-container').innerHTML = this.db.students.map(s => `
             <div style="display:flex; justify-content:space-between; padding:10px; border-bottom:1px solid #eee;">
                 <span>${s.name}</span>
-                <select style="width:auto; margin:0;" onchange="markSAtt('${d}', '${s.id}', this.value)">
-                    <option value="--">--</option>
-                    <option value="Present" ${day[s.id]=='Present'?'selected':''}>Present</option>
-                    <option value="Absent" ${day[s.id]=='Absent'?'selected':''}>Absent</option>
+                <select style="width:auto; margin:0;" onchange="app.markS('${date}','${s.id}',this.value)">
+                    <option value="">--</option>
+                    <option value="P" ${day[s.id]=='P'?'selected':''}>Present</option>
+                    <option value="A" ${day[s.id]=='A'?'selected':''}>Absent</option>
                 </select>
             </div>
         `).join('');
-    }
+    },
 
-    // UTILITIES
-    function markTAtt(date, id, val) { db.tAttendance[date] = db.tAttendance[date] || {}; db.tAttendance[date][id] = val; save(); }
-    function markSAtt(date, id, val) { db.sAttendance[date] = db.sAttendance[date] || {}; db.sAttendance[date][id] = val; save(); }
-    
-    function save() {
-        localStorage.setItem('rps_t', JSON.stringify(db.teachers));
-        localStorage.setItem('rps_s', JSON.stringify(db.students));
-        localStorage.setItem('rps_ta', JSON.stringify(db.tAttendance));
-        localStorage.setItem('rps_sa', JSON.stringify(db.sAttendance));
-    }
+    markT: function(d, id, v) { this.db.tAtt[d] = this.db.tAtt[d] || {}; this.db.tAtt[d][id] = v; this.save(); },
+    markS: function(d, id, v) { this.db.sAtt[d] = this.db.sAtt[d] || {}; this.db.sAtt[d][id] = v; this.save(); },
 
-    function syncList(eid, list) {
-        document.getElementById(eid).innerHTML = '<option value="">Select Record</option>' + list.map(i => `<option value="${i.id}">${i.name} (${i.id})</option>`).join('');
+    syncSelect: function(eid, list) {
+        document.getElementById(eid).innerHTML = '<option value="">Select From List</option>' + 
+            list.map(i => `<option value="${i.id}">${i.name} (${i.id})</option>`).join('');
     }
+};
 </script>
 
 </body>
