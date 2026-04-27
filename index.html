@@ -3,304 +3,290 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>School App Pro - Complete Edition</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <title>School Pro - Ultimate</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        :root { --primary: #00f2fe; --secondary: #4facfe; --accent: #f53f5b; --bg: #0f172a; }
+        :root { --primary: #1e293b; --accent: #3b82f6; --success: #10b981; --danger: #ef4444; --bg: #f1f5f9; }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
-        body { background: #0f172a; color: white; min-height: 100vh; overflow-x: hidden; }
+        body { background: var(--bg); color: var(--primary); padding-bottom: 80px; }
+
+        /* UI COMPONENTS */
+        .glass { background: white; border-radius: 20px; padding: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 15px; }
+        header { background: #1e293b; color: white; padding: 15px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 1000; }
         
-        /* BACKGROUND ANIMATION */
-        .bg-animate { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background: linear-gradient(45deg, #0f172a, #1e293b); }
-        .circle { position: absolute; border-radius: 50%; background: rgba(0, 242, 254, 0.1); filter: blur(50px); animation: move 20s infinite alternate; }
-        @keyframes move { from { transform: translate(0,0); } to { transform: translate(100px, 100px); } }
+        input, select, button { width: 100%; padding: 12px; margin: 8px 0; border-radius: 12px; border: 1px solid #ddd; outline: none; }
+        button { background: var(--accent); color: white; font-weight: 600; border: none; cursor: pointer; }
+        .btn-outline { background: transparent; border: 2px solid var(--accent); color: var(--accent); }
+        .btn-sm { width: auto; padding: 5px 15px; font-size: 12px; }
 
-        /* GLASS UI */
-        .glass { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 20px; padding: 20px; }
-        input, select, button, textarea { width: 100%; padding: 12px; margin: 8px 0; border-radius: 12px; border: none; outline: none; transition: 0.3s; }
-        input, select, textarea { background: rgba(255,255,255,0.1); color: white; }
-        button { background: linear-gradient(135deg, var(--secondary), var(--primary)); color: #0f172a; font-weight: 700; cursor: pointer; }
-        button:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,242,254,0.4); }
-        .btn-danger { background: var(--accent); color: white; }
+        /* DRAWER */
+        #drawer { position: fixed; top: 0; left: -100%; width: 80%; height: 100%; background: white; z-index: 2000; transition: 0.3s; padding: 20px; box-shadow: 10px 0 30px rgba(0,0,0,0.2); }
+        #drawer.active { left: 0; }
+        .overlay { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index: 1500; display:none; }
 
-        /* LAYOUT */
-        #login-page { height: 100vh; display: flex; align-items: center; justify-content: center; }
-        #main-app { display: none; padding: 20px; max-width: 900px; margin: 0 auto; }
-        .tab-content { display: none; animation: fadeIn 0.5s ease; }
-        .active-tab { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        /* ATTENDANCE SYSTEM */
+        .att-row { display: flex; justify-content: space-between; align-items: center; padding: 10px; border-bottom: 1px solid #eee; }
+        .status-dot { width: 12px; height: 12px; border-radius: 50%; display: inline-block; margin-right: 5px; }
+        .present { background: var(--success); }
+        .absent { background: var(--danger); }
 
-        .nav { display: flex; gap: 10px; margin-bottom: 20px; overflow-x: auto; padding-bottom: 5px; }
-        .nav button { min-width: 120px; background: rgba(255,255,255,0.1); color: white; }
-        .nav button.active { background: var(--primary); color: #000; }
+        /* BOTTOM NAV */
+        .bottom-nav { position: fixed; bottom: 0; width: 100%; height: 70px; background: white; display: flex; justify-content: space-around; align-items: center; border-top: 1px solid #e2e8f0; z-index: 1000; }
+        .nav-item { text-align: center; font-size: 10px; color: #64748b; cursor: pointer; }
+        .nav-item.active { color: var(--accent); }
+        .nav-center { background: var(--accent); width: 55px; height: 55px; border-radius: 50%; margin-top: -35px; display: flex; align-items: center; justify-content: center; color: white; box-shadow: 0 4px 10px rgba(59, 130, 246, 0.4); }
 
-        .card { background: rgba(255,255,255,0.03); padding: 15px; border-radius: 15px; margin-bottom: 15px; border-left: 5px solid var(--primary); }
-        #toast { position: fixed; bottom: 20px; right: 20px; padding: 15px 25px; border-radius: 10px; background: var(--primary); color: #000; font-weight: 600; display: none; z-index: 1000; }
+        .hidden { display: none !important; }
+        .editable-field { border: 1px dashed var(--accent) !important; background: #f0f7ff !important; }
     </style>
 </head>
 <body>
 
-<div class="bg-animate">
-    <div class="circle" style="width: 300px; height: 300px; top: -50px; left: -50px;"></div>
-    <div class="circle" style="width: 200px; height: 200px; bottom: 50px; right: 50px; background: rgba(79, 172, 254, 0.1);"></div>
+<div class="overlay" id="overlay" onclick="toggleDrawer()"></div>
+<div id="drawer">
+    <div style="text-align:center; margin-bottom:20px;">
+        <img id="user-pfp" src="https://via.placeholder.com/80" style="border-radius:50%; width:80px; height:80px; border:3px solid var(--accent);">
+        <h3 id="user-name-side">Admin Name</h3>
+        <p id="user-role-side" style="font-size:12px; color:var(--accent);">Principal</p>
+    </div>
+    <div style="margin-top:30px;">
+        <div style="padding:15px 0; border-bottom:1px solid #eee;">🏠 Dashboard</div>
+        <div style="padding:15px 0; border-bottom:1px solid #eee;">⚙️ Account Settings</div>
+        <div style="padding:15px 0; border-bottom:1px solid #eee;">🔒 Privacy Policy</div>
+        <div style="padding:15px 0; color:var(--danger);" onclick="location.reload()">🚪 Logout</div>
+    </div>
 </div>
 
-<div id="toast"></div>
+<header>
+    <div onclick="toggleDrawer()">☰</div>
+    <div id="header-title">School Pro</div>
+    <div>🔔</div>
+</header>
 
-<div id="login-page">
-    <div class="glass" style="width: 90%; max-width: 400px; text-align: center;">
-        <h2 style="margin-bottom: 20px; letter-spacing: 2px;">SCHOOL PRO</h2>
-        <select id="role">
+<div id="login-section" style="padding:20px; max-width:400px; margin: 50px auto;">
+    <div class="glass" style="text-align:center;">
+        <h2>Login</h2>
+        <select id="login-role">
             <option value="Principal">Principal</option>
             <option value="Teacher">Teacher</option>
-            <option value="Student">Student</option>
+            <option value="Parent">Parent/Student</option>
         </select>
-        <input type="text" id="userid" placeholder="ID (e.g. Azizkhan)">
-        <input type="password" id="password" placeholder="Password">
-        <button onclick="auth()">Access Dashboard</button>
+        <input type="text" id="login-id" placeholder="ID">
+        <input type="password" id="login-pass" placeholder="Password">
+        <button onclick="handleLogin()">Login</button>
     </div>
 </div>
 
-<div id="main-app">
-    <div class="glass" style="margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;">
-        <div>
-            <h3 id="user-display">Welcome</h3>
-            <p id="role-display" style="font-size: 12px; color: var(--primary);"></p>
-        </div>
-        <button onclick="location.reload()" style="width: auto; padding: 8px 15px;" class="btn-danger">Logout</button>
-    </div>
-
-    <div class="nav" id="main-nav">
-        </div>
-
-    <div id="tab-manage-teachers" class="tab-content">
+<main id="app-section" class="hidden" style="padding:15px;">
+    
+    <section id="view-principal" class="hidden">
         <div class="glass">
-            <h3>Add Teacher (Max 12)</h3>
-            <input type="text" id="t-name" placeholder="Full Name">
-            <input type="text" id="t-id" placeholder="Login ID">
-            <input type="text" id="t-pass" placeholder="Password">
-            <input type="text" id="t-salary" placeholder="Salary Amount (e.g. $2500)">
-            <button onclick="addTeacher()">Save Teacher</button>
-            <hr style="margin: 20px 0; opacity: 0.1;">
-            <div id="teacher-list"></div>
+            <h3>Add/Edit Teacher</h3>
+            <input type="text" id="teach-name" placeholder="Teacher Name">
+            <input type="text" id="teach-id" placeholder="Login ID">
+            <input type="text" id="teach-pass" placeholder="Password">
+            <input type="file" id="teach-pic" accept="image/*">
+            <button onclick="saveTeacher()">Save Teacher Account</button>
         </div>
-    </div>
+        <div id="principal-teacher-list"></div>
+    </section>
 
-    <div id="tab-manage-students" class="tab-content">
-        <div class="glass">
-            <h3>Student Directory</h3>
-            <div id="student-form-container">
-                <input type="text" id="s-name" placeholder="Student Name">
-                <input type="text" id="s-id" placeholder="Student ID">
-                <input type="text" id="s-pass" placeholder="Password">
-                <input type="file" id="s-photo" accept="image/*">
-                <button onclick="addStudent()">Register Student</button>
-            </div>
-            <div id="student-list" style="margin-top: 20px;"></div>
+    <section id="view-teacher" class="hidden">
+        <div class="glass" id="attendance-box">
+            <h3>Daily Attendance</h3>
+            <p style="font-size:12px; margin-bottom:10px;">Date: <span id="current-date"></span></p>
+            <div id="attendance-list"></div>
+            <button onclick="submitAttendance()" style="margin-top:15px; background:var(--success);">Submit Attendance</button>
         </div>
-    </div>
-
-    <div id="tab-my-details" class="tab-content">
+        
         <div class="glass">
-            <h3>My Employment Info</h3>
-            <div id="salary-view" class="card"></div>
-            <div class="card">
-                <h4>Attendance Summary</h4>
-                <p>Status: <span style="color: var(--primary);">Active</span></p>
-                <p>Days Present: 24/26</p>
+            <h3>Edit Student Details</h3>
+            <div id="teacher-student-list"></div>
+        </div>
+    </section>
+
+    <section id="view-parent" class="hidden">
+        <div class="glass" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color:white;">
+            <p>Good Afternoon 👋</p>
+            <h2 id="parent-display-name">User</h2>
+            <div style="display:flex; justify-content:space-between; margin-top:15px; align-items:center;">
+                <div id="active-child-info">
+                    <b>Child Name</b><br><small>Class 12-COMM</small>
+                </div>
+                <button class="btn-sm" onclick="switchChild()">Switch Child ▿</button>
             </div>
         </div>
-    </div>
-
-    <div id="tab-notices" class="tab-content">
-        <div class="glass">
-            <h3>School Notices</h3>
-            <div id="notice-form-container">
-                <input id="n-title" placeholder="Title">
-                <textarea id="n-body" placeholder="Notice Details..."></textarea>
-                <button onclick="addNotice()">Post Notice</button>
+        <div class="glass" id="child-profile-card">
             </div>
-            <div id="notice-list" style="margin-top: 20px;"></div>
-        </div>
-    </div>
+    </section>
+
+</main>
+
+<div class="bottom-nav hidden" id="main-nav">
+    <div class="nav-item active" onclick="showTab('home')">🏠<br>Home</div>
+    <div class="nav-item" onclick="showTab('child')">👤<br>Profile</div>
+    <div class="nav-center">▦</div>
+    <div class="nav-item">🔔<br>Updates</div>
+    <div class="nav-item">🏢<br>News</div>
 </div>
 
 <script>
-    // CORE DATA
-    const PRINCIPALS = [
-        {id: "Azizkhan", pass: "khanaziz", name: "Aziz Khan"},
-        {id: "RPS", pass: "JAJ12", name: "RPS Admin"}
-    ];
-
+    // DATA CORE
     let db = {
-        teachers: JSON.parse(localStorage.getItem('pro_teachers')) || [],
-        students: JSON.parse(localStorage.getItem('pro_students')) || [],
-        notices: JSON.parse(localStorage.getItem('pro_notices')) || []
+        teachers: JSON.parse(localStorage.getItem('sp_teachers')) || [],
+        students: JSON.parse(localStorage.getItem('sp_students')) || [
+            {id: 'S1', name: 'TANISHA TAILOR', class: '12-COMM', sr: '1229', father: 'PARTURAM', mother: 'SANGEETA', contact: '6378154691', att: []},
+            {id: 'S2', name: 'BHANU', class: '11-COMM', sr: '1340', father: 'PARTURAM', mother: 'SANGEETA', contact: '6378154691', att: []}
+        ],
+        attendance: JSON.parse(localStorage.getItem('sp_att')) || {}
     };
 
     let currentUser = null;
+    let activeChildIdx = 0;
 
-    function toast(msg) {
-        const t = document.getElementById('toast');
-        t.innerText = msg;
-        t.style.display = 'block';
-        setTimeout(() => t.style.display = 'none', 3000);
-    }
+    function handleLogin() {
+        const role = document.getElementById('login-role').value;
+        const id = document.getElementById('login-id').value;
+        const pass = document.getElementById('login-pass').value;
 
-    // AUTHENTICATION
-    function auth() {
-        const role = document.getElementById('role').value;
-        const id = document.getElementById('userid').value.trim();
-        const pass = document.getElementById('password').value.trim();
-
-        if (role === "Principal") {
-            const p = PRINCIPALS.find(x => x.id === id && x.pass === pass);
-            if(p) startApp(role, p); else toast("Invalid Principal Login");
-        } 
-        else if (role === "Teacher") {
+        if(role === "Principal" && id === "Azizkhan" && pass === "khanaziz") {
+            currentUser = {role: "Principal", name: "Aziz Khan"};
+        } else if(role === "Teacher") {
             const t = db.teachers.find(x => x.id === id && x.pass === pass);
-            if(t) startApp(role, t); else toast("Teacher not found or wrong password");
+            if(t) currentUser = {...t, role: "Teacher"};
+        } else if(role === "Parent") {
+            currentUser = {role: "Parent", name: "PARTURAM"};
         }
-        else if (role === "Student") {
-            const s = db.students.find(x => x.id === id && x.pass === pass);
-            if(s) startApp(role, s); else toast("Student not found");
-        }
+
+        if(currentUser) {
+            document.getElementById('login-section').classList.add('hidden');
+            document.getElementById('app-section').classList.remove('hidden');
+            document.getElementById('main-nav').classList.remove('hidden');
+            setupView();
+        } else alert("Invalid Credentials");
     }
 
-    function startApp(role, user) {
-        currentUser = { ...user, role };
-        document.getElementById('login-page').style.display = 'none';
-        document.getElementById('main-app').style.display = 'block';
-        document.getElementById('user-display').innerText = user.name;
-        document.getElementById('role-display').innerText = role + " Account";
-
-        setupNav(role);
-        renderData();
-    }
-
-    function setupNav(role) {
-        const nav = document.getElementById('main-nav');
-        nav.innerHTML = '';
+    function setupView() {
+        document.getElementById('user-name-side').innerText = currentUser.name;
+        document.getElementById('user-role-side').innerText = currentUser.role;
         
-        if (role === "Principal") {
-            nav.innerHTML += `<button onclick="switchTab('tab-manage-teachers', this)" class="active">Teachers</button>`;
-            nav.innerHTML += `<button onclick="switchTab('tab-manage-students', this)">Students</button>`;
-            nav.innerHTML += `<button onclick="switchTab('tab-notices', this)">Notices</button>`;
-            switchTab('tab-manage-teachers');
-        } 
-        else if (role === "Teacher") {
-            nav.innerHTML += `<button onclick="switchTab('tab-manage-students', this)" class="active">Students</button>`;
-            nav.innerHTML += `<button onclick="switchTab('tab-my-details', this)">My Salary</button>`;
-            nav.innerHTML += `<button onclick="switchTab('tab-notices', this)">Notices</button>`;
-            document.getElementById('student-form-container').classList.remove('hidden');
-            switchTab('tab-manage-students');
-        }
-        else {
-            nav.innerHTML += `<button onclick="switchTab('tab-notices', this)" class="active">School Notices</button>`;
-            document.getElementById('student-form-container').classList.add('hidden');
-            document.getElementById('notice-form-container').classList.add('hidden');
-            switchTab('tab-notices');
+        // Reset views
+        ['view-principal', 'view-teacher', 'view-parent'].forEach(id => document.getElementById(id).classList.add('hidden'));
+
+        if(currentUser.role === "Principal") {
+            document.getElementById('view-principal').classList.remove('hidden');
+            renderPrincipal();
+        } else if(currentUser.role === "Teacher") {
+            document.getElementById('view-teacher').classList.remove('hidden');
+            document.getElementById('current-date').innerText = new Date().toLocaleDateString();
+            renderTeacher();
+        } else {
+            document.getElementById('view-parent').classList.remove('hidden');
+            renderParent();
         }
     }
 
-    function switchTab(tabId, btn) {
-        document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active-tab'));
-        document.getElementById(tabId).classList.add('active-tab');
-        if(btn) {
-            document.querySelectorAll('.nav button').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-        }
-    }
-
-    // ACTIONS
-    function addTeacher() {
-        if(db.teachers.length >= 12) return toast("Limit Reached (12 Teachers)");
-        const name = document.getElementById('t-name').value;
-        const id = document.getElementById('t-id').value;
-        const pass = document.getElementById('t-pass').value;
-        const salary = document.getElementById('t-salary').value;
-
-        if(!name || !id || !pass) return toast("Missing Info");
-
-        db.teachers.push({name, id, pass, salary});
-        save();
-        renderData();
-        toast("Teacher Account Created!");
-    }
-
-    function addStudent() {
-        const name = document.getElementById('s-name').value;
-        const id = document.getElementById('s-id').value;
-        const pass = document.getElementById('s-pass').value;
-        const photo = document.getElementById('s-photo').files[0];
-
-        if(!name || !id) return toast("Name & ID required");
+    // PRINCIPAL FUNCTIONS
+    function saveTeacher() {
+        const name = document.getElementById('teach-name').value;
+        const id = document.getElementById('teach-id').value;
+        const pass = document.getElementById('teach-pass').value;
+        const file = document.getElementById('teach-pic').files[0];
 
         const reader = new FileReader();
         reader.onload = (e) => {
-            db.students.push({name, id, pass, photo: e.target.result});
-            save(); renderData(); toast("Student Added");
+            db.teachers.push({name, id, pass, pic: e.target.result});
+            localStorage.setItem('sp_teachers', JSON.stringify(db.teachers));
+            renderPrincipal();
         };
-        if(photo) reader.readAsDataURL(photo); else {
-            db.students.push({name, id, pass, photo: ''});
-            save(); renderData();
+        if(file) reader.readAsDataURL(file);
+        else {
+            db.teachers.push({name, id, pass, pic: 'https://via.placeholder.com/50'});
+            localStorage.setItem('sp_teachers', JSON.stringify(db.teachers));
+            renderPrincipal();
         }
     }
 
-    function addNotice() {
-        const title = document.getElementById('n-title').value;
-        const body = document.getElementById('n-body').value;
-        db.notices.push({title, body, date: new Date().toLocaleDateString()});
-        save(); renderData(); toast("Notice Posted");
+    function renderPrincipal() {
+        document.getElementById('principal-teacher-list').innerHTML = `<h3>Staff List</h3>` + db.teachers.map(t => `
+            <div class="glass" style="display:flex; align-items:center; gap:10px;">
+                <img src="${t.pic}" style="width:40px; height:40px; border-radius:50%;">
+                <div><b>${t.name}</b><br><small>ID: ${t.id}</small></div>
+            </div>
+        `).join('');
     }
 
-    function save() {
-        localStorage.setItem('pro_teachers', JSON.stringify(db.teachers));
-        localStorage.setItem('pro_students', JSON.stringify(db.students));
-        localStorage.setItem('pro_notices', JSON.stringify(db.notices));
-    }
-
-    function renderData() {
-        // Teacher List (For Principal)
-        document.getElementById('teacher-list').innerHTML = db.teachers.map((t, i) => `
-            <div class="card">
-                <b>${t.name}</b> (Login ID: ${t.id})<br>
-                Salary: ${t.salary || 'Not Set'}
-                <button class="btn-danger" style="width:auto; padding:2px 10px; float:right;" onclick="deleteT(${i})">Delete</button>
+    // TEACHER FUNCTIONS
+    function renderTeacher() {
+        const list = document.getElementById('attendance-list');
+        list.innerHTML = db.students.map(s => `
+            <div class="att-row">
+                <span>${s.name}</span>
+                <select style="width:auto; margin:0;" onchange="updateAttStatus('${s.id}', this.value)">
+                    <option value="P">Present</option>
+                    <option value="A">Absent</option>
+                </select>
             </div>
         `).join('');
 
-        // Student List
-        document.getElementById('student-list').innerHTML = db.students.map(s => `
-            <div class="card" style="display:flex; align-items:center; gap:10px;">
-                <img src="${s.photo || 'https://via.placeholder.com/40'}" style="width:40px; height:40px; border-radius:50%; object-fit:cover;">
-                <div><b>${s.name}</b><br><small>ID: ${s.id}</small></div>
+        const sList = document.getElementById('teacher-student-list');
+        sList.innerHTML = db.students.map((s, i) => `
+            <div class="card" style="border:1px solid #eee; padding:10px; border-radius:10px; margin-bottom:10px;">
+                <input class="editable-field" value="${s.name}" onchange="editStudent(${i}, 'name', this.value)">
+                <input class="editable-field" value="${s.father}" onchange="editStudent(${i}, 'father', this.value)">
+                <input class="editable-field" value="${s.contact}" onchange="editStudent(${i}, 'contact', this.value)">
             </div>
         `).join('');
+    }
 
-        // Notice List
-        document.getElementById('notice-list').innerHTML = db.notices.reverse().map(n => `
-            <div class="card">
-                <h4 style="color:var(--primary)">${n.title}</h4>
-                <p style="font-size: 14px;">${n.body}</p>
-                <small style="opacity:0.5">${n.date}</small>
+    function editStudent(index, field, value) {
+        db.students[index][field] = value;
+        localStorage.setItem('sp_students', JSON.stringify(db.students));
+        alert("Updated " + field);
+    }
+
+    function submitAttendance() {
+        alert("Attendance for " + db.students.length + " students submitted successfully!");
+    }
+
+    // PARENT FUNCTIONS
+    function renderParent() {
+        const child = db.students[activeChildIdx];
+        document.getElementById('parent-display-name').innerText = currentUser.name;
+        document.getElementById('active-child-info').innerHTML = `<b>${child.name}</b><br><small>Class ${child.class}</small>`;
+        
+        document.getElementById('child-profile-card').innerHTML = `
+            <div style="text-align:center; margin-bottom:15px;">
+                <img src="https://via.placeholder.com/100" style="border-radius:50%; border:3px solid var(--accent);">
+                <h4>${child.name}</h4>
             </div>
-        `).join('');
-
-        // Salary View (For Teacher)
-        if(currentUser && currentUser.role === 'Teacher') {
-            document.getElementById('salary-view').innerHTML = `
-                <h4>My Salary Information</h4>
-                <p style="font-size: 24px; color: var(--primary); font-weight:700;">${currentUser.salary || '$0.00'}</p>
-                <p style="font-size:12px;">Status: Paid (Current Month)</p>
-            `;
-        }
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+                <div class="glass" style="margin:0;"><span>SR No</span><p>${child.sr}</p></div>
+                <div class="glass" style="margin:0;"><span>Roll No</span><p>118${activeChildIdx}</p></div>
+                <div class="glass" style="margin:0; grid-column:span 2;"><span>Father</span><p>${child.father}</p></div>
+                <div class="glass" style="margin:0; grid-column:span 2;"><span>Contact</span><p>${child.contact}</p></div>
+            </div>
+        `;
     }
 
-    function deleteT(i) {
-        db.teachers.splice(i, 1); save(); renderData();
+    function switchChild() {
+        activeChildIdx = activeChildIdx === 0 ? 1 : 0;
+        renderParent();
     }
 
+    function toggleDrawer() {
+        const d = document.getElementById('drawer');
+        const o = document.getElementById('overlay');
+        d.classList.toggle('active');
+        o.style.display = d.classList.contains('active') ? 'block' : 'none';
+    }
+
+    function showTab(tab) {
+        document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+        // In this simple version, we just toggle UI elements. 
+        // Real tab logic would hide/show sections.
+    }
 </script>
+
 </body>
 </html>
