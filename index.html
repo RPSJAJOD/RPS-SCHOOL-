@@ -3,134 +3,144 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RPS JAJOD - RealTime Portal</title>
+    <title>RPS JAJOD - Pro Management Portal</title>
     
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
-    
     <script src="https://www.google.com/recaptcha/enterprise.js?render=6LdpZswsAAAAAAv4bZ5V5xuxwmwPeaJU15bZcuHS"></script>
+    
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        :root { --dark: #1a2a6c; --red: #b21f1f; --gold: #fdbb2d; --bg: #f4f7f6; --success: #28a745; }
+        :root { --dark: #0f172a; --red: #dc2626; --gold: #fbbf24; --bg: #f1f5f9; --glass: rgba(255, 255, 255, 0.9); }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Outfit', sans-serif; }
-        body { background: var(--bg); padding-bottom: 80px; color: #333; }
-        
-        header { background: linear-gradient(135deg, var(--dark), var(--red)); color: white; padding: 30px 20px; text-align: center; border-radius: 0 0 30px 30px; box-shadow: 0 10px 20px rgba(0,0,0,0.15); position: relative; }
-        .logout-btn { position: absolute; top: 20px; right: 20px; background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.4); color: white; padding: 8px 15px; border-radius: 20px; font-size: 12px; font-weight: 600; cursor: pointer; transition: 0.3s; width: auto; }
-        
-        .card { background: white; border-radius: 20px; padding: 25px; margin: 20px 15px; box-shadow: 0 8px 25px rgba(0,0,0,0.06); border: 1px solid rgba(0,0,0,0.05); }
-        h4 { color: var(--dark); margin-bottom: 15px; border-bottom: 3px solid var(--gold); display: inline-block; }
-        
-        .input-group { position: relative; margin: 12px 0; }
-        .input-group i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #888; }
-        input, select, textarea { width: 100%; padding: 14px 14px 14px 45px; border-radius: 12px; border: 1.5px solid #e0e0e0; outline: none; font-size: 15px; background: #fafafa; }
-        
-        button.action-btn { background: linear-gradient(to right, var(--red), #e63946); color: white; border: none; padding: 15px; border-radius: 12px; font-weight: 700; width: 100%; cursor: pointer; transition: 0.3s; box-shadow: 0 4px 15px rgba(178, 31, 31, 0.3); }
-        button.success-btn { background: linear-gradient(to right, var(--success), #218838); box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3); }
-        
-        .hidden { display: none !important; }
-        .status-bar { font-size: 11px; font-weight: 600; margin-top: 10px; background: rgba(0,0,0,0.2); padding: 5px 15px; border-radius: 15px; display: inline-block; transition: 0.5s; }
-        .label { font-size: 11px; color: #888; text-transform: uppercase; font-weight: 700; display: block; margin-top: 15px; }
-        .profile-pic { width: 90px; height: 90px; border-radius: 50%; object-fit: cover; border: 4px solid var(--gold); display: block; margin: 0 auto 15px; background: #f0f0f0; }
-        
-        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px; }
-        .stat-box { padding: 15px; border-radius: 15px; text-align: center; }
-        .stat-fee { background: #fff1f1; border: 2px solid #ffd6d6; }
-        .stat-att { background: #f0f8ff; border: 2px solid #d6eaff; }
+        body { background: var(--bg); padding-bottom: 50px; }
 
-        #toast { visibility: hidden; min-width: 250px; background-color: #333; color: #fff; text-align: center; border-radius: 10px; padding: 16px; position: fixed; z-index: 1000; left: 50%; bottom: 30px; transform: translateX(-50%); opacity: 0; transition: 0.5s; }
-        #toast.show { visibility: visible; opacity: 1; bottom: 50px; }
-        #toast.error { background-color: var(--red); }
-        #toast.success { background-color: var(--success); }
-        .fade-in { animation: fadeIn 0.5s ease-in-out; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        /* Modern Glassmorphism Header */
+        header { background: var(--dark); color: white; padding: 35px 20px; text-align: center; border-radius: 0 0 40px 40px; box-shadow: 0 15px 30px rgba(0,0,0,0.2); position: relative; }
+        .logout-btn { position: absolute; top: 15px; right: 15px; background: #ef4444; color: white; border: none; padding: 8px 15px; border-radius: 12px; font-size: 12px; cursor: pointer; font-weight: 600; display: flex; align-items: center; gap: 5px; }
+
+        .card { background: var(--glass); border-radius: 24px; padding: 25px; margin: 20px 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); border: 1px solid white; backdrop-filter: blur(10px); }
+        h4 { color: var(--dark); margin-bottom: 15px; display: flex; align-items: center; gap: 10px; font-size: 18px; }
+        
+        .input-group { margin: 15px 0; }
+        input, select, textarea { width: 100%; padding: 14px 18px; border-radius: 15px; border: 1.5px solid #e2e8f0; outline: none; transition: 0.3s; font-size: 15px; }
+        input:focus { border-color: var(--gold); box-shadow: 0 0 0 4px rgba(251, 191, 36, 0.1); }
+
+        button.btn-main { background: linear-gradient(135deg, #1e293b, #0f172a); color: white; border: none; padding: 16px; border-radius: 15px; width: 100%; font-weight: 700; cursor: pointer; transition: 0.3s; margin-top: 10px; }
+        button.btn-main:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0,0,0,0.15); }
+
+        /* Badges */
+        .badge { padding: 4px 10px; border-radius: 8px; font-size: 11px; font-weight: 700; text-transform: uppercase; }
+        .badge-red { background: #fee2e2; color: #dc2626; }
+        .badge-green { background: #dcfce7; color: #16a34a; }
+
+        .profile-area { text-align: center; margin-bottom: 20px; }
+        .profile-img { width: 100px; height: 100px; border-radius: 35%; object-fit: cover; border: 4px solid var(--gold); padding: 3px; background: white; }
+
+        #toast { visibility: hidden; position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: #1e293b; color: white; padding: 15px 30px; border-radius: 50px; z-index: 1000; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+        #toast.show { visibility: visible; animation: slideUp 0.4s ease forwards; }
+
+        .stats-row { display: flex; gap: 10px; margin-top: 15px; }
+        .stat-card { flex: 1; padding: 15px; border-radius: 18px; text-align: center; background: white; border: 1px solid #f1f5f9; }
+        
+        @keyframes slideUp { from { bottom: 0; opacity: 0; } to { bottom: 30px; opacity: 1; } }
     </style>
 </head>
 <body>
 
 <header>
-    <h2><i class="fas fa-graduation-cap"></i> RPS JAJOD</h2>
-    <div id="db-status" class="status-bar" style="color: #fff; background: #f44336;">○ OFFLINE: Connecting...</div>
-    <button id="logout-btn" class="logout-btn hidden" onclick="sys.logout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
+    <button id="logout-btn" class="logout-btn hidden" onclick="sys.logout()"><i class="fas fa-power-off"></i> Exit</button>
+    <h2 style="letter-spacing: 2px;">RPS PORTAL <span style="color: var(--gold);">2.0</span></h2>
+    <div id="db-status" class="status-bar" style="margin-top:10px; font-size: 12px;">● Initializing Systems...</div>
 </header>
 
-<div id="screen-login" class="fade-in" style="padding: 10px;">
+<div id="screen-login" style="padding: 15px;">
     <div class="card">
-        <h3 style="text-align: center; margin-bottom: 20px;">Portal Login</h3>
-        <div class="input-group">
-            <i class="fas fa-user-shield"></i>
-            <select id="login-role">
-                <option value="Principal">Principal</option>
-                <option value="Teacher">Teacher</option>
-                <option value="Student">Student</option>
-            </select>
-        </div>
-        <div class="input-group">
-            <i class="fas fa-id-badge"></i>
-            <input type="text" id="login-id" placeholder="Enter ID">
-        </div>
-        <div class="input-group">
-            <i class="fas fa-lock"></i>
-            <input type="password" id="login-pass" placeholder="Enter Password">
-        </div>
-        <button class="g-recaptcha action-btn" data-sitekey="6LdpZswsAAAAAAv4bZ5V5xuxwmwPeaJU15bZcuHS" data-callback='onLoginSubmit' data-action='submit'>
-            Sign In <i class="fas fa-arrow-right"></i>
+        <h3 style="text-align: center; margin-bottom: 25px;">Welcome Back</h3>
+        <select id="login-role" style="margin-bottom: 15px;">
+            <option value="Principal">Management (Principal)</option>
+            <option value="Teacher">Academic (Teacher)</option>
+            <option value="Student">Learner (Student)</option>
+        </select>
+        <input type="text" id="login-id" placeholder="Username / ID" style="margin-bottom: 15px;">
+        <input type="password" id="login-pass" placeholder="Security Password">
+        <button class="g-recaptcha btn-main" data-sitekey="6LdpZswsAAAAAAv4bZ5V5xuxwmwPeaJU15bZcuHS" data-callback='onLoginSubmit' data-action='submit'>
+            ACCESS PORTAL <i class="fas fa-chevron-right" style="margin-left: 10px;"></i>
         </button>
     </div>
 </div>
 
-<div id="screen-app" class="hidden fade-in">
+<div id="screen-app" class="hidden">
     <div id="view-principal" class="hidden">
         <div class="card">
-            <h4><i class="fas fa-user-plus"></i> Create Teacher</h4>
-            <div class="input-group"><i class="fas fa-user"></i><input type="text" id="new-t-name" placeholder="Full Name"></div>
-            <div class="input-group"><i class="fas fa-id-card"></i><input type="text" id="new-t-id" placeholder="ID"></div>
-            <div class="input-group"><i class="fas fa-key"></i><input type="text" id="new-t-pass" placeholder="Password"></div>
-            <div class="input-group"><i class="fas fa-chalkboard"></i><input type="text" id="new-t-classes" placeholder="Classes (9,10)"></div>
-            <div class="input-group"><i class="fas fa-book"></i><select id="new-t-sub"><option value="Hindi">Hindi</option><option value="Math">Math</option><option value="Science">Science</option><option value="English">English</option></select></div>
-            <button class="action-btn success-btn" onclick="sys.saveTeacher()">Push to Server</button>
+            <h4><i class="fas fa-chart-line" style="color: var(--gold);"></i> School Insights</h4>
+            <div class="stats-row">
+                <div class="stat-card"><h2 id="p-total-t">0</h2><small>Teachers</small></div>
+                <div class="stat-card"><h2 id="p-total-s">0</h2><small>Students</small></div>
+            </div>
+        </div>
+        <div class="card">
+            <h4><i class="fas fa-user-tie"></i> Recruit Teacher</h4>
+            <input type="text" id="new-t-name" placeholder="Full Name" style="margin-bottom:10px;">
+            <input type="text" id="new-t-id" placeholder="Staff ID (Unique)" style="margin-bottom:10px;">
+            <input type="text" id="new-t-pass" placeholder="Initial Password" style="margin-bottom:10px;">
+            <input type="text" id="new-t-classes" placeholder="Assigned Classes (e.g. 10,11,12)" style="margin-bottom:10px;">
+            <select id="new-t-sub" style="margin-bottom:10px;">
+                <option value="English">English Specialist</option>
+                <option value="Math">Math Specialist</option>
+                <option value="Science">Science Specialist</option>
+                <option value="Hindi">Hindi Specialist</option>
+            </select>
+            <button class="btn-main" onclick="sys.saveTeacher()" style="background: var(--gold); color: var(--dark);">ACTIVATE TEACHER</button>
         </div>
     </div>
 
     <div id="view-teacher" class="hidden">
-        <div class="card" style="text-align: center;"><h3 id="t-welcome"></h3><p id="t-info"></p></div>
-        <div class="card">
-            <h4><i class="fas fa-user-graduate"></i> Enroll Student</h4>
-            <div class="input-group"><i class="fas fa-chalkboard-teacher"></i><select id="t-class-sel"></select></div>
-            <input type="text" id="s-name" placeholder="Name" style="padding-left:15px; margin-bottom:10px;">
-            <input type="text" id="s-id" placeholder="Roll No" style="padding-left:15px; margin-bottom:10px;">
-            <input type="text" id="s-pass" placeholder="Password" style="padding-left:15px; margin-bottom:10px;">
-            <button class="action-btn" onclick="sys.saveStudent()">Add Student</button>
+        <div class="card" style="background: linear-gradient(to right, #1e293b, #334155); color: white;">
+            <h2 id="t-welcome"></h2>
+            <p id="t-info" style="opacity: 0.8; font-size: 13px;"></p>
         </div>
         <div class="card">
-            <h4><i class="fas fa-edit"></i> Manage Records</h4>
-            <select id="edit-select" onchange="sys.loadStudent()" style="padding-left:15px;"><option value="">Select Student</option></select>
-            <div id="edit-panel" class="hidden fade-in">
-                <span class="label">Photo</span>
-                <input type="file" accept="image/*" onchange="sys.upPic(event)" style="padding:10px;">
-                <img id="s-preview" class="profile-pic" src="">
-                <input type="text" id="e-f" placeholder="Father's Name" style="padding-left:15px; margin-bottom:10px;">
-                <input type="text" id="e-att" placeholder="Attendance %" style="padding-left:15px; margin-bottom:10px;">
-                <input type="text" id="e-fee" placeholder="Fees Due" style="padding-left:15px; margin-bottom:10px;">
-                <textarea id="e-hw" placeholder="Homework..." rows="3" style="padding-left:15px;"></textarea>
-                <button class="action-btn success-btn" onclick="sys.updateStudent()">Sync Data</button>
+            <h4><i class="fas fa-user-plus"></i> New Enrollment</h4>
+            <select id="t-class-sel" style="margin-bottom:10px;"></select>
+            <input type="text" id="s-name" placeholder="Student Name" style="margin-bottom:10px;">
+            <input type="text" id="s-id" placeholder="Roll No / ID" style="margin-bottom:10px;">
+            <input type="text" id="s-pass" placeholder="Login Password">
+            <button class="btn-main" onclick="sys.saveStudent()">COMPLETE ENROLLMENT</button>
+        </div>
+        <div class="card">
+            <h4><i class="fas fa-tasks"></i> Academic Records</h4>
+            <select id="edit-select" onchange="sys.loadStudent()" style="background: #f8fafc;"><option value="">Select Student to Manage</option></select>
+            <div id="edit-panel" class="hidden">
+                <div class="profile-area" style="margin-top: 15px;">
+                    <img id="s-preview" class="profile-img" src="">
+                    <input type="file" accept="image/*" onchange="sys.upPic(event)" style="font-size: 10px; margin-top: 10px; border:none; background:transparent;">
+                </div>
+                <input type="text" id="e-f" placeholder="Father's Name" style="margin-bottom:10px;">
+                <input type="number" id="e-att" placeholder="Attendance % (0-100)" style="margin-bottom:10px;">
+                <input type="text" id="e-fee" placeholder="Pending Fees (₹)" style="margin-bottom:10px;">
+                <textarea id="e-hw" placeholder="Homework or Daily Notice..." rows="3"></textarea>
+                <button class="btn-main" onclick="sys.updateStudent()">UPDATE CLOUD RECORDS</button>
             </div>
         </div>
     </div>
 
     <div id="view-student" class="hidden">
-        <div class="card" style="text-align: center;">
-            <img id="st-pic" class="profile-pic" src="">
+        <div class="card profile-area">
+            <img id="st-pic" class="profile-img" src="">
             <h2 id="st-name-head">---</h2>
-            <p id="st-meta" class="label"></p>
+            <p id="st-meta" class="badge badge-green"></p>
         </div>
-        <div class="stats-grid">
-            <div class="stat-box stat-fee"><span class="label">Fees Due</span><h2 id="st-fee">₹ 0</h2></div>
-            <div class="stat-box stat-att"><span class="label">Attendance</span><h2 id="st-att">0%</h2></div>
+        <div class="stats-row" style="margin: 0 15px;">
+            <div class="stat-card" style="background: #fff5f5;"><small>Balance Fee</small><h2 id="st-fee" style="color: var(--red);">₹ 0</h2></div>
+            <div class="stat-card" style="background: #f0fdf4;"><small>Attendance</small><h2 id="st-att">0%</h2></div>
         </div>
-        <div class="card"><span class="label">Today's Homework</span><p id="st-hw"></p></div>
+        <div class="card">
+            <h4><i class="fas fa-bullhorn" style="color: var(--red);"></i> School Notice</h4>
+            <div id="st-hw" style="padding: 10px; background: #f8fafc; border-radius: 12px; font-size: 15px; color: #475569;"></div>
+        </div>
     </div>
 </div>
 
@@ -146,8 +156,7 @@
         projectId: "rps-sikar-da9d4",
         storageBucket: "rps-sikar-da9d4.firebasestorage.app",
         messagingSenderId: "1075905739210",
-        appId: "1:1075905739210:web:0999c29b691d13715fb733",
-        measurementId: "G-JWGLC631NF"
+        appId: "1:1075905739210:web:0999c29b691d13715fb733"
     };
 
     firebase.initializeApp(firebaseConfig);
@@ -157,61 +166,63 @@
         user: null,
         tempPic: "",
 
-        showToast: function(m, type="success") {
+        showToast: function(m) {
             const t = document.getElementById("toast");
-            t.innerText = m; t.className = "show " + type;
-            setTimeout(() => { t.className = ""; }, 3000);
+            t.innerText = m; t.className = "show";
+            setTimeout(() => t.className = "", 3000);
         },
 
         login: function() {
             const r = document.getElementById('login-role').value;
             const id = document.getElementById('login-id').value.trim();
             const ps = document.getElementById('login-pass').value.trim();
-            if (!id || !ps) { this.showToast("Fill all fields", "error"); return; }
 
             if(r === "Principal" && id === "Azizkhan" && ps === "khanaziz") {
-                this.user = {role:"Principal", name:"Aziz Khan"}; this.showApp();
+                this.user = {role:"Principal", name:"Aziz Khan"};
+                this.showApp();
             } else {
                 const path = (r === "Teacher") ? 'teachers/' + id : 'students/' + id;
-                db.ref(path).once('value', (snap) => {
-                    const data = snap.val();
-                    if(data && data.pass === ps) { this.user = data; this.user.role = r; this.showApp(); }
-                    else this.showToast("Invalid ID/Password", "error");
+                db.ref(path).once('value', snap => {
+                    const d = snap.val();
+                    if(d && d.pass === ps) { this.user = {...d, role: r}; this.showApp(); }
+                    else this.showToast("❌ Security Check Failed!");
                 });
             }
         },
 
-        logout: function() {
-            this.user = null;
-            document.getElementById('screen-app').classList.add('hidden');
-            document.getElementById('screen-login').classList.remove('hidden');
-            document.getElementById('logout-btn').classList.add('hidden');
-        },
+        logout: function() { location.reload(); },
 
         showApp: function() {
             document.getElementById('screen-login').classList.add('hidden');
             document.getElementById('screen-app').classList.remove('hidden');
             document.getElementById('logout-btn').classList.remove('hidden');
             const r = this.user.role;
+
             ['view-principal', 'view-teacher', 'view-student'].forEach(v => document.getElementById(v).classList.add('hidden'));
             
             if(r === "Principal") {
                 document.getElementById('view-principal').classList.remove('hidden');
+                this.loadPrincipalStats();
             } else if(r === "Teacher") {
                 document.getElementById('view-teacher').classList.remove('hidden');
-                document.getElementById('t-welcome').innerText = this.user.name;
-                document.getElementById('t-info').innerText = `Subject: ${this.user.subject}`;
+                document.getElementById('t-welcome').innerText = "Hello, " + this.user.name;
+                document.getElementById('t-info').innerText = `Department: ${this.user.subject} | Grade: ${this.user.classes}`;
                 document.getElementById('t-class-sel').innerHTML = this.user.classes.split(',').map(c => `<option value="${c.trim()}">Class ${c.trim()}</option>`).join('');
                 this.syncSList();
             } else {
                 document.getElementById('view-student').classList.remove('hidden');
-                document.getElementById('st-pic').src = this.user.pic || "https://cdn-icons-png.flaticon.com/512/149/149071.png";
+                document.getElementById('st-pic').src = this.user.pic || "https://cdn-icons-png.flaticon.com/512/3135/3135715.png";
                 document.getElementById('st-name-head').innerText = this.user.name;
-                document.getElementById('st-meta').innerText = `Roll: ${this.user.id} | Class: ${this.user.class}`;
+                document.getElementById('st-meta').innerText = `ROLL: ${this.user.id} | CLASS ${this.user.class}`;
                 document.getElementById('st-fee').innerText = "₹ " + (this.user.fee || "0");
                 document.getElementById('st-att').innerText = (this.user.att || "0") + "%";
-                document.getElementById('st-hw').innerText = this.user.hw || "No homework.";
+                document.getElementById('st-hw').innerText = this.user.hw || "Keep up the good work! No new notices.";
             }
+        },
+
+        loadPrincipalStats: function() {
+            db.ref('teachers').on('value', s => document.getElementById('p-total-t').innerText = s.numChildren());
+            db.ref('students').on('value', s => document.getElementById('p-total-s').innerText = s.numChildren());
         },
 
         saveTeacher: function() {
@@ -222,7 +233,8 @@
                 classes: document.getElementById('new-t-classes').value,
                 subject: document.getElementById('new-t-sub').value
             };
-            db.ref('teachers/' + id).set(data).then(() => this.showToast("Teacher Added!"));
+            if(!id) return this.showToast("Teacher ID Required!");
+            db.ref('teachers/' + id).set(data).then(() => this.showToast("✅ Teacher Profile Live!"));
         },
 
         saveStudent: function() {
@@ -233,30 +245,30 @@
                 class: document.getElementById('t-class-sel').value,
                 f:"", fee:"0", att:"0", hw:"", pic:""
             };
-            db.ref('students/' + id).set(data).then(() => { this.showToast("Student Added!"); this.syncSList(); });
+            db.ref('students/' + id).set(data).then(() => { this.showToast("🎓 Student Enrolled!"); this.syncSList(); });
         },
 
         syncSList: function() {
-            db.ref('students').once('value', (snap) => {
+            db.ref('students').once('value', snap => {
                 const all = snap.val() || {};
                 const cls = (this.user.classes || "").split(',').map(x => x.trim());
                 let html = '<option value="">Select Student</option>';
-                for(let id in all) { if(cls.includes(all[id].class)) html += `<option value="${id}">${all[id].name}</option>`; }
+                for(let id in all) { if(cls.includes(all[id].class)) html += `<option value="${id}">${all[id].name} (Class ${all[id].class})</option>`; }
                 document.getElementById('edit-select').innerHTML = html;
             });
         },
 
         loadStudent: function() {
             const id = document.getElementById('edit-select').value;
-            if(!id) return;
-            db.ref('students/' + id).once('value', (snap) => {
+            if(!id) return document.getElementById('edit-panel').classList.add('hidden');
+            db.ref('students/' + id).once('value', snap => {
                 const s = snap.val();
                 document.getElementById('edit-panel').classList.remove('hidden');
                 document.getElementById('e-f').value = s.f || "";
-                document.getElementById('e-att').value = s.att || "";
-                document.getElementById('e-fee').value = s.fee || "";
+                document.getElementById('e-att').value = s.att || "0";
+                document.getElementById('e-fee').value = s.fee || "0";
                 document.getElementById('e-hw').value = s.hw || "";
-                document.getElementById('s-preview').src = s.pic || "";
+                document.getElementById('s-preview').src = s.pic || "https://cdn-icons-png.flaticon.com/512/3135/3135715.png";
                 this.tempPic = s.pic || "";
             });
         },
@@ -269,15 +281,22 @@
 
         updateStudent: function() {
             const id = document.getElementById('edit-select').value;
-            const updates = { f: document.getElementById('e-f').value, att: document.getElementById('e-att').value, fee: document.getElementById('e-fee').value, hw: `[${this.user.subject}] ` + document.getElementById('e-hw').value, pic: this.tempPic };
-            db.ref('students/' + id).update(updates).then(() => this.showToast("Data Synced!"));
+            const att = document.getElementById('e-att').value;
+            const updates = {
+                f: document.getElementById('e-f').value,
+                att: att,
+                fee: document.getElementById('e-fee').value,
+                hw: `[Note by ${this.user.name}]: ` + document.getElementById('e-hw').value,
+                pic: this.tempPic
+            };
+            db.ref('students/' + id).update(updates).then(() => this.showToast("📊 Cloud Synced!"));
         }
     };
 
-    db.ref(".info/connected").on("value", (snap) => {
+    db.ref(".info/connected").on("value", snap => {
         const s = document.getElementById('db-status');
-        if (snap.val() === true) { s.innerText = "● LIVE: Sikar Server Active"; s.style.background = "#28a745"; }
-        else { s.innerText = "○ OFFLINE: Connecting..."; s.style.background = "#f44336"; }
+        if (snap.val() === true) { s.innerText = "● CLOUD ACTIVE"; s.style.color = "#4ade80"; }
+        else { s.innerText = "○ CONNECTING..."; s.style.color = "#f87171"; }
     });
 </script>
 </body>
