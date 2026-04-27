@@ -3,275 +3,444 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>School App Pro</title>
-
+<title>School App Pro - Hyper Design</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
-body {
-  margin:0;
-  font-family:sans-serif;
-  background: linear-gradient(135deg,#141e30,#243b55);
-  color:white;
-}
+    /* VARIABLES & RESET */
+    :root {
+        --glass-bg: rgba(255, 255, 255, 0.1);
+        --glass-border: rgba(255, 255, 255, 0.2);
+        --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.2);
+        --primary: #00f2fe;
+        --secondary: #4facfe;
+        --text: #ffffff;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+    
+    /* ANIMATED AURORA BACKGROUND */
+    body {
+        min-height: 100vh;
+        background: linear-gradient(-45deg, #1e3c72, #2a5298, #0f2027, #203a43, #2c5364);
+        background-size: 400% 400%;
+        animation: aurora 15s ease infinite;
+        color: var(--text);
+        overflow-x: hidden;
+    }
+    @keyframes aurora {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+    }
 
-/* Glass */
-.glass {
-  background: rgba(255,255,255,0.1);
-  backdrop-filter: blur(12px);
-  border-radius: 15px;
-  padding:15px;
-  margin:10px;
-}
+    /* GLASSMORPHISM UTILITIES */
+    .glass {
+        background: var(--glass-bg);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: 1px solid var(--glass-border);
+        box-shadow: var(--glass-shadow);
+        border-radius: 16px;
+    }
 
-/* Layout */
-.container {padding:15px;}
-input,button,select {
-  width:100%;
-  margin:5px 0;
-  padding:10px;
-  border-radius:8px;
-  border:none;
-}
+    /* TYPOGRAPHY & FORMS */
+    h2, h3 { font-weight: 600; margin-bottom: 15px; }
+    input, select, button, textarea {
+        width: 100%; padding: 12px 15px; margin-bottom: 15px;
+        border-radius: 10px; border: none; outline: none;
+        font-size: 14px; transition: all 0.3s ease;
+    }
+    input, select, textarea {
+        background: rgba(255,255,255,0.15); color: white;
+        border: 1px solid rgba(255,255,255,0.1);
+    }
+    input::placeholder, textarea::placeholder { color: rgba(255,255,255,0.7); }
+    input:focus, select:focus { background: rgba(255,255,255,0.25); border-color: var(--primary); }
+    option { background: #2a5298; color: white; }
+    
+    button {
+        background: linear-gradient(135deg, var(--secondary), var(--primary));
+        color: white; font-weight: 600; cursor: pointer;
+        box-shadow: 0 4px 15px rgba(0, 242, 254, 0.4);
+    }
+    button:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0, 242, 254, 0.6); }
+    button.danger { background: linear-gradient(135deg, #ff416c, #ff4b2b); box-shadow: 0 4px 15px rgba(255, 65, 108, 0.4); }
 
-button {background:#00c6ff;color:white;}
+    /* LAYOUT */
+    #app-container { max-width: 800px; margin: 0 auto; padding: 20px; }
+    .hidden { display: none !important; }
+    
+    /* LOGIN SCREEN */
+    #login-section { max-width: 400px; margin: 10vh auto; padding: 30px; text-align: center; }
+    .avatar-placeholder { width: 80px; height: 80px; background: rgba(255,255,255,0.2); border-radius: 50%; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center; font-size: 30px; }
 
-.hidden {display:none;}
+    /* DASHBOARD NAV */
+    .nav-bar { display: flex; gap: 10px; padding: 15px; margin-bottom: 20px; overflow-x: auto; scrollbar-width: none; }
+    .nav-bar::-webkit-scrollbar { display: none; }
+    .nav-bar button { margin: 0; white-space: nowrap; flex: 1; min-width: 100px; }
 
-.card {
-  animation:fade 0.5s ease;
-}
-@keyframes fade {
-  from{opacity:0; transform:translateY(10px);}
-  to{opacity:1;}
-}
+    /* CARDS & STAGGERED ANIMATIONS */
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 15px; }
+    .card {
+        padding: 20px; position: relative;
+        animation: slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        opacity: 0; transform: translateY(20px);
+    }
+    .card img { width: 60px; height: 60px; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary); }
+    .card-header { display: flex; align-items: center; gap: 15px; margin-bottom: 15px; }
+    .card-actions { display: flex; gap: 10px; margin-top: 15px; }
+    
+    @keyframes slideUp { to { opacity: 1; transform: translateY(0); } }
 
-#toast {
-  position:fixed;
-  bottom:20px;
-  right:20px;
-  background:#00c6ff;
-  padding:12px;
-  border-radius:8px;
-  display:none;
-}
+    /* PROGRESS BARS */
+    .progress-container { margin-top: 10px; }
+    .progress-label { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 5px; }
+    .progress-bg { background: rgba(255,255,255,0.1); height: 8px; border-radius: 4px; overflow: hidden; }
+    .progress-fill { background: var(--primary); height: 100%; width: 0; transition: width 1s cubic-bezier(0.16, 1, 0.3, 1); }
+
+    /* MODAL */
+    #modal-overlay {
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(0,0,0,0.6); backdrop-filter: blur(5px);
+        display: flex; align-items: center; justify-content: center; z-index: 100;
+        opacity: 0; pointer-events: none; transition: opacity 0.3s;
+    }
+    #modal-overlay.active { opacity: 1; pointer-events: auto; }
+    .modal-content { width: 90%; max-width: 450px; padding: 25px; transform: scale(0.9); transition: transform 0.3s; max-height: 90vh; overflow-y: auto; }
+    #modal-overlay.active .modal-content { transform: scale(1); }
+    .close-btn { position: absolute; top: 15px; right: 15px; background: transparent; box-shadow: none; width: auto; font-size: 20px; padding: 0; margin: 0; }
+
+    /* TOAST NOTIFICATIONS */
+    #toast-container { position: fixed; bottom: 20px; right: 20px; z-index: 999; display: flex; flex-direction: column; gap: 10px; }
+    .toast {
+        background: rgba(255,255,255,0.2); backdrop-filter: blur(15px); border-left: 4px solid var(--primary);
+        padding: 15px 20px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        animation: slideInRight 0.3s forwards, fadeOut 0.3s 2.7s forwards;
+    }
+    @keyframes slideInRight { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+    @keyframes fadeOut { to { opacity: 0; transform: translateY(-10px); } }
+
+    .header-flex { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
 </style>
 </head>
-
 <body>
 
-<div class="container">
+<div id="toast-container"></div>
 
-<!-- LOGIN -->
-<div id="login">
-  <div class="glass">
-    <h2>Login</h2>
-    <select id="role">
-      <option>Principal</option>
-      <option>Teacher</option>
-      <option>Student</option>
+<div id="login-section" class="glass">
+    <div class="avatar-placeholder">🎓</div>
+    <h2>Portal Login</h2>
+    <select id="login-role">
+        <option value="Principal">Principal</option>
+        <option value="Teacher">Teacher</option>
+        <option value="Student">Student</option>
     </select>
-    <input id="id" placeholder="ID">
-    <input id="pass" placeholder="Password">
-    <button onclick="login()">Login</button>
-  </div>
+    <input type="text" id="login-id" placeholder="User ID">
+    <input type="password" id="login-pass" placeholder="Password">
+    <button onclick="app.login()">Secure Login</button>
 </div>
 
-<!-- DASHBOARD -->
-<div id="dashboard" class="hidden">
+<div id="app-container" class="hidden">
+    <div class="header-flex">
+        <div>
+            <h2 id="dash-title">Dashboard</h2>
+            <p id="dash-subtitle" style="font-size:12px; opacity:0.8;"></p>
+        </div>
+        <img id="user-profile-pic" src="" style="width:50px; height:50px; border-radius:50%; object-fit:cover; display:none; border: 2px solid var(--primary);">
+    </div>
 
-  <h2 id="title"></h2>
+    <div id="nav-menu" class="glass nav-bar">
+        </div>
 
-  <!-- NAV -->
-  <div class="glass">
-    <button onclick="show('students')">Students</button>
-    <button onclick="show('attendance')">Attendance</button>
-    <button onclick="show('homework')">Homework</button>
-    <button onclick="logout()">Logout</button>
-  </div>
+    <div id="panel-teachers" class="panel hidden">
+        <div class="header-flex">
+            <h3>Manage Teachers <span id="teacher-count" style="font-size:14px">(0/12)</span></h3>
+            <button onclick="app.openModal('teacher')" style="width:auto; padding:8px 15px">+ Add</button>
+        </div>
+        <div id="teacher-list" class="grid"></div>
+    </div>
 
-  <!-- STUDENTS -->
-  <div id="students" class="glass hidden">
-    <h3>Add Student</h3>
-    <input id="sname" placeholder="Name">
-    <input id="sid" placeholder="Student ID">
-    <input id="spass" placeholder="Password">
-    <input type="file" id="sphoto">
-    <button onclick="addStudent()">Add</button>
+    <div id="panel-students" class="panel hidden">
+        <div class="header-flex">
+            <h3>Manage Students</h3>
+            <button id="add-student-btn" onclick="app.openModal('student')" style="width:auto; padding:8px 15px">+ Add</button>
+        </div>
+        <div id="student-list" class="grid"></div>
+    </div>
 
-    <div id="studentList"></div>
-  </div>
+    <div id="panel-communications" class="panel hidden">
+        <div class="header-flex">
+            <h3>Communications</h3>
+            <button id="add-comm-btn" onclick="app.openModal('communication')" style="width:auto; padding:8px 15px">+ New</button>
+        </div>
+        <div id="comm-list" class="grid"></div>
+    </div>
 
-  <!-- ATTENDANCE -->
-  <div id="attendance" class="glass hidden">
-    <h3>Mark Attendance</h3>
-    <div id="attendanceList"></div>
-    <button onclick="saveAttendance()">Save</button>
-  </div>
-
-  <!-- HOMEWORK -->
-  <div id="homework" class="glass hidden">
-    <h3>Add Homework</h3>
-    <input id="htitle" placeholder="Title">
-    <input id="hdesc" placeholder="Description">
-    <button onclick="addHomework()">Add</button>
-
-    <div id="homeworkList"></div>
-  </div>
+    <div id="panel-profile" class="panel hidden">
+        <div class="glass card" id="my-profile-card"></div>
+    </div>
 
 </div>
 
+<div id="modal-overlay">
+    <div class="glass modal-content">
+        <button class="close-btn" onclick="app.closeModal()">✕</button>
+        <h3 id="modal-title">Title</h3>
+        <div id="modal-body"></div>
+        <button id="modal-save-btn">Save</button>
+    </div>
 </div>
-
-<div id="toast"></div>
 
 <script>
+/**
+ * School App Pro - Logic Controller
+ */
+const app = {
+    // State
+    db: {
+        teachers: JSON.parse(localStorage.getItem("pro_teachers")) || [],
+        students: JSON.parse(localStorage.getItem("pro_students")) || [],
+        comms: JSON.parse(localStorage.getItem("pro_comms")) || [] // Notices, Homework, Work details
+    },
+    currentUser: null,
+    currentRole: null,
+    editingIndex: null,
 
-/* ===== DATA ===== */
-let students = JSON.parse(localStorage.getItem("students")) || [];
-let homework = JSON.parse(localStorage.getItem("homework")) || [];
-let attendance = [];
+    // Credentials
+    principals: [
+        { id: "Azizkhan", pass: "khanaziz" },
+        { id: "RPS", pass: "JAJ12" }
+    ],
 
-const PRINCIPAL = {id:"Azizkhan", pass:"khanaziz"};
-let teachers = JSON.parse(localStorage.getItem("teachers")) || [];
+    // --- UTILS ---
+    saveDb() {
+        localStorage.setItem("pro_teachers", JSON.stringify(this.db.teachers));
+        localStorage.setItem("pro_students", JSON.stringify(this.db.students));
+        localStorage.setItem("pro_comms", JSON.stringify(this.db.comms));
+    },
+    toast(msg, type="info") {
+        const container = document.getElementById('toast-container');
+        const t = document.createElement('div');
+        t.className = 'toast';
+        t.innerText = msg;
+        if(type === 'error') t.style.borderLeftColor = '#ff416c';
+        container.appendChild(t);
+        setTimeout(() => t.remove(), 3000);
+    },
+    resizeImage(file, callback) {
+        // Compress image to prevent localStorage quota exceeded
+        if(!file) return callback(null);
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const img = new Image();
+            img.onload = () => {
+                const canvas = document.createElement('canvas');
+                const MAX_WIDTH = 200; // Small size for fast loading
+                const scaleSize = MAX_WIDTH / img.width;
+                canvas.width = MAX_WIDTH;
+                canvas.height = img.height * scaleSize;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                callback(canvas.toDataURL('image/jpeg', 0.8));
+            };
+            img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+    },
 
-let currentUser = null;
+    // --- AUTH ---
+    login() {
+        const role = document.getElementById('login-role').value;
+        const id = document.getElementById('login-id').value;
+        const pass = document.getElementById('login-pass').value;
 
-/* ===== TOAST ===== */
-function toast(msg){
-  let t = document.getElementById("toast");
-  t.innerText = msg;
-  t.style.display="block";
-  setTimeout(()=>t.style.display="none",2000);
-}
+        if(!id || !pass) return this.toast("Enter ID and Password", "error");
 
-/* ===== LOGIN ===== */
-function login(){
-  let role = document.getElementById("role").value;
-  let id = document.getElementById("id").value;
-  let pass = document.getElementById("pass").value;
+        if (role === "Principal") {
+            const p = this.principals.find(x => x.id === id && x.pass === pass);
+            if (p) this.startSession(p, "Principal");
+            else this.toast("Invalid Principal Credentials", "error");
+        } else if (role === "Teacher") {
+            const t = this.db.teachers.find(x => x.id === id && x.pass === pass);
+            if (t) this.startSession(t, "Teacher");
+            else this.toast("Invalid Teacher Credentials", "error");
+        } else if (role === "Student") {
+            const s = this.db.students.find(x => x.id === id && x.pass === pass);
+            if (s) this.startSession(s, "Student");
+            else this.toast("Invalid Student Credentials", "error");
+        }
+    },
+    logout() {
+        this.currentUser = null;
+        this.currentRole = null;
+        document.getElementById('app-container').classList.add('hidden');
+        document.getElementById('login-section').classList.remove('hidden');
+        document.getElementById('login-id').value = "";
+        document.getElementById('login-pass').value = "";
+        this.toast("Logged out securely");
+    },
+    startSession(user, role) {
+        this.currentUser = user;
+        this.currentRole = role;
+        
+        document.getElementById('login-section').classList.add('hidden');
+        document.getElementById('app-container').classList.remove('hidden');
+        document.getElementById('dash-title').innerText = `${role} Portal`;
+        document.getElementById('dash-subtitle').innerText = `Welcome back, ${user.name || user.id}`;
+        
+        const pic = document.getElementById('user-profile-pic');
+        if(user.photo) {
+            pic.src = user.photo;
+            pic.style.display = 'block';
+        } else {
+            pic.style.display = 'none';
+        }
 
-  if(role==="Principal" && id===PRINCIPAL.id && pass===PRINCIPAL.pass){
-    start("Principal");
-  }
-  else if(role==="Teacher"){
-    let t = teachers.find(x=>x.id===id && x.pass===pass);
-    if(t) start("Teacher");
-    else toast("Wrong Teacher Login");
-  }
-  else if(role==="Student"){
-    let s = students.find(x=>x.id===id && x.pass===pass);
-    if(s){
-      currentUser = s;
-      start("Student");
-    } else toast("Wrong Student Login");
-  }
-}
+        this.buildNav();
+    },
 
-/* ===== START ===== */
-function start(role){
-  document.getElementById("login").style.display="none";
-  document.getElementById("dashboard").classList.remove("hidden");
-  document.getElementById("title").innerText = role+" Dashboard";
-  show('students');
-  loadStudents();
-  loadHomework();
-}
+    // --- NAVIGATION ---
+    buildNav() {
+        const nav = document.getElementById('nav-menu');
+        nav.innerHTML = '';
+        const role = this.currentRole;
 
-/* ===== NAV ===== */
-function show(tab){
-  document.querySelectorAll("#dashboard > div").forEach(d=>d.classList.add("hidden"));
-  document.getElementById(tab).classList.remove("hidden");
+        const addBtn = (name, target) => {
+            const b = document.createElement('button');
+            b.innerText = name;
+            b.onclick = () => this.showPanel(target);
+            nav.appendChild(b);
+        };
 
-  if(tab==="attendance") loadAttendance();
-}
+        if (role === "Principal") {
+            addBtn("Teachers", "panel-teachers");
+            addBtn("Students", "panel-students");
+            addBtn("Notices/Work", "panel-communications");
+            this.showPanel("panel-teachers");
+        } else if (role === "Teacher") {
+            addBtn("Students", "panel-students");
+            addBtn("Notices From Admin", "panel-communications");
+            this.showPanel("panel-students");
+        } else if (role === "Student") {
+            addBtn("My Profile", "panel-profile");
+            addBtn("Homework/Notices", "panel-communications");
+            this.showPanel("panel-profile");
+        }
+        
+        const logoutBtn = document.createElement('button');
+        logoutBtn.innerText = "Logout";
+        logoutBtn.className = "danger";
+        logoutBtn.onclick = () => this.logout();
+        nav.appendChild(logoutBtn);
+    },
+    showPanel(id) {
+        document.querySelectorAll('.panel').forEach(p => p.classList.add('hidden'));
+        document.getElementById(id).classList.remove('hidden');
 
-/* ===== STUDENT ===== */
-function addStudent(){
-  let name = sname.value;
-  let id = sid.value;
-  let pass = spass.value;
-  let file = sphoto.files[0];
+        if (id === 'panel-teachers') this.renderTeachers();
+        if (id === 'panel-students') this.renderStudents();
+        if (id === 'panel-communications') this.renderComms();
+        if (id === 'panel-profile') this.renderStudentProfile();
+    },
 
-  let reader = new FileReader();
-  reader.onload = function(){
-    students.push({name,id,pass,photo:reader.result});
-    localStorage.setItem("students",JSON.stringify(students));
-    loadStudents();
-    toast("Student Added");
-  };
-  if(file) reader.readAsDataURL(file);
-}
+    // --- RENDERING VIEWS ---
+    renderTeachers() {
+        const list = document.getElementById('teacher-list');
+        list.innerHTML = '';
+        document.getElementById('teacher-count').innerText = `(${this.db.teachers.length}/12)`;
 
-function loadStudents(){
-  let list = document.getElementById("studentList");
-  list.innerHTML="";
-  students.forEach(s=>{
-    list.innerHTML+=`
-      <div class="glass card">
-        <img src="${s.photo}" width="50">
-        ${s.name} (${s.id})
-      </div>
-    `;
-  });
-}
+        this.db.teachers.forEach((t, i) => {
+            const delay = i * 0.1;
+            list.innerHTML += `
+            <div class="glass card" style="animation-delay: ${delay}s">
+                <div class="card-header">
+                    <img src="${t.photo || 'data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 fill=%22%232a5298%22/><text x=%2250%22 y=%2265%22 font-size=%2240%22 fill=%22white%22 text-anchor=%22middle%22>T</text></svg>'}">
+                    <div>
+                        <h4 style="margin:0">${t.name}</h4>
+                        <p style="font-size:12px; margin:0; opacity:0.8">ID: ${t.id}</p>
+                    </div>
+                </div>
+                <div style="font-size:13px">
+                    <p><b>Salary:</b> ${t.salary || 'Not Set'}</p>
+                    <p><b>Work:</b> ${t.work || 'Not Set'}</p>
+                </div>
+                <div class="card-actions">
+                    <button onclick="app.openModal('teacher', ${i})">Edit</button>
+                    <button class="danger" onclick="app.deleteItem('teachers', ${i})">Del</button>
+                </div>
+            </div>`;
+        });
+    },
+    renderStudents() {
+        const list = document.getElementById('student-list');
+        list.innerHTML = '';
+        
+        // Only Principal and Teacher can see the Add Student button
+        document.getElementById('add-student-btn').style.display = (this.currentRole === 'Student') ? 'none' : 'block';
 
-/* ===== ATTENDANCE ===== */
-function loadAttendance(){
-  let div = document.getElementById("attendanceList");
-  div.innerHTML="";
-  students.forEach(s=>{
-    div.innerHTML+=`
-      <div>
-        ${s.name}
-        <select id="att_${s.id}">
-          <option>Present</option>
-          <option>Absent</option>
-        </select>
-      </div>
-    `;
-  });
-}
+        this.db.students.forEach((s, i) => {
+            const delay = i * 0.1;
+            const percentage = s.marks || 0;
+            list.innerHTML += `
+            <div class="glass card" style="animation-delay: ${delay}s">
+                <div class="card-header">
+                    <img src="${s.photo || 'data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 fill=%22%2300f2fe%22/><text x=%2250%22 y=%2265%22 font-size=%2240%22 fill=%22white%22 text-anchor=%22middle%22>S</text></svg>'}">
+                    <div>
+                        <h4 style="margin:0">${s.name}</h4>
+                        <p style="font-size:12px; margin:0; opacity:0.8">ID: ${s.id}</p>
+                    </div>
+                </div>
+                <div class="progress-container">
+                    <div class="progress-label"><span>Overall Performance</span><span>${percentage}%</span></div>
+                    <div class="progress-bg">
+                        <div class="progress-fill" style="width: ${percentage}%"></div>
+                    </div>
+                </div>
+                ${this.currentRole !== 'Student' ? `
+                <div class="card-actions">
+                    <button onclick="app.openModal('student', ${i})">Edit</button>
+                    <button class="danger" onclick="app.deleteItem('students', ${i})">Del</button>
+                </div>` : ''}
+            </div>`;
+        });
+        
+        // Trigger reflow for progress bars
+        setTimeout(() => {
+            document.querySelectorAll('.progress-fill').forEach(el => {
+                const w = el.style.width; el.style.width = '0'; 
+                setTimeout(()=> el.style.width = w, 50);
+            });
+        }, 100);
+    },
+    renderComms() {
+        const list = document.getElementById('comm-list');
+        list.innerHTML = '';
+        
+        document.getElementById('add-comm-btn').style.display = (this.currentRole === 'Principal' || this.currentRole === 'Teacher') ? 'block' : 'none';
 
-function saveAttendance(){
-  let today = new Date().toLocaleDateString();
-  let record = {date:today,data:{}};
+        // Filter: Students only see Homework/Notice for them. Teachers see Principal notices + their own homework.
+        const filtered = this.db.comms.filter(c => {
+            if (this.currentRole === 'Student') return c.target === 'Students' || c.target === 'All';
+            if (this.currentRole === 'Teacher') return c.target === 'Teachers' || c.target === 'All' || c.author === this.currentUser.id;
+            return true; // Principal sees all
+        });
 
-  students.forEach(s=>{
-    record.data[s.id] = document.getElementById("att_"+s.id).value;
-  });
-
-  attendance.push(record);
-  toast("Attendance Saved");
-}
-
-/* ===== HOMEWORK ===== */
-function addHomework(){
-  let title = htitle.value;
-  let desc = hdesc.value;
-
-  homework.push({title,desc});
-  localStorage.setItem("homework",JSON.stringify(homework));
-  loadHomework();
-}
-
-function loadHomework(){
-  let list = document.getElementById("homeworkList");
-  list.innerHTML="";
-  homework.forEach(h=>{
-    list.innerHTML+=`
-      <div class="glass card">
-        <b>${h.title}</b><br>
-        ${h.desc}
-      </div>
-    `;
-  });
-}
-
-/* ===== LOGOUT ===== */
-function logout(){
-  location.reload();
-}
-
-</script>
-
-</body>
-</html>
+        filtered.reverse().forEach((c, i) => {
+            list.innerHTML += `
+            <div class="glass card" style="animation-delay: ${i * 0.1}s">
+                <div style="font-size:12px; color:var(--primary); margin-bottom:5px;">To: ${c.target} | By: ${c.authorRole}</div>
+                <h4 style="margin-bottom:8px;">${c.title}</h4>
+                <p style="font-size:14px; opacity:0.9;">${c.desc}</p>
+                ${(this.currentRole === 'Principal' || c.author === this.currentUser.id) ? `
+                <button class="danger" style="margin-top:15px; padding:5px 10px; width:auto;" onclick="app.deleteComm(${c.id})">Delete</button>
+                ` : ''}
+            </div>`;
+        });
+    },
+    renderStudentProfile() {
+        const s = this.currentUser;
+        const container = document.getElementById('my-profile-card');
+        const percentage = s.marks || 0;
+        
+        container.innerHTML = `
+            <div style="text-align:center; padding: 20px;">
+                <img src="${s.photo || 'data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 fill=%22%2300f2fe%22/><text x=%2250%22 y=%2265%22 font-size=%2240%22 fill=%22white%22 text-anchor=%22middle%22>S</text></svg>'}" style="width:120px; height:120px; bord
