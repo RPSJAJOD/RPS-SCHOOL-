@@ -1,446 +1,297 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>School App Pro - Hyper Design</title>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<style>
-    /* VARIABLES & RESET */
-    :root {
-        --glass-bg: rgba(255, 255, 255, 0.1);
-        --glass-border: rgba(255, 255, 255, 0.2);
-        --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.2);
-        --primary: #00f2fe;
-        --secondary: #4facfe;
-        --text: #ffffff;
-    }
-    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
-    
-    /* ANIMATED AURORA BACKGROUND */
-    body {
-        min-height: 100vh;
-        background: linear-gradient(-45deg, #1e3c72, #2a5298, #0f2027, #203a43, #2c5364);
-        background-size: 400% 400%;
-        animation: aurora 15s ease infinite;
-        color: var(--text);
-        overflow-x: hidden;
-    }
-    @keyframes aurora {
-        0% { background-position: 0% 50%; }
-        50% { background-position: 100% 50%; }
-        100% { background-position: 0% 50%; }
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>School App Pro - Fixed</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #00f2fe;
+            --secondary: #4facfe;
+            --bg: #0f172a;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+        
+        body {
+            background: radial-gradient(circle at top right, #1e293b, #0f172a);
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
 
-    /* GLASSMORPHISM UTILITIES */
-    .glass {
-        background: var(--glass-bg);
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
-        border: 1px solid var(--glass-border);
-        box-shadow: var(--glass-shadow);
-        border-radius: 16px;
-    }
+        /* PREMIUM GLASS UI */
+        .glass {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+        }
 
-    /* TYPOGRAPHY & FORMS */
-    h2, h3 { font-weight: 600; margin-bottom: 15px; }
-    input, select, button, textarea {
-        width: 100%; padding: 12px 15px; margin-bottom: 15px;
-        border-radius: 10px; border: none; outline: none;
-        font-size: 14px; transition: all 0.3s ease;
-    }
-    input, select, textarea {
-        background: rgba(255,255,255,0.15); color: white;
-        border: 1px solid rgba(255,255,255,0.1);
-    }
-    input::placeholder, textarea::placeholder { color: rgba(255,255,255,0.7); }
-    input:focus, select:focus { background: rgba(255,255,255,0.25); border-color: var(--primary); }
-    option { background: #2a5298; color: white; }
-    
-    button {
-        background: linear-gradient(135deg, var(--secondary), var(--primary));
-        color: white; font-weight: 600; cursor: pointer;
-        box-shadow: 0 4px 15px rgba(0, 242, 254, 0.4);
-    }
-    button:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0, 242, 254, 0.6); }
-    button.danger { background: linear-gradient(135deg, #ff416c, #ff4b2b); box-shadow: 0 4px 15px rgba(255, 65, 108, 0.4); }
+        /* LOGIN FORM */
+        #login-box {
+            width: 90%;
+            max-width: 400px;
+            margin: auto;
+            text-align: center;
+        }
 
-    /* LAYOUT */
-    #app-container { max-width: 800px; margin: 0 auto; padding: 20px; }
-    .hidden { display: none !important; }
-    
-    /* LOGIN SCREEN */
-    #login-section { max-width: 400px; margin: 10vh auto; padding: 30px; text-align: center; }
-    .avatar-placeholder { width: 80px; height: 80px; background: rgba(255,255,255,0.2); border-radius: 50%; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center; font-size: 30px; }
+        input, select, button {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border-radius: 12px;
+            border: none;
+            outline: none;
+            font-size: 15px;
+        }
 
-    /* DASHBOARD NAV */
-    .nav-bar { display: flex; gap: 10px; padding: 15px; margin-bottom: 20px; overflow-x: auto; scrollbar-width: none; }
-    .nav-bar::-webkit-scrollbar { display: none; }
-    .nav-bar button { margin: 0; white-space: nowrap; flex: 1; min-width: 100px; }
+        input, select { background: rgba(255,255,255,0.1); color: white; }
+        option { background: #1e293b; color: white; }
 
-    /* CARDS & STAGGERED ANIMATIONS */
-    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 15px; }
-    .card {
-        padding: 20px; position: relative;
-        animation: slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-        opacity: 0; transform: translateY(20px);
-    }
-    .card img { width: 60px; height: 60px; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary); }
-    .card-header { display: flex; align-items: center; gap: 15px; margin-bottom: 15px; }
-    .card-actions { display: flex; gap: 10px; margin-top: 15px; }
-    
-    @keyframes slideUp { to { opacity: 1; transform: translateY(0); } }
+        button {
+            background: linear-gradient(135deg, var(--secondary), var(--primary));
+            color: #0f172a;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s;
+        }
 
-    /* PROGRESS BARS */
-    .progress-container { margin-top: 10px; }
-    .progress-label { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 5px; }
-    .progress-bg { background: rgba(255,255,255,0.1); height: 8px; border-radius: 4px; overflow: hidden; }
-    .progress-fill { background: var(--primary); height: 100%; width: 0; transition: width 1s cubic-bezier(0.16, 1, 0.3, 1); }
+        button:hover { transform: scale(1.02); opacity: 0.9; }
 
-    /* MODAL */
-    #modal-overlay {
-        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-        background: rgba(0,0,0,0.6); backdrop-filter: blur(5px);
-        display: flex; align-items: center; justify-content: center; z-index: 100;
-        opacity: 0; pointer-events: none; transition: opacity 0.3s;
-    }
-    #modal-overlay.active { opacity: 1; pointer-events: auto; }
-    .modal-content { width: 90%; max-width: 450px; padding: 25px; transform: scale(0.9); transition: transform 0.3s; max-height: 90vh; overflow-y: auto; }
-    #modal-overlay.active .modal-content { transform: scale(1); }
-    .close-btn { position: absolute; top: 15px; right: 15px; background: transparent; box-shadow: none; width: auto; font-size: 20px; padding: 0; margin: 0; }
+        /* DASHBOARD */
+        #app { display: none; width: 100%; max-width: 900px; margin: 20px auto; padding: 15px; }
+        .hidden { display: none !important; }
+        .nav { display: flex; gap: 10px; margin-bottom: 20px; overflow-x: auto; }
+        .card { background: rgba(255,255,255,0.03); padding: 15px; border-radius: 15px; margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.05); }
 
-    /* TOAST NOTIFICATIONS */
-    #toast-container { position: fixed; bottom: 20px; right: 20px; z-index: 999; display: flex; flex-direction: column; gap: 10px; }
-    .toast {
-        background: rgba(255,255,255,0.2); backdrop-filter: blur(15px); border-left: 4px solid var(--primary);
-        padding: 15px 20px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-        animation: slideInRight 0.3s forwards, fadeOut 0.3s 2.7s forwards;
-    }
-    @keyframes slideInRight { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
-    @keyframes fadeOut { to { opacity: 0; transform: translateY(-10px); } }
-
-    .header-flex { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-</style>
+        /* TOAST */
+        #toast {
+            position: fixed; top: 20px; right: 20px; 
+            padding: 15px 25px; border-radius: 10px; 
+            background: var(--primary); color: #000;
+            font-weight: 600; display: none; z-index: 1000;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+        }
+    </style>
 </head>
 <body>
 
-<div id="toast-container"></div>
+<div id="toast"></div>
 
-<div id="login-section" class="glass">
-    <div class="avatar-placeholder">🎓</div>
-    <h2>Portal Login</h2>
-    <select id="login-role">
+<div id="login-box" class="glass">
+    <h1 style="margin-bottom: 20px;">School Pro</h1>
+    <select id="role">
         <option value="Principal">Principal</option>
         <option value="Teacher">Teacher</option>
         <option value="Student">Student</option>
     </select>
-    <input type="text" id="login-id" placeholder="User ID">
-    <input type="password" id="login-pass" placeholder="Password">
-    <button onclick="app.login()">Secure Login</button>
+    <input type="text" id="userid" placeholder="User ID">
+    <input type="password" id="password" placeholder="Password">
+    <button onclick="handleLogin()">Login to Dashboard</button>
 </div>
 
-<div id="app-container" class="hidden">
-    <div class="header-flex">
-        <div>
-            <h2 id="dash-title">Dashboard</h2>
-            <p id="dash-subtitle" style="font-size:12px; opacity:0.8;"></p>
-        </div>
-        <img id="user-profile-pic" src="" style="width:50px; height:50px; border-radius:50%; object-fit:cover; display:none; border: 2px solid var(--primary);">
+<div id="app">
+    <div class="glass" style="margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;">
+        <h2 id="welcome">Dashboard</h2>
+        <button onclick="location.reload()" style="width: auto; padding: 8px 15px;">Logout</button>
     </div>
 
-    <div id="nav-menu" class="glass nav-bar">
-        </div>
-
-    <div id="panel-teachers" class="panel hidden">
-        <div class="header-flex">
-            <h3>Manage Teachers <span id="teacher-count" style="font-size:14px">(0/12)</span></h3>
-            <button onclick="app.openModal('teacher')" style="width:auto; padding:8px 15px">+ Add</button>
-        </div>
-        <div id="teacher-list" class="grid"></div>
+    <div class="nav">
+        <button onclick="showTab('teachers-tab')" id="nav-t">Teachers</button>
+        <button onclick="showTab('students-tab')" id="nav-s">Students</button>
+        <button onclick="showTab('work-tab')">Management</button>
     </div>
 
-    <div id="panel-students" class="panel hidden">
-        <div class="header-flex">
-            <h3>Manage Students</h3>
-            <button id="add-student-btn" onclick="app.openModal('student')" style="width:auto; padding:8px 15px">+ Add</button>
+    <div id="teachers-tab" class="tab-content">
+        <div class="glass">
+            <h3>Add Teacher (Max 12)</h3>
+            <input type="text" id="t-name" placeholder="Teacher Name">
+            <input type="text" id="t-id" placeholder="Teacher Login ID">
+            <input type="text" id="t-pass" placeholder="Teacher Password">
+            <button onclick="addTeacher()">Save Teacher</button>
+            <div id="teacher-list" style="margin-top: 20px;"></div>
         </div>
-        <div id="student-list" class="grid"></div>
     </div>
 
-    <div id="panel-communications" class="panel hidden">
-        <div class="header-flex">
-            <h3>Communications</h3>
-            <button id="add-comm-btn" onclick="app.openModal('communication')" style="width:auto; padding:8px 15px">+ New</button>
+    <div id="students-tab" class="tab-content hidden">
+        <div class="glass">
+            <h3>Student Database</h3>
+            <div id="student-add-form">
+                <input type="text" id="s-name" placeholder="Student Name">
+                <input type="text" id="s-id" placeholder="Student ID">
+                <input type="text" id="s-pass" placeholder="Password">
+                <input type="file" id="s-photo" accept="image/*">
+                <button onclick="addStudent()">Register Student</button>
+            </div>
+            <div id="student-list" style="margin-top: 20px;"></div>
         </div>
-        <div id="comm-list" class="grid"></div>
     </div>
 
-    <div id="panel-profile" class="panel hidden">
-        <div class="glass card" id="my-profile-card"></div>
-    </div>
-
-</div>
-
-<div id="modal-overlay">
-    <div class="glass modal-content">
-        <button class="close-btn" onclick="app.closeModal()">✕</button>
-        <h3 id="modal-title">Title</h3>
-        <div id="modal-body"></div>
-        <button id="modal-save-btn">Save</button>
+    <div id="work-tab" class="tab-content hidden">
+        <div class="glass">
+            <h3>Admin Notices & Work</h3>
+            <input type="text" id="n-title" placeholder="Title">
+            <textarea id="n-body" placeholder="Details..." style="width:100%; background:rgba(255,255,255,0.1); color:white; border-radius:10px; padding:10px; margin:10px 0; border:none;"></textarea>
+            <button onclick="addNotice()">Post Notice</button>
+            <div id="notice-list" style="margin-top: 20px;"></div>
+        </div>
     </div>
 </div>
 
 <script>
-/**
- * School App Pro - Logic Controller
- */
-const app = {
-    // State
-    db: {
-        teachers: JSON.parse(localStorage.getItem("pro_teachers")) || [],
-        students: JSON.parse(localStorage.getItem("pro_students")) || [],
-        comms: JSON.parse(localStorage.getItem("pro_comms")) || [] // Notices, Homework, Work details
-    },
-    currentUser: null,
-    currentRole: null,
-    editingIndex: null,
+    // DATA CONFIG
+    const PRINCIPAL_LOGINS = [
+        {id: "Azizkhan", pass: "khanaziz"},
+        {id: "RPS", pass: "JAJ12"}
+    ];
 
-    // Credentials
-    principals: [
-        { id: "Azizkhan", pass: "khanaziz" },
-        { id: "RPS", pass: "JAJ12" }
-    ],
+    let teachers = JSON.parse(localStorage.getItem('sch_teachers')) || [];
+    let students = JSON.parse(localStorage.getItem('sch_students')) || [];
+    let notices = JSON.parse(localStorage.getItem('sch_notices')) || [];
 
-    // --- UTILS ---
-    saveDb() {
-        localStorage.setItem("pro_teachers", JSON.stringify(this.db.teachers));
-        localStorage.setItem("pro_students", JSON.stringify(this.db.students));
-        localStorage.setItem("pro_comms", JSON.stringify(this.db.comms));
-    },
-    toast(msg, type="info") {
-        const container = document.getElementById('toast-container');
-        const t = document.createElement('div');
-        t.className = 'toast';
+    // TOAST SYSTEM
+    function showToast(msg) {
+        const t = document.getElementById('toast');
         t.innerText = msg;
-        if(type === 'error') t.style.borderLeftColor = '#ff416c';
-        container.appendChild(t);
-        setTimeout(() => t.remove(), 3000);
-    },
-    resizeImage(file, callback) {
-        // Compress image to prevent localStorage quota exceeded
-        if(!file) return callback(null);
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            const img = new Image();
-            img.onload = () => {
-                const canvas = document.createElement('canvas');
-                const MAX_WIDTH = 200; // Small size for fast loading
-                const scaleSize = MAX_WIDTH / img.width;
-                canvas.width = MAX_WIDTH;
-                canvas.height = img.height * scaleSize;
-                const ctx = canvas.getContext('2d');
-                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-                callback(canvas.toDataURL('image/jpeg', 0.8));
-            };
-            img.src = e.target.result;
-        };
-        reader.readAsDataURL(file);
-    },
+        t.style.display = 'block';
+        setTimeout(() => t.style.display = 'none', 3000);
+    }
 
-    // --- AUTH ---
-    login() {
-        const role = document.getElementById('login-role').value;
-        const id = document.getElementById('login-id').value;
-        const pass = document.getElementById('login-pass').value;
-
-        if(!id || !pass) return this.toast("Enter ID and Password", "error");
+    // LOGIN LOGIC
+    function handleLogin() {
+        const role = document.getElementById('role').value;
+        const user = document.getElementById('userid').value.trim();
+        const pass = document.getElementById('password').value.trim();
 
         if (role === "Principal") {
-            const p = this.principals.find(x => x.id === id && x.pass === pass);
-            if (p) this.startSession(p, "Principal");
-            else this.toast("Invalid Principal Credentials", "error");
-        } else if (role === "Teacher") {
-            const t = this.db.teachers.find(x => x.id === id && x.pass === pass);
-            if (t) this.startSession(t, "Teacher");
-            else this.toast("Invalid Teacher Credentials", "error");
-        } else if (role === "Student") {
-            const s = this.db.students.find(x => x.id === id && x.pass === pass);
-            if (s) this.startSession(s, "Student");
-            else this.toast("Invalid Student Credentials", "error");
+            const auth = PRINCIPAL_LOGINS.find(p => p.id === user && p.pass === pass);
+            if (auth) startApp("Principal", user);
+            else showToast("Principal ID/Pass Incorrect");
+        } 
+        else if (role === "Teacher") {
+            const auth = teachers.find(t => t.id === user && t.pass === pass);
+            if (auth) startApp("Teacher", auth.name);
+            else showToast("Teacher ID/Pass Incorrect");
         }
-    },
-    logout() {
-        this.currentUser = null;
-        this.currentRole = null;
-        document.getElementById('app-container').classList.add('hidden');
-        document.getElementById('login-section').classList.remove('hidden');
-        document.getElementById('login-id').value = "";
-        document.getElementById('login-pass').value = "";
-        this.toast("Logged out securely");
-    },
-    startSession(user, role) {
-        this.currentUser = user;
-        this.currentRole = role;
-        
-        document.getElementById('login-section').classList.add('hidden');
-        document.getElementById('app-container').classList.remove('hidden');
-        document.getElementById('dash-title').innerText = `${role} Portal`;
-        document.getElementById('dash-subtitle').innerText = `Welcome back, ${user.name || user.id}`;
-        
-        const pic = document.getElementById('user-profile-pic');
-        if(user.photo) {
-            pic.src = user.photo;
-            pic.style.display = 'block';
+        else if (role === "Student") {
+            const auth = students.find(s => s.id === user && s.pass === pass);
+            if (auth) startApp("Student", auth.name);
+            else showToast("Student ID/Pass Incorrect");
+        }
+    }
+
+    function startApp(role, name) {
+        document.getElementById('login-box').style.display = 'none';
+        document.getElementById('app').style.display = 'block';
+        document.getElementById('welcome').innerText = role + ": " + name;
+
+        // Permissions
+        if (role === "Teacher") {
+            document.getElementById('nav-t').classList.add('hidden');
+            showTab('students-tab');
+        } else if (role === "Student") {
+            document.getElementById('nav-t').classList.add('hidden');
+            document.getElementById('student-add-form').classList.add('hidden');
+            showTab('work-tab');
         } else {
-            pic.style.display = 'none';
-        }
-
-        this.buildNav();
-    },
-
-    // --- NAVIGATION ---
-    buildNav() {
-        const nav = document.getElementById('nav-menu');
-        nav.innerHTML = '';
-        const role = this.currentRole;
-
-        const addBtn = (name, target) => {
-            const b = document.createElement('button');
-            b.innerText = name;
-            b.onclick = () => this.showPanel(target);
-            nav.appendChild(b);
-        };
-
-        if (role === "Principal") {
-            addBtn("Teachers", "panel-teachers");
-            addBtn("Students", "panel-students");
-            addBtn("Notices/Work", "panel-communications");
-            this.showPanel("panel-teachers");
-        } else if (role === "Teacher") {
-            addBtn("Students", "panel-students");
-            addBtn("Notices From Admin", "panel-communications");
-            this.showPanel("panel-students");
-        } else if (role === "Student") {
-            addBtn("My Profile", "panel-profile");
-            addBtn("Homework/Notices", "panel-communications");
-            this.showPanel("panel-profile");
+            showTab('teachers-tab');
         }
         
-        const logoutBtn = document.createElement('button');
-        logoutBtn.innerText = "Logout";
-        logoutBtn.className = "danger";
-        logoutBtn.onclick = () => this.logout();
-        nav.appendChild(logoutBtn);
-    },
-    showPanel(id) {
-        document.querySelectorAll('.panel').forEach(p => p.classList.add('hidden'));
+        renderAll();
+    }
+
+    function showTab(id) {
+        document.querySelectorAll('.tab-content').forEach(t => t.classList.add('hidden'));
         document.getElementById(id).classList.remove('hidden');
+    }
 
-        if (id === 'panel-teachers') this.renderTeachers();
-        if (id === 'panel-students') this.renderStudents();
-        if (id === 'panel-communications') this.renderComms();
-        if (id === 'panel-profile') this.renderStudentProfile();
-    },
+    // ACTIONS
+    function addTeacher() {
+        if (teachers.length >= 12) return showToast("Limit: 12 Teachers");
+        const name = document.getElementById('t-name').value;
+        const id = document.getElementById('t-id').value;
+        const pass = document.getElementById('t-pass').value;
 
-    // --- RENDERING VIEWS ---
-    renderTeachers() {
-        const list = document.getElementById('teacher-list');
-        list.innerHTML = '';
-        document.getElementById('teacher-count').innerText = `(${this.db.teachers.length}/12)`;
-
-        this.db.teachers.forEach((t, i) => {
-            const delay = i * 0.1;
-            list.innerHTML += `
-            <div class="glass card" style="animation-delay: ${delay}s">
-                <div class="card-header">
-                    <img src="${t.photo || 'data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 fill=%22%232a5298%22/><text x=%2250%22 y=%2265%22 font-size=%2240%22 fill=%22white%22 text-anchor=%22middle%22>T</text></svg>'}">
-                    <div>
-                        <h4 style="margin:0">${t.name}</h4>
-                        <p style="font-size:12px; margin:0; opacity:0.8">ID: ${t.id}</p>
-                    </div>
-                </div>
-                <div style="font-size:13px">
-                    <p><b>Salary:</b> ${t.salary || 'Not Set'}</p>
-                    <p><b>Work:</b> ${t.work || 'Not Set'}</p>
-                </div>
-                <div class="card-actions">
-                    <button onclick="app.openModal('teacher', ${i})">Edit</button>
-                    <button class="danger" onclick="app.deleteItem('teachers', ${i})">Del</button>
-                </div>
-            </div>`;
-        });
-    },
-    renderStudents() {
-        const list = document.getElementById('student-list');
-        list.innerHTML = '';
+        if(!name || !id || !pass) return showToast("Fill all fields");
         
-        // Only Principal and Teacher can see the Add Student button
-        document.getElementById('add-student-btn').style.display = (this.currentRole === 'Student') ? 'none' : 'block';
+        teachers.push({name, id, pass});
+        localStorage.setItem('sch_teachers', JSON.stringify(teachers));
+        renderAll();
+        showToast("Teacher Added!");
+    }
 
-        this.db.students.forEach((s, i) => {
-            const delay = i * 0.1;
-            const percentage = s.marks || 0;
-            list.innerHTML += `
-            <div class="glass card" style="animation-delay: ${delay}s">
-                <div class="card-header">
-                    <img src="${s.photo || 'data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 fill=%22%2300f2fe%22/><text x=%2250%22 y=%2265%22 font-size=%2240%22 fill=%22white%22 text-anchor=%22middle%22>S</text></svg>'}">
-                    <div>
-                        <h4 style="margin:0">${s.name}</h4>
-                        <p style="font-size:12px; margin:0; opacity:0.8">ID: ${s.id}</p>
-                    </div>
-                </div>
-                <div class="progress-container">
-                    <div class="progress-label"><span>Overall Performance</span><span>${percentage}%</span></div>
-                    <div class="progress-bg">
-                        <div class="progress-fill" style="width: ${percentage}%"></div>
-                    </div>
-                </div>
-                ${this.currentRole !== 'Student' ? `
-                <div class="card-actions">
-                    <button onclick="app.openModal('student', ${i})">Edit</button>
-                    <button class="danger" onclick="app.deleteItem('students', ${i})">Del</button>
-                </div>` : ''}
-            </div>`;
-        });
-        
-        // Trigger reflow for progress bars
-        setTimeout(() => {
-            document.querySelectorAll('.progress-fill').forEach(el => {
-                const w = el.style.width; el.style.width = '0'; 
-                setTimeout(()=> el.style.width = w, 50);
-            });
-        }, 100);
-    },
-    renderComms() {
-        const list = document.getElementById('comm-list');
-        list.innerHTML = '';
-        
-        document.getElementById('add-comm-btn').style.display = (this.currentRole === 'Principal' || this.currentRole === 'Teacher') ? 'block' : 'none';
+    function addStudent() {
+        const name = document.getElementById('s-name').value;
+        const id = document.getElementById('s-id').value;
+        const pass = document.getElementById('s-pass').value;
+        const file = document.getElementById('s-photo').files[0];
 
-        // Filter: Students only see Homework/Notice for them. Teachers see Principal notices + their own homework.
-        const filtered = this.db.comms.filter(c => {
-            if (this.currentRole === 'Student') return c.target === 'Students' || c.target === 'All';
-            if (this.currentRole === 'Teacher') return c.target === 'Teachers' || c.target === 'All' || c.author === this.currentUser.id;
-            return true; // Principal sees all
-        });
+        if(!name || !id || !pass) return showToast("Fill all fields");
 
-        filtered.reverse().forEach((c, i) => {
-            list.innerHTML += `
-            <div class="glass card" style="animation-delay: ${i * 0.1}s">
-                <div style="font-size:12px; color:var(--primary); margin-bottom:5px;">To: ${c.target} | By: ${c.authorRole}</div>
-                <h4 style="margin-bottom:8px;">${c.title}</h4>
-                <p style="font-size:14px; opacity:0.9;">${c.desc}</p>
-                ${(this.currentRole === 'Principal' || c.author === this.currentUser.id) ? `
-                <button class="danger" style="margin-top:15px; padding:5px 10px; width:auto;" onclick="app.deleteComm(${c.id})">Delete</button>
-                ` : ''}
-            </div>`;
-        });
-    },
-    renderStudentProfile() {
-        const s = this.currentUser;
-        const container = document.getElementById('my-profile-card');
-        const percentage = s.marks || 0;
-        
-        container.innerHTML = `
-            <div style="text-align:center; padding: 20px;">
-                <img src="${s.photo || 'data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 fill=%22%2300f2fe%22/><text x=%2250%22 y=%2265%22 font-size=%2240%22 fill=%22white%22 text-anchor=%22middle%22>S</text></svg>'}" style="width:120px; height:120px; bord
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            students.push({name, id, pass, photo: e.target.result});
+            localStorage.setItem('sch_students', JSON.stringify(students));
+            renderAll();
+            showToast("Student Added!");
+        }
+        if(file) reader.readAsDataURL(file);
+        else {
+            students.push({name, id, pass, photo: ''});
+            localStorage.setItem('sch_students', JSON.stringify(students));
+            renderAll();
+        }
+    }
+
+    function addNotice() {
+        const title = document.getElementById('n-title').value;
+        const body = document.getElementById('n-body').value;
+        if(!title) return;
+        notices.push({title, body});
+        localStorage.setItem('sch_notices', JSON.stringify(notices));
+        renderAll();
+        showToast("Notice Posted");
+    }
+
+    // RENDERERS
+    function renderAll() {
+        const tList = document.getElementById('teacher-list');
+        tList.innerHTML = teachers.map((t, i) => `
+            <div class="card">
+                <b>${t.name}</b> (ID: ${t.id})
+                <button onclick="deleteItem('teachers', ${i})" style="width:auto; float:right; background:red; color:white; padding:2px 10px;">X</button>
+            </div>
+        `).join('');
+
+        const sList = document.getElementById('student-list');
+        sList.innerHTML = students.map((s, i) => `
+            <div class="card" style="display:flex; align-items:center; gap:15px;">
+                <img src="${s.photo || 'https://via.placeholder.com/50'}" style="width:50px; height:50px; border-radius:50%; object-fit:cover;">
+                <div><b>${s.name}</b><br><small>ID: ${s.id}</small></div>
+                <button onclick="deleteItem('students', ${i})" style="margin-left:auto; width:auto; background:red; color:white;">X</button>
+            </div>
+        `).join('');
+
+        const nList = document.getElementById('notice-list');
+        nList.innerHTML = notices.map(n => `
+            <div class="card">
+                <h4 style="color:var(--primary)">${n.title}</h4>
+                <p>${n.body}</p>
+            </div>
+        `).join('');
+    }
+
+    function deleteItem(type, index) {
+        if(type === 'teachers') teachers.splice(index, 1);
+        else students.splice(index, 1);
+        localStorage.setItem('sch_' + type, JSON.stringify(type === 'teachers' ? teachers : students));
+        renderAll();
+    }
+</script>
+
+</body>
+</html>
