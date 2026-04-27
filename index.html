@@ -3,222 +3,260 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RPS Jajod - Sikar</title>
+    <title>RPS JAJOD - RealTime Portal</title>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
-        :root { --dark: #1a2a6c; --red: #b21f1f; --gold: #fdbb2d; --bg: #f0f2f5; }
+        :root { --dark: #1a2a6c; --red: #b21f1f; --gold: #fdbb2d; --bg: #f8f9fa; }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Outfit', sans-serif; }
-        body { background: var(--bg); padding-bottom: 100px; }
-        header { background: var(--dark); color: white; padding: 25px; text-align: center; border-radius: 0 0 25px 25px; }
-        .card { background: white; border-radius: 15px; padding: 20px; margin: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.08); }
-        input, select, textarea { width: 100%; padding: 12px; margin: 10px 0; border-radius: 10px; border: 1px solid #ccc; font-size: 14px; outline: none; }
-        button { background: var(--red); color: white; border: none; padding: 15px; border-radius: 10px; font-weight: 700; width: 100%; cursor: pointer; margin-top: 10px; }
+        body { background: var(--bg); padding-bottom: 80px; }
+        header { background: var(--dark); color: white; padding: 25px; text-align: center; border-radius: 0 0 25px 25px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        .card { background: white; border-radius: 15px; padding: 18px; margin: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); border: 1px solid #eee; }
+        h4 { color: var(--dark); margin-bottom: 12px; border-bottom: 2px solid var(--gold); display: inline-block; }
+        input, select, textarea { width: 100%; padding: 12px; margin: 8px 0; border-radius: 10px; border: 1px solid #ddd; outline: none; font-size: 14px; }
+        button { background: var(--red); color: white; border: none; padding: 14px; border-radius: 10px; font-weight: 700; width: 100%; cursor: pointer; transition: 0.3s; }
+        button:active { transform: scale(0.98); }
         .hidden { display: none !important; }
-        .profile-img { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; display: block; margin: 0 auto 10px; background: #ddd; border: 2px solid var(--gold); }
-        .nav { position: fixed; bottom: 0; width: 100%; background: white; display: flex; padding: 15px 0; border-top: 1px solid #ddd; }
-        .nav-item { flex: 1; text-align: center; font-size: 12px; color: #888; cursor: pointer; }
+        .status-bar { font-size: 10px; font-weight: bold; margin-top: 8px; transition: 0.5s; }
+        .label { font-size: 10px; color: #888; text-transform: uppercase; font-weight: 700; display: block; margin-top: 10px; }
+        .profile-pic { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 3px solid var(--gold); display: block; margin: 0 auto 10px; background: #f0f0f0; }
     </style>
 </head>
 <body>
 
 <header>
-    <h2 id="main-title">RPS JAJOD Portal</h2>
+    <h2>RPS JAJOD</h2>
+    <div id="db-status" class="status-bar" style="color: #ff9800;">● Connecting to Sikar Cloud...</div>
 </header>
 
-<div id="login-screen" style="padding: 20px;">
+<div id="screen-login" style="padding: 20px;">
     <div class="card">
-        <h3 style="text-align: center; margin-bottom: 15px;">Secure Sign-In</h3>
+        <h3 style="text-align: center; margin-bottom: 15px;">Portal Login</h3>
         <select id="login-role">
             <option value="Principal">Principal</option>
             <option value="Teacher">Teacher</option>
             <option value="Student">Student</option>
         </select>
-        <input type="text" id="login-id" placeholder="User ID">
-        <input type="password" id="login-pass" placeholder="Password">
-        <button onclick="app.login()">Login Now</button>
-        <p style="font-size: 10px; color: #999; margin-top: 15px; text-align: center;">Default Admin: Azizkhan / khanaziz</p>
+        <input type="text" id="login-id" placeholder="Enter ID">
+        <input type="password" id="login-pass" placeholder="Enter Password">
+        <button onclick="sys.login()">Sign In</button>
+        <p style="text-align: center; font-size: 10px; color: #aaa; margin-top: 15px;">Admin: Azizkhan / khanaziz</p>
     </div>
 </div>
 
-<div id="app-screen" class="hidden">
+<div id="screen-app" class="hidden">
     
     <div id="view-principal" class="hidden">
         <div class="card">
-            <h4 style="color:var(--dark)">Step 1: Register Teacher (ID/Pass)</h4>
-            <input type="text" id="reg-t-name" placeholder="Full Name">
-            <input type="text" id="reg-t-id" placeholder="Set Teacher ID (Login ID)">
-            <input type="text" id="reg-t-pass" placeholder="Set Password">
-            <input type="text" id="reg-t-classes" placeholder="Allowed Classes (e.g. 1,2,5)">
-            <select id="reg-t-sub">
-                <option value="Hindi">Hindi</option>
-                <option value="Math">Math</option>
-                <option value="English">English</option>
+            <h4>➕ Create Teacher Account</h4>
+            <input type="text" id="new-t-name" placeholder="Full Name">
+            <input type="text" id="new-t-id" placeholder="Assign ID (Unique)">
+            <input type="text" id="new-t-pass" placeholder="Set Password">
+            <input type="text" id="new-t-classes" placeholder="Classes (e.g. 9,10,11)">
+            <select id="new-t-sub">
+                <option value="Hindi">Hindi</option><option value="Math">Math</option><option value="Science">Science</option><option value="English">English</option>
             </select>
-            <button onclick="app.registerTeacher()" style="background: green;">Create Teacher Account</button>
+            <button onclick="sys.saveTeacher()" style="background: #28a745;">Push to Live Server</button>
         </div>
         <div class="card">
-            <h4>Live Activity Logs</h4>
-            <div id="logs" style="font-size: 11px; max-height: 100px; overflow-y: auto;"></div>
+            <h4>Live Feed</h4>
+            <div id="logs" style="font-size: 11px; color: #666; max-height: 100px; overflow-y: auto;"></div>
         </div>
     </div>
 
     <div id="view-teacher" class="hidden">
-        <div class="card" style="text-align:center;">
-            <img id="t-pic" class="profile-img" src="">
-            <h3 id="t-name-head">Teacher</h3>
+        <div class="card" style="text-align: center;">
+            <h3 id="t-welcome">Welcome</h3>
+            <p id="t-info" style="font-size: 11px; color: #777;"></p>
         </div>
         <div class="card">
-            <h4>Enroll New Student</h4>
-            <select id="s-class-sel"></select>
+            <h4>Enroll Student</h4>
+            <select id="t-class-sel"></select>
             <input type="text" id="s-name" placeholder="Student Name">
-            <input type="text" id="s-id" placeholder="Student Roll ID">
-            <input type="text" id="s-pass" placeholder="Student Pass">
-            <button onclick="app.registerStudent()">Add Student</button>
+            <input type="text" id="s-id" placeholder="Student ID/Roll">
+            <input type="text" id="s-pass" placeholder="Student Password">
+            <button onclick="sys.saveStudent()">Add to Live List</button>
         </div>
         <div class="card">
-            <h4>Update Student Data</h4>
-            <select id="edit-select" onchange="app.loadEdit()"><option value="">Choose Student</option></select>
-            <div id="edit-box" class="hidden">
-                <input type="text" id="e-f" placeholder="Father Name">
+            <h4>Manage Student Records</h4>
+            <select id="edit-select" onchange="sys.loadStudent()"><option value="">Choose Student</option></select>
+            <div id="edit-panel" class="hidden">
+                <span class="label">Update Photo</span>
+                <input type="file" accept="image/*" onchange="sys.upPic(event)">
+                <img id="s-preview" class="profile-pic" src="">
+                <input type="text" id="e-f" placeholder="Father's Name">
                 <input type="text" id="e-att" placeholder="Attendance %">
-                <input type="text" id="e-fee" placeholder="Fees">
-                <textarea id="e-hw" placeholder="Homework..."></textarea>
-                <button onclick="app.saveStudent()">Save Changes</button>
+                <input type="text" id="e-fee" placeholder="Fees Due">
+                <textarea id="e-hw" placeholder="Today's Homework..."></textarea>
+                <button onclick="sys.updateStudent()">Sync Records</button>
             </div>
         </div>
     </div>
 
     <div id="view-student" class="hidden">
         <div class="card" style="text-align: center;">
-            <h2 id="st-name">Welcome</h2>
-            <p id="st-info" class="label"></p>
+            <img id="st-pic" class="profile-pic" src="">
+            <h2 id="st-name-head">---</h2>
+            <p id="st-meta" class="label"></p>
         </div>
-        <div class="card" style="background: #fff1f1;">
-            <p>Fee Status</p>
+        <div class="card" style="background: #fff1f1; border-left: 5px solid var(--red);">
+            <span class="label">Balance Fees</span>
             <h2 id="st-fee" style="color:var(--red)">₹ 0</h2>
         </div>
         <div class="card">
-            <p>Today's Task:</p>
-            <b id="st-hw"></b>
+            <span class="label">Homework / Activity</span>
+            <p id="st-hw" style="font-size: 15px; margin-top: 5px;"></p>
         </div>
     </div>
-
-</div>
-
-<div id="nav" class="nav hidden">
-    <div class="nav-item" onclick="location.reload()">🏠<br>Dashboard</div>
-    <div class="nav-item" onclick="location.reload()">🚪<br>Logout</div>
 </div>
 
 <script>
-const app = {
-    db: {
-        teachers: JSON.parse(localStorage.getItem('rps_v15_t')) || [],
-        students: JSON.parse(localStorage.getItem('rps_v15_s')) || [],
-        logs: JSON.parse(localStorage.getItem('rps_v15_l')) || []
-    },
-    user: null,
+    // --- FIREBASE LIVE CONFIG ---
+    const firebaseConfig = {
+        apiKey: "AIzaSyBj8K0fbnu3qZHO8TUOUEV4uOhihLwFEVw",
+        authDomain: "rps-sikar-da9d4.firebaseapp.com",
+        projectId: "rps-sikar-da9d4",
+        storageBucket: "rps-sikar-da9d4.firebasestorage.app",
+        messagingSenderId: "1075905739210",
+        appId: "1:1075905739210:web:0999c29b691d13715fb733",
+        databaseURL: "https://rps-sikar-da9d4-default-rtdb.firebaseio.com"
+    };
 
-    save: () => {
-        localStorage.setItem('rps_v15_t', JSON.stringify(app.db.teachers));
-        localStorage.setItem('rps_v15_s', JSON.stringify(app.db.students));
-        localStorage.setItem('rps_v15_l', JSON.stringify(app.db.logs));
-    },
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
 
-    login: () => {
-        const role = document.getElementById('login-role').value;
-        const id = document.getElementById('login-id').value.trim();
-        const ps = document.getElementById('login-pass').value.trim();
+    const sys = {
+        user: null,
+        tempPic: "",
 
-        if(role === "Principal" && id === "Azizkhan" && ps === "khanaziz") app.user = {role:"Principal", name:"Aziz Khan"};
-        else if(role === "Teacher") app.user = app.db.teachers.find(t => t.id === id && t.pass === ps);
-        else if(role === "Student") app.user = app.db.students.find(s => s.id === id && s.pass === ps);
+        login: function() {
+            const r = document.getElementById('login-role').value;
+            const id = document.getElementById('login-id').value.trim();
+            const ps = document.getElementById('login-pass').value.trim();
 
-        if(app.user) {
-            app.user.role = app.user.role || role;
-            document.getElementById('login-screen').classList.add('hidden');
-            document.getElementById('app-screen').classList.remove('hidden');
-            document.getElementById('nav').classList.remove('hidden');
-            app.render();
-        } else alert("Galat ID ya Password hai bhai!");
-    },
+            if(r === "Principal" && id === "Azizkhan" && ps === "khanaziz") {
+                this.user = {role:"Principal", name:"Aziz Khan"};
+                this.showApp();
+            } else {
+                const path = (r === "Teacher") ? 'teachers/' + id : 'students/' + id;
+                db.ref(path).once('value', (snap) => {
+                    const data = snap.val();
+                    if(data && data.pass === ps) {
+                        this.user = data;
+                        this.user.role = r;
+                        sys.showApp();
+                    } else alert("❌ Error: Invalid ID or Password!");
+                });
+            }
+        },
 
-    render: () => {
-        const r = app.user.role;
-        ['view-principal', 'view-teacher', 'view-student'].forEach(v => document.getElementById(v).classList.add('hidden'));
-        
-        if(r === "Principal") {
-            document.getElementById('view-principal').classList.remove('hidden');
-            document.getElementById('logs').innerHTML = app.db.logs.map(l => `<div>${l}</div>`).join('');
-        } else if(r === "Teacher") {
-            document.getElementById('view-teacher').classList.remove('hidden');
-            document.getElementById('t-name-head').innerText = app.user.name;
-            document.getElementById('s-class-sel').innerHTML = app.user.classes.split(',').map(c => `<option value="${c.trim()}">Class ${c.trim()}</option>`).join('');
-            app.syncEditList();
-        } else {
-            document.getElementById('view-student').classList.remove('hidden');
-            document.getElementById('st-name').innerText = app.user.name;
-            document.getElementById('st-info').innerText = `Class ${app.user.class} | SR: ${app.user.id}`;
-            document.getElementById('st-fee').innerText = "₹ " + (app.user.fee || "0");
-            document.getElementById('st-hw').innerText = app.user.hw || "No Homework";
+        showApp: function() {
+            document.getElementById('screen-login').classList.add('hidden');
+            document.getElementById('screen-app').classList.remove('hidden');
+            const r = this.user.role;
+            ['view-principal', 'view-teacher', 'view-student'].forEach(v => document.getElementById(v).classList.add('hidden'));
+            
+            if(r === "Principal") {
+                document.getElementById('view-principal').classList.remove('hidden');
+            } else if(r === "Teacher") {
+                document.getElementById('view-teacher').classList.remove('hidden');
+                document.getElementById('t-welcome').innerText = this.user.name;
+                document.getElementById('t-info').innerText = `Classes: ${this.user.classes} | Sub: ${this.user.subject}`;
+                document.getElementById('t-class-sel').innerHTML = this.user.classes.split(',').map(c => `<option value="${c.trim()}">Class ${c.trim()}</option>`).join('');
+                this.syncSList();
+            } else {
+                document.getElementById('view-student').classList.remove('hidden');
+                document.getElementById('st-pic').src = this.user.pic || "";
+                document.getElementById('st-name-head').innerText = this.user.name;
+                document.getElementById('st-meta').innerText = `Class ${this.user.class} | Roll ${this.user.id}`;
+                document.getElementById('st-fee').innerText = "₹ " + (this.user.fee || "0");
+                document.getElementById('st-hw').innerText = this.user.hw || "No Homework.";
+            }
+        },
+
+        saveTeacher: function() {
+            const id = document.getElementById('new-t-id').value;
+            const data = {
+                name: document.getElementById('new-t-name').value,
+                id: id,
+                pass: document.getElementById('new-t-pass').value,
+                classes: document.getElementById('new-t-classes').value,
+                subject: document.getElementById('new-t-sub').value
+            };
+            db.ref('teachers/' + id).set(data).then(() => alert("✅ Teacher Pushed to Cloud!"));
+        },
+
+        saveStudent: function() {
+            const id = document.getElementById('s-id').value;
+            const data = {
+                name: document.getElementById('s-name').value,
+                id: id,
+                pass: document.getElementById('s-pass').value,
+                class: document.getElementById('t-class-sel').value,
+                f:"", fee:"0", att:"0", hw:"", pic:""
+            };
+            db.ref('students/' + id).set(data).then(() => {
+                alert("✅ Student Registered Live!");
+                this.syncSList();
+            });
+        },
+
+        syncSList: function() {
+            db.ref('students').once('value', (snap) => {
+                const all = snap.val() || {};
+                const cls = this.user.classes.split(',').map(x => x.trim());
+                let html = '<option value="">Choose Student</option>';
+                for(let id in all) {
+                    if(cls.includes(all[id].class)) html += `<option value="${id}">${all[id].name} (${all[id].class})</option>`;
+                }
+                document.getElementById('edit-select').innerHTML = html;
+            });
+        },
+
+        loadStudent: function() {
+            const id = document.getElementById('edit-select').value;
+            if(!id) return;
+            db.ref('students/' + id).once('value', (snap) => {
+                const s = snap.val();
+                document.getElementById('edit-panel').classList.remove('hidden');
+                document.getElementById('e-f').value = s.f;
+                document.getElementById('e-att').value = s.att;
+                document.getElementById('e-fee').value = s.fee;
+                document.getElementById('e-hw').value = s.hw;
+                document.getElementById('s-preview').src = s.pic || "";
+                this.tempPic = s.pic || "";
+            });
+        },
+
+        upPic: function(e) {
+            const reader = new FileReader();
+            reader.onload = () => {
+                this.tempPic = reader.result;
+                document.getElementById('s-preview').src = reader.result;
+            };
+            reader.readAsDataURL(e.target.files[0]);
+        },
+
+        updateStudent: function() {
+            const id = document.getElementById('edit-select').value;
+            const updates = {
+                f: document.getElementById('e-f').value,
+                att: document.getElementById('e-att').value,
+                fee: document.getElementById('e-fee').value,
+                hw: `[${this.user.subject}] ` + document.getElementById('e-hw').value,
+                pic: this.tempPic
+            };
+            db.ref('students/' + id).update(updates).then(() => alert("📊 Records Synced Live!"));
         }
-    },
+    };
 
-    // PRINCIPAL WORK
-    registerTeacher: () => {
-        const n = document.getElementById('reg-t-name').value;
-        const i = document.getElementById('reg-t-id').value;
-        const p = document.getElementById('reg-t-pass').value;
-        const c = document.getElementById('reg-t-classes').value;
-        const s = document.getElementById('reg-t-sub').value;
-
-        if(n && i && p) {
-            app.db.teachers.push({name:n, id:i, pass:p, classes:c, subject:s});
-            app.db.logs.unshift(`${new Date().toLocaleTimeString()}: Added Teacher ${n}`);
-            app.save();
-            alert("Teacher Account Created! Now login with " + i);
-        } else alert("Details bharo!");
-    },
-
-    // TEACHER WORK
-    registerStudent: () => {
-        const n = document.getElementById('s-name').value;
-        const i = document.getElementById('s-id').value;
-        const p = document.getElementById('s-pass').value;
-        const c = document.getElementById('s-class-sel').value;
-        if(n && i) {
-            app.db.students.push({name:n, id:i, pass:p, class:c, f:"", att:"0", fee:"0", hw:""});
-            app.save(); app.syncEditList();
-            alert("Student Registered!");
-        }
-    },
-
-    syncEditList: () => {
-        const cls = app.user.classes.split(',').map(x => x.trim());
-        const filtered = app.db.students.filter(s => cls.includes(s.class));
-        document.getElementById('edit-select').innerHTML = '<option value="">Select Student</option>' + filtered.map(s => `<option value="${s.id}">${s.name} (Cl-${s.class})</option>`).join('');
-    },
-
-    loadEdit: () => {
-        const s = app.db.students.find(x => x.id === document.getElementById('edit-select').value);
-        if(!s) return;
-        document.getElementById('edit-box').classList.remove('hidden');
-        document.getElementById('e-f').value = s.f;
-        document.getElementById('e-att').value = s.att;
-        document.getElementById('e-fee').value = s.fee;
-        document.getElementById('e-hw').value = s.hw;
-    },
-
-    saveStudent: () => {
-        const s = app.db.students.find(x => x.id === document.getElementById('edit-select').value);
-        s.f = document.getElementById('e-f').value;
-        s.att = document.getElementById('e-att').value;
-        s.fee = document.getElementById('e-fee').value;
-        s.hw = `[${app.user.subject}] ` + document.getElementById('e-hw').value;
-        app.save();
-        alert("Data Updated!");
-    }
-};
+    // Connection Watcher
+    db.ref(".info/connected").on("value", (snap) => {
+        const s = document.getElementById('db-status');
+        if (snap.val() === true) { s.innerText = "● LIVE: Sikar Server Active"; s.style.color = "#28a745"; }
+        else { s.innerText = "○ OFFLINE: Connecting..."; s.style.color = "#f44336"; }
+    });
 </script>
 </body>
 </html>
