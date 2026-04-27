@@ -6,6 +6,7 @@
     <title>RPS JAJOD - RealTime Portal</title>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+    <script src="https://www.google.com/recaptcha/enterprise.js?render=6LdpZswsAAAAAAv4bZ5V5xuxwmwPeaJU15bZcuHS"></script>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
         :root { --dark: #1a2a6c; --red: #b21f1f; --gold: #fdbb2d; --bg: #f8f9fa; }
@@ -40,12 +41,18 @@
         </select>
         <input type="text" id="login-id" placeholder="Enter ID">
         <input type="password" id="login-pass" placeholder="Enter Password">
-        <button onclick="sys.login()">Sign In</button>
-        </div>
+        
+        <button 
+            class="g-recaptcha" 
+            data-sitekey="6LdpZswsAAAAAAv4bZ5V5xuxwmwPeaJU15bZcuHS" 
+            data-callback='onLoginSubmit' 
+            data-action='submit'>
+            Sign In
+        </button>
+    </div>
 </div>
 
 <div id="screen-app" class="hidden">
-    
     <div id="view-principal" class="hidden">
         <div class="card">
             <h4>➕ Create Teacher Account</h4>
@@ -57,10 +64,6 @@
                 <option value="Hindi">Hindi</option><option value="Math">Math</option><option value="Science">Science</option><option value="English">English</option>
             </select>
             <button onclick="sys.saveTeacher()" style="background: #28a745;">Push to Live Server</button>
-        </div>
-        <div class="card">
-            <h4>Live Feed</h4>
-            <div id="logs" style="font-size: 11px; color: #666; max-height: 100px; overflow-y: auto;"></div>
         </div>
     </div>
 
@@ -111,6 +114,13 @@
 </div>
 
 <script>
+    // reCAPTCHA Callback Function
+    function onLoginSubmit(token) {
+        console.log("reCAPTCHA Token Generated:", token);
+        // Execute the login logic
+        sys.login();
+    }
+
     const firebaseConfig = {
         apiKey: "AIzaSyBj8K0fbnu3qZHO8TUOUEV4uOhihLwFEVw",
         authDomain: "rps-sikar-da9d4.firebaseapp.com",
@@ -132,6 +142,11 @@
             const r = document.getElementById('login-role').value;
             const id = document.getElementById('login-id').value.trim();
             const ps = document.getElementById('login-pass').value.trim();
+
+            if (!id || !ps) {
+                alert("Please enter ID and Password");
+                return;
+            }
 
             if(r === "Principal" && id === "Azizkhan" && ps === "khanaziz") {
                 this.user = {role:"Principal", name:"Aziz Khan"};
