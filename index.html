@@ -1,290 +1,282 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>School Pro - Ultimate</title>
+    <title>School Pro - Principal Master</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        :root { --primary: #1e293b; --accent: #3b82f6; --success: #10b981; --danger: #ef4444; --bg: #f1f5f9; }
+        :root { 
+            --primary: #0f172a; 
+            --accent: #3b82f6; 
+            --success: #10b981; 
+            --warning: #f59e0b; 
+            --danger: #ef4444; 
+            --bg: #f8fafc; 
+        }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
-        body { background: var(--bg); color: var(--primary); padding-bottom: 80px; }
+        body { background: var(--bg); color: #1e293b; padding-bottom: 90px; }
 
-        /* UI COMPONENTS */
-        .glass { background: white; border-radius: 20px; padding: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 15px; }
-        header { background: #1e293b; color: white; padding: 15px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 1000; }
+        /* UI BASICS */
+        .glass { background: white; border-radius: 20px; padding: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); margin-bottom: 20px; border: 1px solid #e2e8f0; }
+        header { background: white; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 1000; border-bottom: 1px solid #e2e8f0; }
         
-        input, select, button { width: 100%; padding: 12px; margin: 8px 0; border-radius: 12px; border: 1px solid #ddd; outline: none; }
-        button { background: var(--accent); color: white; font-weight: 600; border: none; cursor: pointer; }
-        .btn-outline { background: transparent; border: 2px solid var(--accent); color: var(--accent); }
-        .btn-sm { width: auto; padding: 5px 15px; font-size: 12px; }
+        input, select, textarea, button { width: 100%; padding: 12px; margin: 8px 0; border-radius: 12px; border: 1px solid #cbd5e1; outline: none; transition: 0.2s; font-size: 14px; }
+        button { background: var(--accent); color: white; border: none; font-weight: 600; cursor: pointer; }
+        button:hover { opacity: 0.9; }
+        .btn-sec { background: #f1f5f9; color: #475569; }
+        .btn-del { background: var(--danger); }
 
-        /* DRAWER */
-        #drawer { position: fixed; top: 0; left: -100%; width: 80%; height: 100%; background: white; z-index: 2000; transition: 0.3s; padding: 20px; box-shadow: 10px 0 30px rgba(0,0,0,0.2); }
-        #drawer.active { left: 0; }
-        .overlay { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index: 1500; display:none; }
-
-        /* ATTENDANCE SYSTEM */
-        .att-row { display: flex; justify-content: space-between; align-items: center; padding: 10px; border-bottom: 1px solid #eee; }
-        .status-dot { width: 12px; height: 12px; border-radius: 50%; display: inline-block; margin-right: 5px; }
-        .present { background: var(--success); }
-        .absent { background: var(--danger); }
-
+        /* CARDS */
+        .item-card { display: flex; align-items: center; gap: 15px; padding: 15px; border-bottom: 1px solid #f1f5f9; }
+        .item-card img { width: 50px; height: 50px; border-radius: 50%; object-fit: cover; border: 2px solid var(--accent); }
+        
         /* BOTTOM NAV */
-        .bottom-nav { position: fixed; bottom: 0; width: 100%; height: 70px; background: white; display: flex; justify-content: space-around; align-items: center; border-top: 1px solid #e2e8f0; z-index: 1000; }
-        .nav-item { text-align: center; font-size: 10px; color: #64748b; cursor: pointer; }
-        .nav-item.active { color: var(--accent); }
-        .nav-center { background: var(--accent); width: 55px; height: 55px; border-radius: 50%; margin-top: -35px; display: flex; align-items: center; justify-content: center; color: white; box-shadow: 0 4px 10px rgba(59, 130, 246, 0.4); }
+        .bottom-nav { position: fixed; bottom: 0; width: 100%; height: 75px; background: white; display: flex; justify-content: space-around; align-items: center; border-top: 1px solid #e2e8f0; z-index: 1000; }
+        .nav-item { text-align: center; font-size: 11px; color: #94a3b8; flex: 1; cursor: pointer; }
+        .nav-item.active { color: var(--accent); font-weight: 700; }
 
         .hidden { display: none !important; }
-        .editable-field { border: 1px dashed var(--accent) !important; background: #f0f7ff !important; }
+        .status-pill { font-size: 10px; padding: 4px 8px; border-radius: 6px; font-weight: 700; color: white; display: inline-block; }
+        .Present { background: var(--success); }
+        .Absent { background: var(--danger); }
+        .Half-Day { background: var(--warning); }
+        .Late { background: #6366f1; }
     </style>
 </head>
 <body>
 
-<div class="overlay" id="overlay" onclick="toggleDrawer()"></div>
-<div id="drawer">
-    <div style="text-align:center; margin-bottom:20px;">
-        <img id="user-pfp" src="https://via.placeholder.com/80" style="border-radius:50%; width:80px; height:80px; border:3px solid var(--accent);">
-        <h3 id="user-name-side">Admin Name</h3>
-        <p id="user-role-side" style="font-size:12px; color:var(--accent);">Principal</p>
-    </div>
-    <div style="margin-top:30px;">
-        <div style="padding:15px 0; border-bottom:1px solid #eee;">🏠 Dashboard</div>
-        <div style="padding:15px 0; border-bottom:1px solid #eee;">⚙️ Account Settings</div>
-        <div style="padding:15px 0; border-bottom:1px solid #eee;">🔒 Privacy Policy</div>
-        <div style="padding:15px 0; color:var(--danger);" onclick="location.reload()">🚪 Logout</div>
-    </div>
-</div>
-
 <header>
-    <div onclick="toggleDrawer()">☰</div>
-    <div id="header-title">School Pro</div>
-    <div>🔔</div>
+    <div style="font-size: 20px; font-weight: 700; color: var(--primary);">SchoolPro Dashboard</div>
+    <div id="user-info" style="font-size: 12px; font-weight: 500;"></div>
 </header>
 
-<div id="login-section" style="padding:20px; max-width:400px; margin: 50px auto;">
-    <div class="glass" style="text-align:center;">
-        <h2>Login</h2>
+<div id="login-view" style="padding: 40px 20px;">
+    <div class="glass" style="max-width: 400px; margin: auto;">
+        <h2 style="text-align:center; margin-bottom: 20px;">Secure Login</h2>
         <select id="login-role">
-            <option value="Principal">Principal</option>
+            <option value="Principal">Principal (Azizkhan)</option>
             <option value="Teacher">Teacher</option>
-            <option value="Parent">Parent/Student</option>
+            <option value="Student">Student</option>
         </select>
-        <input type="text" id="login-id" placeholder="ID">
-        <input type="password" id="login-pass" placeholder="Password">
-        <button onclick="handleLogin()">Login</button>
+        <input type="text" id="uid" placeholder="ID">
+        <input type="password" id="upass" placeholder="Password">
+        <button onclick="handleLogin()">Sign In</button>
     </div>
 </div>
 
-<main id="app-section" class="hidden" style="padding:15px;">
+<div id="principal-view" class="hidden" style="padding: 20px;">
     
-    <section id="view-principal" class="hidden">
-        <div class="glass">
-            <h3>Add/Edit Teacher</h3>
-            <input type="text" id="teach-name" placeholder="Teacher Name">
-            <input type="text" id="teach-id" placeholder="Login ID">
-            <input type="text" id="teach-pass" placeholder="Password">
-            <input type="file" id="teach-pic" accept="image/*">
-            <button onclick="saveTeacher()">Save Teacher Account</button>
-        </div>
-        <div id="principal-teacher-list"></div>
-    </section>
-
-    <section id="view-teacher" class="hidden">
-        <div class="glass" id="attendance-box">
-            <h3>Daily Attendance</h3>
-            <p style="font-size:12px; margin-bottom:10px;">Date: <span id="current-date"></span></p>
-            <div id="attendance-list"></div>
-            <button onclick="submitAttendance()" style="margin-top:15px; background:var(--success);">Submit Attendance</button>
-        </div>
+    <div class="glass">
+        <h3>Teacher Management</h3>
+        <p style="font-size: 12px; margin-bottom: 10px; opacity: 0.7;">Add or Edit Teacher Profiles</p>
+        <select id="edit-teacher-select" onchange="loadTeacherToEdit()">
+            <option value="">-- Select Teacher to Edit --</option>
+        </select>
         
-        <div class="glass">
-            <h3>Edit Student Details</h3>
-            <div id="teacher-student-list"></div>
-        </div>
-    </section>
-
-    <section id="view-parent" class="hidden">
-        <div class="glass" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color:white;">
-            <p>Good Afternoon 👋</p>
-            <h2 id="parent-display-name">User</h2>
-            <div style="display:flex; justify-content:space-between; margin-top:15px; align-items:center;">
-                <div id="active-child-info">
-                    <b>Child Name</b><br><small>Class 12-COMM</small>
-                </div>
-                <button class="btn-sm" onclick="switchChild()">Switch Child ▿</button>
+        <div id="teacher-edit-form" class="hidden" style="margin-top: 15px; border-top: 2px solid #f1f5f9; padding-top: 15px;">
+            <label style="font-size: 12px; font-weight: 600;">Teacher Photo</label>
+            <input type="file" id="t-pic-edit" accept="image/*">
+            <input type="text" id="t-name-edit" placeholder="Full Name">
+            <input type="text" id="t-pass-edit" placeholder="Update Password">
+            <input type="text" id="t-sal-edit" placeholder="Monthly Salary (e.g. ₹50,000)">
+            <div style="display: flex; gap: 10px;">
+                <button onclick="updateTeacherDetails()">Save Profile</button>
+                <button class="btn-del" onclick="deleteTeacher()">Delete</button>
             </div>
         </div>
-        <div class="glass" id="child-profile-card">
+
+        <button id="add-new-t-btn" class="btn-sec" style="margin-top: 10px;" onclick="showAddTeacherForm()">+ Create New Teacher</button>
+    </div>
+
+    <div class="glass">
+        <h3>Staff Attendance Ledger</h3>
+        <label style="font-size: 12px; font-weight: 600;">Select Date:</label>
+        <input type="date" id="attendance-date" onchange="renderTeacherAttendanceList()">
+        
+        <div id="teacher-attendance-list" style="margin-top: 15px;">
             </div>
-    </section>
+        <button id="save-att-btn" class="hidden" onclick="saveStaffAttendance()" style="background: var(--success); margin-top: 10px;">Save Attendance for Date</button>
+    </div>
+</div>
 
-</main>
+<div id="other-view" class="hidden" style="padding: 20px;">
+    <div class="glass">
+        <h2 id="welcome-msg"></h2>
+        <p>Accessing your specific data modules...</p>
+    </div>
+</div>
 
-<div class="bottom-nav hidden" id="main-nav">
-    <div class="nav-item active" onclick="showTab('home')">🏠<br>Home</div>
-    <div class="nav-item" onclick="showTab('child')">👤<br>Profile</div>
-    <div class="nav-center">▦</div>
-    <div class="nav-item">🔔<br>Updates</div>
-    <div class="nav-item">🏢<br>News</div>
+<div id="nav" class="bottom-nav hidden">
+    <div class="nav-item active" onclick="location.reload()">🏠<br>Home</div>
+    <div class="nav-item">📋<br>Reports</div>
+    <div class="nav-item">⚙️<br>Settings</div>
+    <div class="nav-item" onclick="location.reload()">🚪<br>Logout</div>
 </div>
 
 <script>
     // DATA CORE
     let db = {
         teachers: JSON.parse(localStorage.getItem('sp_teachers')) || [],
-        students: JSON.parse(localStorage.getItem('sp_students')) || [
-            {id: 'S1', name: 'TANISHA TAILOR', class: '12-COMM', sr: '1229', father: 'PARTURAM', mother: 'SANGEETA', contact: '6378154691', att: []},
-            {id: 'S2', name: 'BHANU', class: '11-COMM', sr: '1340', father: 'PARTURAM', mother: 'SANGEETA', contact: '6378154691', att: []}
-        ],
-        attendance: JSON.parse(localStorage.getItem('sp_att')) || {}
+        teacherAttendance: JSON.parse(localStorage.getItem('sp_teacher_att')) || {} 
+        // Structure: { "2026-04-27": { "T1": "Present", "T2": "Late" } }
     };
 
-    let currentUser = null;
-    let activeChildIdx = 0;
+    let session = null;
 
+    // AUTH
     function handleLogin() {
         const role = document.getElementById('login-role').value;
-        const id = document.getElementById('login-id').value;
-        const pass = document.getElementById('login-pass').value;
+        const id = document.getElementById('uid').value;
+        const pass = document.getElementById('upass').value;
 
-        if(role === "Principal" && id === "Azizkhan" && pass === "khanaziz") {
-            currentUser = {role: "Principal", name: "Aziz Khan"};
-        } else if(role === "Teacher") {
-            const t = db.teachers.find(x => x.id === id && x.pass === pass);
-            if(t) currentUser = {...t, role: "Teacher"};
-        } else if(role === "Parent") {
-            currentUser = {role: "Parent", name: "PARTURAM"};
-        }
-
-        if(currentUser) {
-            document.getElementById('login-section').classList.add('hidden');
-            document.getElementById('app-section').classList.remove('hidden');
-            document.getElementById('main-nav').classList.remove('hidden');
-            setupView();
-        } else alert("Invalid Credentials");
-    }
-
-    function setupView() {
-        document.getElementById('user-name-side').innerText = currentUser.name;
-        document.getElementById('user-role-side').innerText = currentUser.role;
-        
-        // Reset views
-        ['view-principal', 'view-teacher', 'view-parent'].forEach(id => document.getElementById(id).classList.add('hidden'));
-
-        if(currentUser.role === "Principal") {
-            document.getElementById('view-principal').classList.remove('hidden');
-            renderPrincipal();
-        } else if(currentUser.role === "Teacher") {
-            document.getElementById('view-teacher').classList.remove('hidden');
-            document.getElementById('current-date').innerText = new Date().toLocaleDateString();
-            renderTeacher();
+        if (role === "Principal" && id === "Azizkhan" && pass === "khanaziz") {
+            session = { role: "Principal", name: "Aziz Khan" };
+            document.getElementById('login-view').classList.add('hidden');
+            document.getElementById('principal-view').classList.remove('hidden');
+            document.getElementById('nav').classList.remove('hidden');
+            initPrincipal();
         } else {
-            document.getElementById('view-parent').classList.remove('hidden');
-            renderParent();
+            alert("This module is specifically optimized for Principal access.");
         }
-    }
-
-    // PRINCIPAL FUNCTIONS
-    function saveTeacher() {
-        const name = document.getElementById('teach-name').value;
-        const id = document.getElementById('teach-id').value;
-        const pass = document.getElementById('teach-pass').value;
-        const file = document.getElementById('teach-pic').files[0];
-
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            db.teachers.push({name, id, pass, pic: e.target.result});
-            localStorage.setItem('sp_teachers', JSON.stringify(db.teachers));
-            renderPrincipal();
-        };
-        if(file) reader.readAsDataURL(file);
-        else {
-            db.teachers.push({name, id, pass, pic: 'https://via.placeholder.com/50'});
-            localStorage.setItem('sp_teachers', JSON.stringify(db.teachers));
-            renderPrincipal();
-        }
-    }
-
-    function renderPrincipal() {
-        document.getElementById('principal-teacher-list').innerHTML = `<h3>Staff List</h3>` + db.teachers.map(t => `
-            <div class="glass" style="display:flex; align-items:center; gap:10px;">
-                <img src="${t.pic}" style="width:40px; height:40px; border-radius:50%;">
-                <div><b>${t.name}</b><br><small>ID: ${t.id}</small></div>
-            </div>
-        `).join('');
-    }
-
-    // TEACHER FUNCTIONS
-    function renderTeacher() {
-        const list = document.getElementById('attendance-list');
-        list.innerHTML = db.students.map(s => `
-            <div class="att-row">
-                <span>${s.name}</span>
-                <select style="width:auto; margin:0;" onchange="updateAttStatus('${s.id}', this.value)">
-                    <option value="P">Present</option>
-                    <option value="A">Absent</option>
-                </select>
-            </div>
-        `).join('');
-
-        const sList = document.getElementById('teacher-student-list');
-        sList.innerHTML = db.students.map((s, i) => `
-            <div class="card" style="border:1px solid #eee; padding:10px; border-radius:10px; margin-bottom:10px;">
-                <input class="editable-field" value="${s.name}" onchange="editStudent(${i}, 'name', this.value)">
-                <input class="editable-field" value="${s.father}" onchange="editStudent(${i}, 'father', this.value)">
-                <input class="editable-field" value="${s.contact}" onchange="editStudent(${i}, 'contact', this.value)">
-            </div>
-        `).join('');
-    }
-
-    function editStudent(index, field, value) {
-        db.students[index][field] = value;
-        localStorage.setItem('sp_students', JSON.stringify(db.students));
-        alert("Updated " + field);
-    }
-
-    function submitAttendance() {
-        alert("Attendance for " + db.students.length + " students submitted successfully!");
-    }
-
-    // PARENT FUNCTIONS
-    function renderParent() {
-        const child = db.students[activeChildIdx];
-        document.getElementById('parent-display-name').innerText = currentUser.name;
-        document.getElementById('active-child-info').innerHTML = `<b>${child.name}</b><br><small>Class ${child.class}</small>`;
         
-        document.getElementById('child-profile-card').innerHTML = `
-            <div style="text-align:center; margin-bottom:15px;">
-                <img src="https://via.placeholder.com/100" style="border-radius:50%; border:3px solid var(--accent);">
-                <h4>${child.name}</h4>
-            </div>
-            <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
-                <div class="glass" style="margin:0;"><span>SR No</span><p>${child.sr}</p></div>
-                <div class="glass" style="margin:0;"><span>Roll No</span><p>118${activeChildIdx}</p></div>
-                <div class="glass" style="margin:0; grid-column:span 2;"><span>Father</span><p>${child.father}</p></div>
-                <div class="glass" style="margin:0; grid-column:span 2;"><span>Contact</span><p>${child.contact}</p></div>
-            </div>
-        `;
+        if (session) {
+            document.getElementById('user-info').innerText = session.name + " (" + session.role + ")";
+        }
     }
 
-    function switchChild() {
-        activeChildIdx = activeChildIdx === 0 ? 1 : 0;
-        renderParent();
+    // PRINCIPAL LOGIC
+    function initPrincipal() {
+        populateTeacherSelect();
+        // Set default date to today
+        document.getElementById('attendance-date').valueAsDate = new Date();
+        renderTeacherAttendanceList();
     }
 
-    function toggleDrawer() {
-        const d = document.getElementById('drawer');
-        const o = document.getElementById('overlay');
-        d.classList.toggle('active');
-        o.style.display = d.classList.contains('active') ? 'block' : 'none';
+    function populateTeacherSelect() {
+        const sel = document.getElementById('edit-teacher-select');
+        sel.innerHTML = '<option value="">-- Select Teacher to Edit --</option>' + 
+            db.teachers.map(t => `<option value="${t.id}">${t.name} (ID: ${t.id})</option>`).join('');
     }
 
-    function showTab(tab) {
-        document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
-        // In this simple version, we just toggle UI elements. 
-        // Real tab logic would hide/show sections.
+    function showAddTeacherForm() {
+        const id = "T" + (db.teachers.length + 1) + Date.now().toString().slice(-3);
+        const newTeacher = { id, name: "New Teacher", pass: "1234", sal: "₹0", pic: "" };
+        db.teachers.push(newTeacher);
+        saveDb();
+        populateTeacherSelect();
+        document.getElementById('edit-teacher-select').value = id;
+        loadTeacherToEdit();
+    }
+
+    function loadTeacherToEdit() {
+        const id = document.getElementById('edit-teacher-select').value;
+        const t = db.teachers.find(x => x.id === id);
+        if (!t) {
+            document.getElementById('teacher-edit-form').classList.add('hidden');
+            return;
+        }
+        document.getElementById('teacher-edit-form').classList.remove('hidden');
+        document.getElementById('t-name-edit').value = t.name;
+        document.getElementById('t-pass-edit').value = t.pass;
+        document.getElementById('t-sal-edit').value = t.sal;
+    }
+
+    function updateTeacherDetails() {
+        const id = document.getElementById('edit-teacher-select').value;
+        const t = db.teachers.find(x => x.id === id);
+        
+        t.name = document.getElementById('t-name-edit').value;
+        t.pass = document.getElementById('t-pass-edit').value;
+        t.sal = document.getElementById('t-sal-edit').value;
+
+        const file = document.getElementById('t-pic-edit').files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                t.pic = e.target.result;
+                finishUpdate();
+            };
+            reader.readAsDataURL(file);
+        } else {
+            finishUpdate();
+        }
+    }
+
+    function finishUpdate() {
+        saveDb();
+        populateTeacherSelect();
+        renderTeacherAttendanceList();
+        alert("Teacher Profile Updated Successfully");
+    }
+
+    function deleteTeacher() {
+        const id = document.getElementById('edit-teacher-select').value;
+        if (confirm("Permanently delete this teacher?")) {
+            db.teachers = db.teachers.filter(x => x.id !== id);
+            saveDb();
+            populateTeacherSelect();
+            document.getElementById('teacher-edit-form').classList.add('hidden');
+            renderTeacherAttendanceList();
+        }
+    }
+
+    // ATTENDANCE LOGIC
+    function renderTeacherAttendanceList() {
+        const date = document.getElementById('attendance-date').value;
+        const listDiv = document.getElementById('teacher-attendance-list');
+        const saveBtn = document.getElementById('save-att-btn');
+
+        if (!date || db.teachers.length === 0) {
+            listDiv.innerHTML = "<p style='text-align:center; opacity:0.5;'>No teachers added or date not selected.</p>";
+            saveBtn.classList.add('hidden');
+            return;
+        }
+
+        saveBtn.classList.remove('hidden');
+        const dayAtt = db.teacherAttendance[date] || {};
+
+        listDiv.innerHTML = db.teachers.map(t => {
+            const currentStatus = dayAtt[t.id] || "Pending";
+            return `
+                <div class="item-card">
+                    <img src="${t.pic || 'https://via.placeholder.com/50'}">
+                    <div style="flex:1">
+                        <b>${t.name}</b><br>
+                        <span class="status-pill ${currentStatus}">${currentStatus}</span>
+                    </div>
+                    <select style="width: auto; margin:0;" class="att-status-select" data-tid="${t.id}">
+                        <option value="Present" ${currentStatus === 'Present' ? 'selected' : ''}>Present</option>
+                        <option value="Absent" ${currentStatus === 'Absent' ? 'selected' : ''}>Absent</option>
+                        <option value="Half-Day" ${currentStatus === 'Half-Day' ? 'selected' : ''}>Half-Day</option>
+                        <option value="Late" ${currentStatus === 'Late' ? 'selected' : ''}>Late</option>
+                    </select>
+                </div>
+            `;
+        }).join('');
+    }
+
+    function saveStaffAttendance() {
+        const date = document.getElementById('attendance-date').value;
+        if (!date) return;
+
+        if (!db.teacherAttendance[date]) db.teacherAttendance[date] = {};
+        
+        const selects = document.querySelectorAll('.att-status-select');
+        selects.forEach(sel => {
+            const tid = sel.getAttribute('data-tid');
+            db.teacherAttendance[date][tid] = sel.value;
+        });
+
+        saveDb();
+        renderTeacherAttendanceList();
+        alert("Attendance Saved for " + date);
+    }
+
+    function saveDb() {
+        localStorage.setItem('sp_teachers', JSON.stringify(db.teachers));
+        localStorage.setItem('sp_teacher_att', JSON.stringify(db.teacherAttendance));
     }
 </script>
 
