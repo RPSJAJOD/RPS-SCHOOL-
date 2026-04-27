@@ -1,282 +1,305 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>School Pro - Principal Master</title>
+    <title>RAJASTHAN Public School, Jajod</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root { 
-            --primary: #0f172a; 
-            --accent: #3b82f6; 
-            --success: #10b981; 
-            --warning: #f59e0b; 
-            --danger: #ef4444; 
-            --bg: #f8fafc; 
+            --school-primary: #b21f1f; /* Royal Red */
+            --school-secondary: #fdbb2d; /* Marwari Gold */
+            --dark: #1a2a6c; 
+            --bg: #f4f7f6;
         }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
-        body { background: var(--bg); color: #1e293b; padding-bottom: 90px; }
+        body { background: var(--bg); color: #333; padding-bottom: 90px; }
 
-        /* UI BASICS */
-        .glass { background: white; border-radius: 20px; padding: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); margin-bottom: 20px; border: 1px solid #e2e8f0; }
-        header { background: white; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 1000; border-bottom: 1px solid #e2e8f0; }
-        
-        input, select, textarea, button { width: 100%; padding: 12px; margin: 8px 0; border-radius: 12px; border: 1px solid #cbd5e1; outline: none; transition: 0.2s; font-size: 14px; }
-        button { background: var(--accent); color: white; border: none; font-weight: 600; cursor: pointer; }
-        button:hover { opacity: 0.9; }
-        .btn-sec { background: #f1f5f9; color: #475569; }
-        .btn-del { background: var(--danger); }
+        /* BRANDING & HEADER */
+        header { 
+            background: linear-gradient(90deg, var(--school-primary), var(--dark)); 
+            color: white; padding: 15px; text-align: center; 
+            position: sticky; top: 0; z-index: 1000; box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        .school-name { font-size: 16px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; }
+        .location { font-size: 10px; opacity: 0.9; font-weight: 400; }
 
-        /* CARDS */
-        .item-card { display: flex; align-items: center; gap: 15px; padding: 15px; border-bottom: 1px solid #f1f5f9; }
-        .item-card img { width: 50px; height: 50px; border-radius: 50%; object-fit: cover; border: 2px solid var(--accent); }
-        
-        /* BOTTOM NAV */
-        .bottom-nav { position: fixed; bottom: 0; width: 100%; height: 75px; background: white; display: flex; justify-content: space-around; align-items: center; border-top: 1px solid #e2e8f0; z-index: 1000; }
-        .nav-item { text-align: center; font-size: 11px; color: #94a3b8; flex: 1; cursor: pointer; }
-        .nav-item.active { color: var(--accent); font-weight: 700; }
+        /* UI COMPONENTS */
+        .glass { background: white; border-radius: 15px; padding: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); margin-bottom: 20px; border-left: 5px solid var(--school-primary); }
+        input, select, textarea, button { width: 100%; padding: 12px; margin: 8px 0; border-radius: 10px; border: 1px solid #ddd; font-size: 14px; }
+        button { background: var(--school-primary); color: white; border: none; font-weight: 600; cursor: pointer; transition: 0.3s; }
+        button:hover { background: var(--dark); }
+        .btn-sec { background: #eee; color: #444; }
+
+        /* ATTENDANCE PILLS */
+        .status-badge { font-size: 10px; padding: 4px 10px; border-radius: 20px; color: white; font-weight: 600; }
+        .Present { background: #27ae60; }
+        .Absent { background: #e74c3c; }
+
+        /* NAVIGATION */
+        .bottom-nav { position: fixed; bottom: 0; width: 100%; height: 70px; background: white; display: flex; justify-content: space-around; align-items: center; border-top: 1px solid #eee; z-index: 1000; }
+        .nav-item { text-align: center; font-size: 10px; color: #888; flex: 1; cursor: pointer; }
+        .nav-item.active { color: var(--school-primary); font-weight: 700; }
+        .nav-center { background: var(--school-primary); width: 50px; height: 50px; border-radius: 50%; margin-top: -30px; display: flex; align-items: center; justify-content: center; color: white; box-shadow: 0 4px 12px rgba(178, 31, 31, 0.4); }
 
         .hidden { display: none !important; }
-        .status-pill { font-size: 10px; padding: 4px 8px; border-radius: 6px; font-weight: 700; color: white; display: inline-block; }
-        .Present { background: var(--success); }
-        .Absent { background: var(--danger); }
-        .Half-Day { background: var(--warning); }
-        .Late { background: #6366f1; }
+        .user-tag { font-size: 11px; background: rgba(255,255,255,0.2); padding: 2px 8px; border-radius: 5px; margin-top: 5px; display: inline-block; }
     </style>
 </head>
 <body>
 
 <header>
-    <div style="font-size: 20px; font-weight: 700; color: var(--primary);">SchoolPro Dashboard</div>
-    <div id="user-info" style="font-size: 12px; font-weight: 500;"></div>
+    <div class="school-name">Rajasthan Public School</div>
+    <div class="location">JAJOD (Sikar)</div>
+    <div id="user-pill" class="user-tag hidden"></div>
 </header>
 
 <div id="login-view" style="padding: 40px 20px;">
-    <div class="glass" style="max-width: 400px; margin: auto;">
-        <h2 style="text-align:center; margin-bottom: 20px;">Secure Login</h2>
-        <select id="login-role">
-            <option value="Principal">Principal (Azizkhan)</option>
-            <option value="Teacher">Teacher</option>
-            <option value="Student">Student</option>
+    <div class="glass" style="max-width: 450px; margin: auto; border-left: none; border-top: 5px solid var(--school-primary);">
+        <h2 style="text-align:center; color: var(--dark);">Portal Login</h2>
+        <p style="text-align:center; font-size: 12px; margin-bottom: 20px;">Welcome to the Digital Campus</p>
+        
+        <select id="l-role">
+            <option value="Principal">Principal (Admin)</option>
+            <option value="Teacher">Teacher Portal</option>
+            <option value="Student">Student/Parent</option>
         </select>
-        <input type="text" id="uid" placeholder="ID">
-        <input type="password" id="upass" placeholder="Password">
-        <button onclick="handleLogin()">Sign In</button>
+        <input type="text" id="l-id" placeholder="User ID">
+        <input type="password" id="l-pass" placeholder="Password">
+        <button onclick="handleLogin()">Log In to Campus</button>
     </div>
 </div>
 
-<div id="principal-view" class="hidden" style="padding: 20px;">
-    
-    <div class="glass">
-        <h3>Teacher Management</h3>
-        <p style="font-size: 12px; margin-bottom: 10px; opacity: 0.7;">Add or Edit Teacher Profiles</p>
-        <select id="edit-teacher-select" onchange="loadTeacherToEdit()">
-            <option value="">-- Select Teacher to Edit --</option>
-        </select>
-        
-        <div id="teacher-edit-form" class="hidden" style="margin-top: 15px; border-top: 2px solid #f1f5f9; padding-top: 15px;">
-            <label style="font-size: 12px; font-weight: 600;">Teacher Photo</label>
-            <input type="file" id="t-pic-edit" accept="image/*">
-            <input type="text" id="t-name-edit" placeholder="Full Name">
-            <input type="text" id="t-pass-edit" placeholder="Update Password">
-            <input type="text" id="t-sal-edit" placeholder="Monthly Salary (e.g. ₹50,000)">
-            <div style="display: flex; gap: 10px;">
-                <button onclick="updateTeacherDetails()">Save Profile</button>
-                <button class="btn-del" onclick="deleteTeacher()">Delete</button>
+<div id="app-body" class="hidden" style="padding: 15px;">
+
+    <div id="view-principal" class="hidden">
+        <div class="glass">
+            <h3>Staff Control</h3>
+            <select id="p-edit-sel" onchange="loadTeacherData()"><option value="">Edit a Teacher</option></select>
+            <div id="p-t-form" class="hidden">
+                <input type="text" id="p-t-name" placeholder="Teacher Name">
+                <input type="text" id="p-t-pass" placeholder="Login Password">
+                <input type="text" id="p-t-sal" placeholder="Salary Info">
+                <button onclick="updateTeacher()">Save Teacher Updates</button>
             </div>
+            <button class="btn-sec" onclick="createTeacher()">+ Add New Staff Member</button>
         </div>
 
-        <button id="add-new-t-btn" class="btn-sec" style="margin-top: 10px;" onclick="showAddTeacherForm()">+ Create New Teacher</button>
+        <div class="glass">
+            <h3>Teacher Attendance Ledger</h3>
+            <input type="date" id="t-att-date" onchange="renderTAtt()">
+            <div id="t-att-list"></div>
+        </div>
     </div>
 
-    <div class="glass">
-        <h3>Staff Attendance Ledger</h3>
-        <label style="font-size: 12px; font-weight: 600;">Select Date:</label>
-        <input type="date" id="attendance-date" onchange="renderTeacherAttendanceList()">
-        
-        <div id="teacher-attendance-list" style="margin-top: 15px;">
+    <div id="view-teacher" class="hidden">
+        <div class="glass">
+            <h3>Student Management</h3>
+            <select id="t-edit-sel" onchange="loadStudentData()"><option value="">Edit a Student</option></select>
+            <div id="t-s-form" class="hidden">
+                <input type="text" id="t-s-name" placeholder="Student Name">
+                <input type="text" id="t-s-pass" placeholder="Login Password">
+                <input type="text" id="t-s-fee" placeholder="Fees (e.g. ₹15,000)">
+                <textarea id="t-s-hw" placeholder="Write Daily Homework here..."></textarea>
+                <button onclick="updateStudent()">Update Student Profile</button>
             </div>
-        <button id="save-att-btn" class="hidden" onclick="saveStaffAttendance()" style="background: var(--success); margin-top: 10px;">Save Attendance for Date</button>
-    </div>
-</div>
+            <button class="btn-sec" onclick="createStudent()">+ Enroll New Student</button>
+        </div>
 
-<div id="other-view" class="hidden" style="padding: 20px;">
-    <div class="glass">
-        <h2 id="welcome-msg"></h2>
-        <p>Accessing your specific data modules...</p>
+        <div class="glass">
+            <h3>Student Daily Attendance</h3>
+            <input type="date" id="s-att-date" onchange="renderSAtt()">
+            <div id="s-att-list"></div>
+        </div>
     </div>
+
+    <div id="view-student" class="hidden">
+        <div class="glass" style="background: var(--dark); color: white;">
+            <p style="font-size: 12px; opacity: 0.8;">Student Profile</p>
+            <h2 id="st-name-ui">Name</h2>
+            <p id="st-id-ui" style="font-size: 12px;"></p>
+        </div>
+
+        <div class="glass">
+            <h4 style="color: var(--school-primary);">📖 Today's Homework</h4>
+            <div id="st-hw-ui" style="padding: 10px; background: #fffdf0; border-radius: 8px; margin-top: 10px; font-size: 14px;"></div>
+        </div>
+
+        <div class="glass">
+            <h4>💰 Account & Fees</h4>
+            <p id="st-fee-ui" style="font-weight: 700; font-size: 18px; color: #c0392b;"></p>
+        </div>
+    </div>
+
 </div>
 
 <div id="nav" class="bottom-nav hidden">
     <div class="nav-item active" onclick="location.reload()">🏠<br>Home</div>
-    <div class="nav-item">📋<br>Reports</div>
-    <div class="nav-item">⚙️<br>Settings</div>
-    <div class="nav-item" onclick="location.reload()">🚪<br>Logout</div>
+    <div class="nav-item">📚<br>Academic</div>
+    <div class="nav-center">RPS</div>
+    <div class="nav-item">🔔<br>Alerts</div>
+    <div class="nav-item" onclick="location.reload()">🚪<br>Exit</div>
 </div>
 
 <script>
-    // DATA CORE
     let db = {
-        teachers: JSON.parse(localStorage.getItem('sp_teachers')) || [],
-        teacherAttendance: JSON.parse(localStorage.getItem('sp_teacher_att')) || {} 
-        // Structure: { "2026-04-27": { "T1": "Present", "T2": "Late" } }
+        teachers: JSON.parse(localStorage.getItem('rps_t')) || [],
+        students: JSON.parse(localStorage.getItem('rps_s')) || [],
+        tAttendance: JSON.parse(localStorage.getItem('rps_ta')) || {},
+        sAttendance: JSON.parse(localStorage.getItem('rps_sa')) || {}
     };
 
-    let session = null;
+    let currentUser = null;
 
-    // AUTH
     function handleLogin() {
-        const role = document.getElementById('login-role').value;
-        const id = document.getElementById('uid').value;
-        const pass = document.getElementById('upass').value;
+        const role = document.getElementById('l-role').value;
+        const id = document.getElementById('l-id').value;
+        const pass = document.getElementById('l-pass').value;
 
+        // Principal hardcoded
         if (role === "Principal" && id === "Azizkhan" && pass === "khanaziz") {
-            session = { role: "Principal", name: "Aziz Khan" };
-            document.getElementById('login-view').classList.add('hidden');
-            document.getElementById('principal-view').classList.remove('hidden');
-            document.getElementById('nav').classList.remove('hidden');
-            initPrincipal();
+            currentUser = { role: "Principal", name: "Aziz Khan" };
+        } 
+        else if (role === "Teacher") {
+            currentUser = db.teachers.find(t => t.id === id && t.pass === pass);
+        } 
+        else if (role === "Student") {
+            currentUser = db.students.find(s => s.id === id && s.pass === pass);
+        }
+
+        if (currentUser) {
+            currentUser.role = currentUser.role || role;
+            startApp();
         } else {
-            alert("This module is specifically optimized for Principal access.");
+            alert("Login Denied: Rajasthan Public School credentials required.");
         }
+    }
+
+    function startApp() {
+        document.getElementById('login-view').classList.add('hidden');
+        document.getElementById('app-body').classList.remove('hidden');
+        document.getElementById('nav').classList.remove('hidden');
+        document.getElementById('user-pill').classList.remove('hidden');
+        document.getElementById('user-pill').innerText = currentUser.name + " | " + currentUser.role;
         
-        if (session) {
-            document.getElementById('user-info').innerText = session.name + " (" + session.role + ")";
-        }
+        showModule();
     }
 
-    // PRINCIPAL LOGIC
-    function initPrincipal() {
-        populateTeacherSelect();
-        // Set default date to today
-        document.getElementById('attendance-date').valueAsDate = new Date();
-        renderTeacherAttendanceList();
-    }
-
-    function populateTeacherSelect() {
-        const sel = document.getElementById('edit-teacher-select');
-        sel.innerHTML = '<option value="">-- Select Teacher to Edit --</option>' + 
-            db.teachers.map(t => `<option value="${t.id}">${t.name} (ID: ${t.id})</option>`).join('');
-    }
-
-    function showAddTeacherForm() {
-        const id = "T" + (db.teachers.length + 1) + Date.now().toString().slice(-3);
-        const newTeacher = { id, name: "New Teacher", pass: "1234", sal: "₹0", pic: "" };
-        db.teachers.push(newTeacher);
-        saveDb();
-        populateTeacherSelect();
-        document.getElementById('edit-teacher-select').value = id;
-        loadTeacherToEdit();
-    }
-
-    function loadTeacherToEdit() {
-        const id = document.getElementById('edit-teacher-select').value;
-        const t = db.teachers.find(x => x.id === id);
-        if (!t) {
-            document.getElementById('teacher-edit-form').classList.add('hidden');
-            return;
-        }
-        document.getElementById('teacher-edit-form').classList.remove('hidden');
-        document.getElementById('t-name-edit').value = t.name;
-        document.getElementById('t-pass-edit').value = t.pass;
-        document.getElementById('t-sal-edit').value = t.sal;
-    }
-
-    function updateTeacherDetails() {
-        const id = document.getElementById('edit-teacher-select').value;
-        const t = db.teachers.find(x => x.id === id);
+    function showModule() {
+        ['view-principal', 'view-teacher', 'view-student'].forEach(m => document.getElementById(m).classList.add('hidden'));
         
-        t.name = document.getElementById('t-name-edit').value;
-        t.pass = document.getElementById('t-pass-edit').value;
-        t.sal = document.getElementById('t-sal-edit').value;
-
-        const file = document.getElementById('t-pic-edit').files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                t.pic = e.target.result;
-                finishUpdate();
-            };
-            reader.readAsDataURL(file);
+        if (currentUser.role === "Principal") {
+            document.getElementById('view-principal').classList.remove('hidden');
+            syncList('p-edit-sel', db.teachers);
+        } else if (currentUser.role === "Teacher") {
+            document.getElementById('view-teacher').classList.remove('hidden');
+            syncList('t-edit-sel', db.students);
         } else {
-            finishUpdate();
+            document.getElementById('view-student').classList.remove('hidden');
+            document.getElementById('st-name-ui').innerText = currentUser.name;
+            document.getElementById('st-id-ui').innerText = "Enrollment ID: " + currentUser.id;
+            document.getElementById('st-hw-ui').innerText = currentUser.hw || "No homework assigned for today.";
+            document.getElementById('st-fee-ui').innerText = "Balance Due: " + (currentUser.fee || "₹ 0");
         }
     }
 
-    function finishUpdate() {
-        saveDb();
-        populateTeacherSelect();
-        renderTeacherAttendanceList();
-        alert("Teacher Profile Updated Successfully");
+    // PRINCIPAL FUNCTIONS
+    function createTeacher() {
+        let id = "RPS-T" + Math.floor(1000 + Math.random() * 9000);
+        db.teachers.push({ id: id, name: "New Staff", pass: "1234", sal: "₹ 0" });
+        save(); syncList('p-edit-sel', db.teachers);
+        alert("New Teacher Profile Created. ID: " + id);
     }
 
-    function deleteTeacher() {
-        const id = document.getElementById('edit-teacher-select').value;
-        if (confirm("Permanently delete this teacher?")) {
-            db.teachers = db.teachers.filter(x => x.id !== id);
-            saveDb();
-            populateTeacherSelect();
-            document.getElementById('teacher-edit-form').classList.add('hidden');
-            renderTeacherAttendanceList();
-        }
+    function loadTeacherData() {
+        let t = db.teachers.find(x => x.id === document.getElementById('p-edit-sel').value);
+        if(!t) return document.getElementById('p-t-form').classList.add('hidden');
+        document.getElementById('p-t-form').classList.remove('hidden');
+        document.getElementById('p-t-name').value = t.name;
+        document.getElementById('p-t-pass').value = t.pass;
+        document.getElementById('p-t-sal').value = t.sal;
     }
 
-    // ATTENDANCE LOGIC
-    function renderTeacherAttendanceList() {
-        const date = document.getElementById('attendance-date').value;
-        const listDiv = document.getElementById('teacher-attendance-list');
-        const saveBtn = document.getElementById('save-att-btn');
-
-        if (!date || db.teachers.length === 0) {
-            listDiv.innerHTML = "<p style='text-align:center; opacity:0.5;'>No teachers added or date not selected.</p>";
-            saveBtn.classList.add('hidden');
-            return;
-        }
-
-        saveBtn.classList.remove('hidden');
-        const dayAtt = db.teacherAttendance[date] || {};
-
-        listDiv.innerHTML = db.teachers.map(t => {
-            const currentStatus = dayAtt[t.id] || "Pending";
-            return `
-                <div class="item-card">
-                    <img src="${t.pic || 'https://via.placeholder.com/50'}">
-                    <div style="flex:1">
-                        <b>${t.name}</b><br>
-                        <span class="status-pill ${currentStatus}">${currentStatus}</span>
-                    </div>
-                    <select style="width: auto; margin:0;" class="att-status-select" data-tid="${t.id}">
-                        <option value="Present" ${currentStatus === 'Present' ? 'selected' : ''}>Present</option>
-                        <option value="Absent" ${currentStatus === 'Absent' ? 'selected' : ''}>Absent</option>
-                        <option value="Half-Day" ${currentStatus === 'Half-Day' ? 'selected' : ''}>Half-Day</option>
-                        <option value="Late" ${currentStatus === 'Late' ? 'selected' : ''}>Late</option>
-                    </select>
-                </div>
-            `;
-        }).join('');
+    function updateTeacher() {
+        let tid = document.getElementById('p-edit-sel').value;
+        let t = db.teachers.find(x => x.id === tid);
+        t.name = document.getElementById('p-t-name').value;
+        t.pass = document.getElementById('p-t-pass').value;
+        t.sal = document.getElementById('p-t-sal').value;
+        save(); alert("Staff Record Updated.");
     }
 
-    function saveStaffAttendance() {
-        const date = document.getElementById('attendance-date').value;
-        if (!date) return;
-
-        if (!db.teacherAttendance[date]) db.teacherAttendance[date] = {};
-        
-        const selects = document.querySelectorAll('.att-status-select');
-        selects.forEach(sel => {
-            const tid = sel.getAttribute('data-tid');
-            db.teacherAttendance[date][tid] = sel.value;
-        });
-
-        saveDb();
-        renderTeacherAttendanceList();
-        alert("Attendance Saved for " + date);
+    function renderTAtt() {
+        let d = document.getElementById('t-att-date').value;
+        let day = db.tAttendance[d] || {};
+        document.getElementById('t-att-list').innerHTML = db.teachers.map(t => `
+            <div style="display:flex; justify-content:space-between; padding:10px; border-bottom:1px solid #eee;">
+                <span>${t.name}</span>
+                <select style="width:auto; margin:0;" onchange="markTAtt('${d}', '${t.id}', this.value)">
+                    <option value="--">--</option>
+                    <option value="Present" ${day[t.id]=='Present'?'selected':''}>Present</option>
+                    <option value="Absent" ${day[t.id]=='Absent'?'selected':''}>Absent</option>
+                </select>
+            </div>
+        `).join('');
     }
 
-    function saveDb() {
-        localStorage.setItem('sp_teachers', JSON.stringify(db.teachers));
-        localStorage.setItem('sp_teacher_att', JSON.stringify(db.teacherAttendance));
+    // TEACHER FUNCTIONS
+    function createStudent() {
+        let id = "RPS-S" + Math.floor(1000 + Math.random() * 9000);
+        db.students.push({ id: id, name: "New Student", pass: "1234", fee: "₹ 0", hw: "" });
+        save(); syncList('t-edit-sel', db.students);
+        alert("Enrollment Successful. Student ID: " + id);
+    }
+
+    function loadStudentData() {
+        let s = db.students.find(x => x.id === document.getElementById('t-edit-sel').value);
+        if(!s) return document.getElementById('t-s-form').classList.add('hidden');
+        document.getElementById('t-s-form').classList.remove('hidden');
+        document.getElementById('t-s-name').value = s.name;
+        document.getElementById('t-s-pass').value = s.pass;
+        document.getElementById('t-s-fee').value = s.fee;
+        document.getElementById('t-s-hw').value = s.hw;
+    }
+
+    function updateStudent() {
+        let sid = document.getElementById('t-edit-sel').value;
+        let s = db.students.find(x => x.id === sid);
+        s.name = document.getElementById('t-s-name').value;
+        s.pass = document.getElementById('t-s-pass').value;
+        s.fee = document.getElementById('t-s-fee').value;
+        s.hw = document.getElementById('t-s-hw').value;
+        save(); alert("Student Academics Updated.");
+    }
+
+    function renderSAtt() {
+        let d = document.getElementById('s-att-date').value;
+        let day = db.sAttendance[d] || {};
+        document.getElementById('s-att-list').innerHTML = db.students.map(s => `
+            <div style="display:flex; justify-content:space-between; padding:10px; border-bottom:1px solid #eee;">
+                <span>${s.name}</span>
+                <select style="width:auto; margin:0;" onchange="markSAtt('${d}', '${s.id}', this.value)">
+                    <option value="--">--</option>
+                    <option value="Present" ${day[s.id]=='Present'?'selected':''}>Present</option>
+                    <option value="Absent" ${day[s.id]=='Absent'?'selected':''}>Absent</option>
+                </select>
+            </div>
+        `).join('');
+    }
+
+    // UTILITIES
+    function markTAtt(date, id, val) { db.tAttendance[date] = db.tAttendance[date] || {}; db.tAttendance[date][id] = val; save(); }
+    function markSAtt(date, id, val) { db.sAttendance[date] = db.sAttendance[date] || {}; db.sAttendance[date][id] = val; save(); }
+    
+    function save() {
+        localStorage.setItem('rps_t', JSON.stringify(db.teachers));
+        localStorage.setItem('rps_s', JSON.stringify(db.students));
+        localStorage.setItem('rps_ta', JSON.stringify(db.tAttendance));
+        localStorage.setItem('rps_sa', JSON.stringify(db.sAttendance));
+    }
+
+    function syncList(eid, list) {
+        document.getElementById(eid).innerHTML = '<option value="">Select Record</option>' + list.map(i => `<option value="${i.id}">${i.name} (${i.id})</option>`).join('');
     }
 </script>
 
